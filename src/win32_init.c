@@ -641,13 +641,7 @@ GLFWbool _glfwConnectWin32(int platformID, _GLFWplatform* platform)
         .pollEvents = _glfwPollEventsWin32,
         .waitEvents = _glfwWaitEventsWin32,
         .waitEventsTimeout = _glfwWaitEventsTimeoutWin32,
-        .postEmptyEvent = _glfwPostEmptyEventWin32,
-        .getEGLPlatform = _glfwGetEGLPlatformWin32,
-        .getEGLNativeDisplay = _glfwGetEGLNativeDisplayWin32,
-        .getEGLNativeWindow = _glfwGetEGLNativeWindowWin32,
-        .getRequiredInstanceExtensions = _glfwGetRequiredInstanceExtensionsWin32,
-        .getPhysicalDevicePresentationSupport = _glfwGetPhysicalDevicePresentationSupportWin32,
-        .createWindowSurface = _glfwCreateWindowSurfaceWin32
+        .postEmptyEvent = _glfwPostEmptyEventWin32
     };
 
     *platform = win32;
@@ -693,10 +687,6 @@ void _glfwTerminateWin32(void)
 
     _glfw_free(_glfw.win32.clipboardString);
     _glfw_free(_glfw.win32.rawInput);
-
-    _glfwTerminateWGL();
-    _glfwTerminateEGL();
-    _glfwTerminateOSMesa();
 
     _glfwPlatformFreeModule(_glfw.win32.xinput.instance);
     _glfwPlatformFreeModule(_glfw.win32.dinput8.instance);

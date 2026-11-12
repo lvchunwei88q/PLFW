@@ -156,17 +156,6 @@
 #define GLFW_NULL_SC_MENU           120
 #define GLFW_NULL_SC_LAST           GLFW_NULL_SC_MENU
 
-typedef VkFlags VkHeadlessSurfaceCreateFlagsEXT;
-
-typedef struct VkHeadlessSurfaceCreateInfoEXT
-{
-    VkStructureType                 sType;
-    const void*                     pNext;
-    VkHeadlessSurfaceCreateFlagsEXT flags;
-} VkHeadlessSurfaceCreateInfoEXT;
-
-typedef VkResult (APIENTRY *PFN_vkCreateHeadlessSurfaceEXT)(VkInstance,const VkHeadlessSurfaceCreateInfoEXT*,const VkAllocationCallbacks*,VkSurfaceKHR*);
-
 // Null-specific per-window data
 //
 typedef struct _GLFWwindowNull
@@ -219,7 +208,7 @@ GLFWbool _glfwGetVideoModeNull(_GLFWmonitor* monitor, GLFWvidmode* mode);
 GLFWbool _glfwGetGammaRampNull(_GLFWmonitor* monitor, GLFWgammaramp* ramp);
 void _glfwSetGammaRampNull(_GLFWmonitor* monitor, const GLFWgammaramp* ramp);
 
-GLFWbool _glfwCreateWindowNull(_GLFWwindow* window, const _GLFWwndconfig* wndconfig, const _GLFWctxconfig* ctxconfig, const _GLFWfbconfig* fbconfig);
+GLFWbool _glfwCreateWindowNull(_GLFWwindow* window, const _GLFWwndconfig* wndconfig, const _GLFWfbconfig* fbconfig);
 void _glfwDestroyWindowNull(_GLFWwindow* window);
 void _glfwSetWindowTitleNull(_GLFWwindow* window, const char* title);
 void _glfwSetWindowIconNull(_GLFWwindow* window, int count, const GLFWimage* images);
@@ -269,14 +258,6 @@ void _glfwSetClipboardStringNull(const char* string);
 const char* _glfwGetClipboardStringNull(void);
 const char* _glfwGetScancodeNameNull(int scancode);
 int _glfwGetKeyScancodeNull(int key);
-
-EGLenum _glfwGetEGLPlatformNull(EGLint** attribs);
-EGLNativeDisplayType _glfwGetEGLNativeDisplayNull(void);
-EGLNativeWindowType _glfwGetEGLNativeWindowNull(_GLFWwindow* window);
-
-void _glfwGetRequiredInstanceExtensionsNull(char** extensions);
-GLFWbool _glfwGetPhysicalDevicePresentationSupportNull(VkInstance instance, VkPhysicalDevice device, uint32_t queuefamily);
-VkResult _glfwCreateWindowSurfaceNull(VkInstance instance, _GLFWwindow* window, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
 
 void _glfwPollMonitorsNull(void);
 

@@ -1,3 +1,125 @@
+# GLFW（窗口 / 输入 / 事件 裁剪版）
+
+> **本仓库是 GLFW 3.5.1 的一个改造分支：所有图形初始化代码已被移除，库只保留
+> 窗口系统、输入（键盘 / 鼠标 / 手柄）与事件处理能力。**
+>
+> 也就是说：`glfwCreateWindow` 不再创建 OpenGL、OpenGL ES、EGL、WGL、GLX、NSGL、
+> OSMesa 或 Vulkan 相关对象，`glfwMakeContextCurrent` / `glfwSwapBuffers` /
+> `glfwSwapInterval` / `glfwGetProcAddress` / `glfwExtensionSupported` /
+> `glfwGetWindowSurface` 等 API 已从公共头文件中删除。怎么在窗口里画东西完全由
+> 应用自己决定（D3D11/12、Vulkan、GDI、子窗口控件……）。
+>
+> 行为上等价于让库永久运行在 GLFW 的 `GLFW_NO_API` 模式。下文是改造说明；再往下
+> 是上游 GLFW 的原始 README 文本（除标注处外未改动）。
+
+## 改造说明
+
+### 保留的能力
+
+| 类别 | 内容 |
+| --- | --- |
+| 窗口 | 创建 / 销毁、标题、图标、位置与尺寸、尺寸限制、宽高比、图标化、最大化、还原、显示 / 隐藏、焦点、置顶、装饰、透明度、鼠标穿透、内容缩放、`GLFW_SCALE_TO_MONITOR` / `GLFW_SCALE_FRAMEBUFFER`、`GLFW_TRANSPARENT_FRAMEBUFFER`、全屏切换（`glfwSetWindowMonitor`）、`GLFW_REFRESH_RATE` 提示 |
+| 输入 | 键盘（键、扫描码、键名、字符回调、粘滞键 / 锁定键）、鼠标（按键、光标位置、光标模式、原始鼠标运动、滚轮）、手柄 / 游戏杆（连接热插拔、轴、按键、帽、映射、用户映射文件） |
+| 事件 | `glfwPollEvents`、`glfwWaitEvents`、`glfwWaitEventsTimeout`、`glfwPostEmptyEvent`、全部窗口 / 输入 / 显示器 / 手柄回调 |
+| 显示器 | 枚举、名称、位置、工作区、内容缩放、视频模式、gamma ramp |
+| 其他 | 剪贴板、光标形状、定时器、错误回调、线程相关的 TLS / 互斥量、`glfwGetVersionString`、平台选择 |
+
+### 被移除的东西
+
+- 源文件删除：`src/context.c`、`src/wgl_context.c`、`src/glx_context.c`、
+  `src/egl_context.c`、`src/osmesa_context.c`、`src/nsgl_context.m`、`src/vulkan.c`。
+- 公共头文件（`include/GLFW/glfw3.h`）删除：`GL`/`GLES`/`EGL`/`Vulkan` 头文件引入链，
+  `GLFWglproc` / `GLFWvkproc`，`glfwGetProcAddress`、`glfwExtensionSupported`、
+  `glfwMakeContextCurrent`、`glfwGetCurrentContext`、`glfwSwapBuffers`、
+  `glfwSwapInterval`、`glfwInitVulkanLoader`、`glfwGetWindowSurface` 等全部上下文与
+  Vulkan API；上下文相关的提示与属性（`GLFW_CLIENT_API`、`GLFW_CONTEXT_VERSION_*`、
+  `GLFW_OPENGL_*`、`GLFW_CONTEXT_*`、`GLFW_SAMPLES`、`GLFW_SRGB_CAPABLE`、
+  `GLFW_DOUBLEBUFFER`、各色深位提示、`GLFW_COCOA_GRAPHICS_SWITCHING`）。
+- `include/GLFW/glfw3native.h` 删除：`glfwGetWGLContext`、`glfwGetNSGLContext`、
+  `glfwGetGLXContext`、`glfwGetGLXWindow`、`glfwGetEGLContext`、`glfwGetEGLSurface`、
+  `glfwGetEGLConfig`、`glfwGetOSMesaColorBuffer`、`glfwGetOSMesaDepthBuffer`、
+  `glfwGetOSMesaContext` 以及 `GLFW_EXPOSE_NATIVE_*` 中的 EGL / WGL / NSGL / GLX / OSMesa
+  分支。保留 `glfwGetWin32Window`、`glfwGetWin32Adapter`、`glfwGetWin32Monitor`、
+  `glfwGetCocoaWindow`、`glfwGetX11Window`、`glfwGetX11Display`、`glfwGetX11Adapter`、
+  `glfwGetX11Monitor` 等原生窗口句柄访问器。
+- 内部结构（`src/internal.h`）：`_GLFWctxconfig`、`_GLFWcontext`、`window->context`、
+  `window->doublebuffer`、平台表中的 EGL / OSMesa / Vulkan 函数指针、
+  `library.egl` / `library.osmesa` / `library.vk`、`hints.context`、
+  `library.contextSlot`（上下文销毁用的 TLS）。
+- 平台层：Win32 的 WGL 支持（`wgl_context.c`、WGL 常量 / 函数指针 / 结构体、
+  `opengl32.dll` 加载）与 EGL / Vulkan 表面辅助函数、null 后端的 OSMesa / EGL /
+  Vulkan 分支。
+- 示例与测试：原有 11 个示例、20 个测试全部依赖 OpenGL 或 Vulkan，已随改造删除
+  （仍可从首次提交取回：`git show 3373d3b:examples/gears.c`）。替换为两个无图形
+  依赖的程序：`examples/window-input.exe`（窗口 + 输入 + 事件演示）与
+  `tests/smoke.exe`（自检式冒烟测试）。
+- 文档：`docs/context.md`、`docs/vulkan.md` 已删除；`docs/` 下其余页面保留上游
+  原文，其中涉及“创建上下文”的段落已经失效。
+
+### 语义变化（迁移时注意）
+
+1. **`glfwCreateWindow` 的 `share` 参数被忽略**。为保持源码兼容性保留了该形参，
+   传入非 `NULL` 不会报错，也不会共享任何东西；建议直接传 `NULL`。
+2. **帧缓冲位深提示被移除**，`GLFW_RED_BITS` / `GLFW_GREEN_BITS` / `GLFW_BLUE_BITS` /
+   `GLFW_ALPHA_BITS` / `GLFW_DEPTH_BITS` / `GLFW_STENCIL_BITS` 不再可设置；
+   `_GLFWfbconfig` 内部仍以 8/8/8 作为 `glfwGetVideoMode` 与 `glfwGetWindowAttrib`
+   名义值使用。`GLFW_TRANSPARENT_FRAMEBUFFER`、`GLFW_SCALE_TO_MONITOR`、
+   `GLFW_SCALE_FRAMEBUFFER`、`GLFW_COCOA_RETINA_FRAMEBUFFER` 等窗口/帧缓冲缩放类提示
+   仍然有效。
+3. **`glfwGetWindowAttrib` 不再返回 `GLFW_DOUBLEBUFFER` 和任何上下文属性**
+   （`GLFW_CLIENT_API`、`GLFW_CONTEXT_CREATION_API`、`GLFW_CONTEXT_VERSION_*`、
+   `GLFW_OPENGL_*` 等）。
+4. **`GLFW_NO_CURRENT_CONTEXT` 错误码保留但不再产生**（源码/ABI 兼容）。
+5. **平台范围只有 Win32**。本改造只适配并验证了 Win32（MinGW-w64 + CMake + Ninja）。
+   X11 / Wayland / Cocoa 的源码仍留在 `src/` 中，但它们调用的上下文层已被删除，
+   因此顶层 `CMakeLists.txt` 在非 Windows 平台会直接 `FATAL_ERROR` 拒绝配置，
+   而不是留到链接阶段报错。要恢复这些平台，需要重新接回上下文实现。
+6. **null 后端可用**（`GLFW_PLATFORM_NULL`），用于无窗口系统的自动化测试；
+   其版本串同样只列 “window/input only”。
+
+### 构建与验证
+
+```sh
+# 配置（需要 CMake 3.16+、Ninja 与 C99 编译器）
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_C_COMPILER=gcc.exe \
+      -DGLFW_BUILD_DOCS=OFF -DGLFW_INSTALL=OFF
+
+# 编译：静态库 + 示例 + 冒烟测试
+cmake --build build
+
+# 运行验证（自检式，失败时返回非 0）
+./build/tests/smoke.exe
+
+# 交互演示：800x480 窗口，打印按键 / 字符 / 鼠标 / 滚轮 / 焦点 / 尺寸 / 手柄事件
+./build/examples/window-input.exe
+```
+
+本机实测（MinGW-w64 GCC 15.2.0 UCRT + CMake 4.3.2 + Ninja）：
+
+- 库与程序全部编译通过，无警告（`-std=c99 -Wall`）；
+- `tests/smoke.exe`：31 项检查全部 ok，含窗口创建（无图形上下文）、窗口/帧缓冲尺寸、
+  位置与尺寸设置、窗口属性、光标位置、键鼠状态查询、剪贴板往返、显示器与视频模式、
+  手柄枚举、事件泵 30 次唤醒、关闭请求与销毁；
+- `examples/window-input.exe`：桌面出现 800x480 窗口（句柄与标题可被 `FindWindow`
+  / `WM_CLOSE` 命中），事件循环稳定（1 秒 46 帧、2 秒 83 帧），光标坐标回报正确，
+  显示器枚举 “Generic PnP Monitor 1920x1080 @ 60 Hz”，收到 `WM_CLOSE` 后正常退出。
+
+### 已知不再成立的上游内容
+
+- 上游 README 中“为 OpenGL / OpenGL ES / Vulkan 应用开发”“creating windows,
+  contexts and surfaces”等描述属于上游原文，对本分支不再准确。
+- `docs/quick.md`、`docs/intro.md`、`docs/window.md`、`docs/moving.md`、
+  `docs/compat.md` 中关于上下文创建、`glfwGetProcAddress`、Vulkan 表面创建、
+  `glfwSwapBuffers` 的段落均不适用；`docs/internal.md` 中提到的
+  `_glfwCreateContext*` 系列函数已不存在。
+- `deps/glad`（OpenGL / Vulkan 加载器头文件）与 `deps/` 下的 getopt、TinyCThread、
+  linmath、Nuklear、stb 等示例依赖仍留在树中，但当前的示例与测试都不再使用它们。
+
+---
+
+# 以下为上游 GLFW README 原文
+
 # GLFW
 
 [![Build status](https://github.com/glfw/glfw/actions/workflows/build.yml/badge.svg)](https://github.com/glfw/glfw/actions)
@@ -195,4 +317,3 @@ request, please file it in the
 
 Finally, if you're interested in helping out with the development of GLFW or
 porting it to your favorite platform, join us on the forum or GitHub.
-

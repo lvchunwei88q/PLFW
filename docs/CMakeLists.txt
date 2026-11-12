@@ -13,11 +13,9 @@ set(source_files
     compile.md
     build.md
     intro.md
-    context.md
     monitor.md
     window.md
     input.md
-    vulkan.md
     compat.md
     internal.md)
 

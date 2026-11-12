@@ -113,33 +113,13 @@ static int createNativeWindow(_GLFWwindow* window,
 
 GLFWbool _glfwCreateWindowNull(_GLFWwindow* window,
                                const _GLFWwndconfig* wndconfig,
-                               const _GLFWctxconfig* ctxconfig,
                                const _GLFWfbconfig* fbconfig)
 {
     if (!createNativeWindow(window, wndconfig, fbconfig))
         return GLFW_FALSE;
 
-    if (ctxconfig->client != GLFW_NO_API)
-    {
-        if (ctxconfig->source == GLFW_NATIVE_CONTEXT_API ||
-            ctxconfig->source == GLFW_OSMESA_CONTEXT_API)
-        {
-            if (!_glfwInitOSMesa())
-                return GLFW_FALSE;
-            if (!_glfwCreateContextOSMesa(window, ctxconfig, fbconfig))
-                return GLFW_FALSE;
-        }
-        else if (ctxconfig->source == GLFW_EGL_CONTEXT_API)
-        {
-            if (!_glfwInitEGL())
-                return GLFW_FALSE;
-            if (!_glfwCreateContextEGL(window, ctxconfig, fbconfig))
-                return GLFW_FALSE;
-        }
-
-        if (!_glfwRefreshContextAttribs(window, ctxconfig))
-            return GLFW_FALSE;
-    }
+    // No context is created: this library owns the window and its input state
+    // only, and leaves all rendering to the application.
 
     if (wndconfig->mousePassthrough)
         _glfwSetWindowMousePassthroughNull(window, GLFW_TRUE);
@@ -173,9 +153,6 @@ void _glfwDestroyWindowNull(_GLFWwindow* window)
 
     if (_glfw.null.focusedWindow == window)
         _glfw.null.focusedWindow = NULL;
-
-    if (window->context.destroy)
-        window->context.destroy(window);
 }
 
 void _glfwSetWindowTitleNull(_GLFWwindow* window, const char* title)
@@ -551,24 +528,6 @@ const char* _glfwGetClipboardStringNull(void)
     return _glfw.null.clipboardString;
 }
 
-EGLenum _glfwGetEGLPlatformNull(EGLint** attribs)
-{
-    if (_glfw.egl.EXT_platform_base && _glfw.egl.MESA_platform_surfaceless)
-        return EGL_PLATFORM_SURFACELESS_MESA;
-    else
-        return 0;
-}
-
-EGLNativeDisplayType _glfwGetEGLNativeDisplayNull(void)
-{
-    return EGL_DEFAULT_DISPLAY;
-}
-
-EGLNativeWindowType _glfwGetEGLNativeWindowNull(_GLFWwindow* window)
-{
-    return 0;
-}
-
 const char* _glfwGetScancodeNameNull(int scancode)
 {
     if (scancode < GLFW_NULL_SC_FIRST || scancode > GLFW_NULL_SC_LAST)
@@ -700,50 +659,3 @@ int _glfwGetKeyScancodeNull(int key)
 {
     return _glfw.null.scancodes[key];
 }
-
-void _glfwGetRequiredInstanceExtensionsNull(char** extensions)
-{
-    if (!_glfw.vk.KHR_surface || !_glfw.vk.EXT_headless_surface)
-        return;
-
-    extensions[0] = "VK_KHR_surface";
-    extensions[1] = "VK_EXT_headless_surface";
-}
-
-GLFWbool _glfwGetPhysicalDevicePresentationSupportNull(VkInstance instance,
-                                                       VkPhysicalDevice device,
-                                                       uint32_t queuefamily)
-{
-    return GLFW_TRUE;
-}
-
-VkResult _glfwCreateWindowSurfaceNull(VkInstance instance,
-                                      _GLFWwindow* window,
-                                      const VkAllocationCallbacks* allocator,
-                                      VkSurfaceKHR* surface)
-{
-    PFN_vkCreateHeadlessSurfaceEXT vkCreateHeadlessSurfaceEXT =
-        (PFN_vkCreateHeadlessSurfaceEXT)
-        vkGetInstanceProcAddr(instance, "vkCreateHeadlessSurfaceEXT");
-    if (!vkCreateHeadlessSurfaceEXT)
-    {
-        _glfwInputError(GLFW_API_UNAVAILABLE,
-                        "Null: Vulkan instance missing VK_EXT_headless_surface extension");
-        return VK_ERROR_EXTENSION_NOT_PRESENT;
-    }
-
-    VkHeadlessSurfaceCreateInfoEXT sci;
-    memset(&sci, 0, sizeof(sci));
-    sci.sType = VK_STRUCTURE_TYPE_HEADLESS_SURFACE_CREATE_INFO_EXT;
-
-    const VkResult err = vkCreateHeadlessSurfaceEXT(instance, &sci, allocator, surface);
-    if (err)
-    {
-        _glfwInputError(GLFW_PLATFORM_ERROR,
-                        "Null: Failed to create Vulkan surface: %s",
-                        _glfwGetVulkanResultString(err));
-    }
-
-    return err;
-}
-

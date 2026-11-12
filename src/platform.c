@@ -171,20 +171,19 @@ GLFWAPI const char* glfwGetVersionString(void)
                               GLFW_VERSION_MINOR,
                               GLFW_VERSION_REVISION)
 #if defined(_GLFW_WIN32)
-        " Win32 WGL"
+        " Win32"
 #endif
 #if defined(_GLFW_COCOA)
-        " Cocoa NSGL"
+        " Cocoa"
 #endif
 #if defined(_GLFW_WAYLAND)
         " Wayland"
 #endif
 #if defined(_GLFW_X11)
-        " X11 GLX"
+        " X11"
 #endif
         " Null"
-        " EGL"
-        " OSMesa"
+        " window/input only"
 #if defined(__MINGW64_VERSION_MAJOR)
         " MinGW-w64"
 #elif defined(_MSC_VER)

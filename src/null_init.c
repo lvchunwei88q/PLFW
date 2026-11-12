@@ -104,13 +104,7 @@ GLFWbool _glfwConnectNull(int platformID, _GLFWplatform* platform)
         .pollEvents = _glfwPollEventsNull,
         .waitEvents = _glfwWaitEventsNull,
         .waitEventsTimeout = _glfwWaitEventsTimeoutNull,
-        .postEmptyEvent = _glfwPostEmptyEventNull,
-        .getEGLPlatform = _glfwGetEGLPlatformNull,
-        .getEGLNativeDisplay = _glfwGetEGLNativeDisplayNull,
-        .getEGLNativeWindow = _glfwGetEGLNativeWindowNull,
-        .getRequiredInstanceExtensions = _glfwGetRequiredInstanceExtensionsNull,
-        .getPhysicalDevicePresentationSupport = _glfwGetPhysicalDevicePresentationSupportNull,
-        .createWindowSurface = _glfwCreateWindowSurfaceNull
+        .postEmptyEvent = _glfwPostEmptyEventNull
     };
 
     *platform = null;
@@ -258,8 +252,6 @@ int _glfwInitNull(void)
 void _glfwTerminateNull(void)
 {
     free(_glfw.null.clipboardString);
-    _glfwTerminateOSMesa();
-    _glfwTerminateEGL();
     memset(&_glfw.null, 0, sizeof(_glfw.null));
 }
 
