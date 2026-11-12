@@ -829,23 +829,6 @@ static GLFWbool initExtensions(void)
                               XkbGroupStateMask, XkbGroupStateMask);
     }
 
-    if (_glfw.hints.init.x11.xcbVulkanSurface)
-    {
-#if defined(__CYGWIN__)
-        _glfw.x11.x11xcb.handle = _glfwPlatformLoadModule("libX11-xcb-1.so");
-#elif defined(__OpenBSD__) || defined(__NetBSD__)
-        _glfw.x11.x11xcb.handle = _glfwPlatformLoadModule("libX11-xcb.so");
-#else
-        _glfw.x11.x11xcb.handle = _glfwPlatformLoadModule("libX11-xcb.so.1");
-#endif
-    }
-
-    if (_glfw.x11.x11xcb.handle)
-    {
-        _glfw.x11.x11xcb.GetXCBConnection = (PFN_XGetXCBConnection)
-            _glfwPlatformGetModuleSymbol(_glfw.x11.x11xcb.handle, "XGetXCBConnection");
-    }
-
 #if defined(__CYGWIN__)
     _glfw.x11.xrender.handle = _glfwPlatformLoadModule("libXrender-1.so");
 #elif defined(__OpenBSD__) || defined(__NetBSD__)
@@ -1240,13 +1223,7 @@ GLFWbool _glfwConnectX11(int platformID, _GLFWplatform* platform)
         .pollEvents = _glfwPollEventsX11,
         .waitEvents = _glfwWaitEventsX11,
         .waitEventsTimeout = _glfwWaitEventsTimeoutX11,
-        .postEmptyEvent = _glfwPostEmptyEventX11,
-        .getEGLPlatform = _glfwGetEGLPlatformX11,
-        .getEGLNativeDisplay = _glfwGetEGLNativeDisplayX11,
-        .getEGLNativeWindow = _glfwGetEGLNativeWindowX11,
-        .getRequiredInstanceExtensions = _glfwGetRequiredInstanceExtensionsX11,
-        .getPhysicalDevicePresentationSupport = _glfwGetPhysicalDevicePresentationSupportX11,
-        .createWindowSurface = _glfwCreateWindowSurfaceX11
+        .postEmptyEvent = _glfwPostEmptyEventX11
     };
 
     // HACK: If the application has left the locale as "C" then both wide
@@ -1592,13 +1569,6 @@ void _glfwTerminateX11(void)
         _glfw.x11.display = NULL;
     }
 
-    _glfwTerminateOSMesa();
-    // NOTE: These need to be unloaded after XCloseDisplay, as they register
-    //       cleanup callbacks that get called by that function
-    _glfwTerminateEGL();
-    _glfwTerminateGLX();
-
-    _glfwPlatformFreeModule(_glfw.x11.x11xcb.handle);
     _glfwPlatformFreeModule(_glfw.x11.xcursor.handle);
     _glfwPlatformFreeModule(_glfw.x11.randr.handle);
     _glfwPlatformFreeModule(_glfw.x11.xinerama.handle);

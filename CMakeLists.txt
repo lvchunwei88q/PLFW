@@ -34,20 +34,6 @@ cmake_dependent_option(GLFW_USE_HYBRID_HPG "Force use of high-performance GPU on
 cmake_dependent_option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" ON
                        "MSVC" OFF)
 
-#--------------------------------------------------------------------
-# Windowing-only build: the graphics context code has been removed together
-# with the WGL/GLX/NSGL/EGL/OSMesa backends and the Vulkan helpers, so only
-# the Win32 window system backend is wired up.  The X11, Wayland and Cocoa
-# sources still call into the deleted context layer, so refuse to configure
-# rather than fail later with a link error.
-#--------------------------------------------------------------------
-if (NOT WIN32)
-    message(FATAL_ERROR
-        "This windowing-only build of GLFW supports the Win32 backend only. "
-        "The X11, Wayland and Cocoa backends still reference the removed graphics "
-        "context layer and are not buildable in this tree.")
-endif()
-
 set(GLFW_LIBRARY_TYPE "${GLFW_LIBRARY_TYPE}" CACHE STRING
     "Library type override for GLFW (SHARED, STATIC, OBJECT, or empty to follow BUILD_SHARED_LIBS)")
 

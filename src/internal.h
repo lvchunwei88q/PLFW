@@ -108,15 +108,11 @@ struct _GLFWerror
 struct _GLFWinitconfig
 {
     bool          hatButtons;
-    int           angleType;
     int           platformID;
     struct {
         bool      menubar;
         bool      chdir;
     } ns;
-    struct {
-        bool      xcbVulkanSurface;
-    } x11;
     struct {
         int       libdecorMode;
     } wl;

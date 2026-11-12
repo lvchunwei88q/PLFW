@@ -139,6 +139,8 @@ static void reportJoysticks(void)
 
 int main(void)
 {
+    setvbuf(stdout, NULL, _IONBF, 0);
+
     glfwSetErrorCallback(errorCallback);
 
     if (!glfwInit())
@@ -148,7 +150,8 @@ int main(void)
            glfwGetVersionString(),
            glfwGetPlatform() == GLFW_PLATFORM_WIN32 ? "Win32" :
            glfwGetPlatform() == GLFW_PLATFORM_COCOA ? "Cocoa" :
-           glfwGetPlatform() == GLFW_PLATFORM_X11 ? "X11" : "Null");
+           glfwGetPlatform() == GLFW_PLATFORM_X11 ? "X11" :
+           glfwGetPlatform() == GLFW_PLATFORM_WAYLAND ? "Wayland" : "Null");
 
     // The window is created without any graphics API: the share parameter of
     // glfwCreateWindow is accepted for source compatibility and ignored.

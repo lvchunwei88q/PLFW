@@ -499,13 +499,7 @@ GLFWbool _glfwConnectWayland(int platformID, _GLFWplatform* platform)
         .pollEvents = _glfwPollEventsWayland,
         .waitEvents = _glfwWaitEventsWayland,
         .waitEventsTimeout = _glfwWaitEventsTimeoutWayland,
-        .postEmptyEvent = _glfwPostEmptyEventWayland,
-        .getEGLPlatform = _glfwGetEGLPlatformWayland,
-        .getEGLNativeDisplay = _glfwGetEGLNativeDisplayWayland,
-        .getEGLNativeWindow = _glfwGetEGLNativeWindowWayland,
-        .getRequiredInstanceExtensions = _glfwGetRequiredInstanceExtensionsWayland,
-        .getPhysicalDevicePresentationSupport = _glfwGetPhysicalDevicePresentationSupportWayland,
-        .createWindowSurface = _glfwCreateWindowSurfaceWayland
+        .postEmptyEvent = _glfwPostEmptyEventWayland
     };
 
     void* module = _glfwPlatformLoadModule("libwayland-client.so.0");
@@ -658,21 +652,6 @@ int _glfwInitWayland(void)
         _glfwPlatformGetModuleSymbol(_glfw.wl.cursor.handle, "wl_cursor_theme_get_cursor");
     _glfw.wl.cursor.image_get_buffer = (PFN_wl_cursor_image_get_buffer)
         _glfwPlatformGetModuleSymbol(_glfw.wl.cursor.handle, "wl_cursor_image_get_buffer");
-
-    _glfw.wl.egl.handle = _glfwPlatformLoadModule("libwayland-egl.so.1");
-    if (!_glfw.wl.egl.handle)
-    {
-        _glfwInputError(GLFW_PLATFORM_ERROR,
-                        "Wayland: Failed to load libwayland-egl");
-        return GLFW_FALSE;
-    }
-
-    _glfw.wl.egl.window_create = (PFN_wl_egl_window_create)
-        _glfwPlatformGetModuleSymbol(_glfw.wl.egl.handle, "wl_egl_window_create");
-    _glfw.wl.egl.window_destroy = (PFN_wl_egl_window_destroy)
-        _glfwPlatformGetModuleSymbol(_glfw.wl.egl.handle, "wl_egl_window_destroy");
-    _glfw.wl.egl.window_resize = (PFN_wl_egl_window_resize)
-        _glfwPlatformGetModuleSymbol(_glfw.wl.egl.handle, "wl_egl_window_resize");
 
     _glfw.wl.xkb.handle = _glfwPlatformLoadModule("libxkbcommon.so.0");
     if (!_glfw.wl.xkb.handle)
@@ -916,9 +895,6 @@ int _glfwInitWayland(void)
 
 void _glfwTerminateWayland(void)
 {
-    _glfwTerminateEGL();
-    _glfwTerminateOSMesa();
-
     if (_glfw.wl.libdecor.context)
     {
         // Allow libdecor to finish receiving all its requested globals
@@ -1003,9 +979,7 @@ void _glfwTerminateWayland(void)
 
     // Free modules only after all Wayland termination functions are called
 
-    _glfwPlatformFreeModule(_glfw.egl.handle);
     _glfwPlatformFreeModule(_glfw.wl.libdecor.handle);
-    _glfwPlatformFreeModule(_glfw.wl.egl.handle);
     _glfwPlatformFreeModule(_glfw.wl.xkb.handle);
     _glfwPlatformFreeModule(_glfw.wl.cursor.handle);
     _glfwPlatformFreeModule(_glfw.wl.client.handle);

@@ -46,13 +46,39 @@
   `window->doublebuffer`、平台表中的 EGL / OSMesa / Vulkan 函数指针、
   `library.egl` / `library.osmesa` / `library.vk`、`hints.context`、
   `library.contextSlot`（上下文销毁用的 TLS）。
-- 平台层：Win32 的 WGL 支持（`wgl_context.c`、WGL 常量 / 函数指针 / 结构体、
-  `opengl32.dll` 加载）与 EGL / Vulkan 表面辅助函数、null 后端的 OSMesa / EGL /
-  Vulkan 分支。
+- 平台层（四个后端逐一清理，不只是 Win32）：
+  - Win32：WGL 支持（`wgl_context.c`、WGL 常量 / 函数指针 / 结构体、`opengl32.dll`
+    加载）、EGL / Vulkan 表面辅助函数。
+  - X11：`x11_platform.h` 中的 GLX 类型、常量、函数指针与 `libGL.so` 宏，Vulkan
+    Xlib / Xcb 表面类型与 `xcbVulkanSurface`，`_GLFWcontextGLX` / `_GLFWlibraryGLX`
+    结构体；`x11_window.c` 改为直接用 `DefaultVisual` / `DefaultDepth` 建窗（即上游
+    `GLFW_NO_API` 走的同一条路径），删除三段上下文创建与 `context.destroy` 钩子；
+    `x11_init.c` 删除平台表中的 EGL / Vulkan 项、`_glfwTerminateEGL/OSMesa/GLX`
+    调用与 `libX11-xcb` 加载。
+  - Wayland：`wl_platform.h` 中的 Vulkan Wayland 表面类型、`wl_egl_window` 函数指针
+    与宏、`_GLFWwindowWayland.egl` / `_GLFWlibraryWayland.egl` 子结构；`wl_init.c`
+    不再加载 `libwayland-egl.so`、删除 `_glfwTerminateEGL/OSMesa`；`wl_window.c`
+    删除 `wl_egl_window_resize` 分支、EGL 帧回调与 `_glfwWaitForEGLFrameWayland`、
+    上下文创建、销毁时的 `egl.*` 资源释放。
+  - Cocoa：`cocoa_platform.h` 中的 Vulkan macOS / Metal 表面类型、`_GLFWcontextNSGL`
+    / `_GLFWlibraryNSGL`、`NSOpenGL` 枚举 shim、`GL_SILENCE_DEPRECATION` 块；
+    `cocoa_window.m` 删除 3 处 `[window->context.nsgl.object update]`、上下文创建、
+    `context.destroy`、`CAMetalLayer` 图层的导入与配置。
 - 示例与测试：原有 11 个示例、20 个测试全部依赖 OpenGL 或 Vulkan，已随改造删除
-  （仍可从首次提交取回：`git show 3373d3b:examples/gears.c`）。替换为两个无图形
-  依赖的程序：`examples/window-input.exe`（窗口 + 输入 + 事件演示）与
-  `tests/smoke.exe`（自检式冒烟测试）。
+  （仍可从首次提交取回：`git show 3373d3b:examples/gears.c`）。替换为三个无图形
+  依赖的程序，全部为本分支自写：
+  - `examples/window-input.c`：单窗口的键盘 / 字符 / 鼠标 / 滚轮 / 焦点 / 尺寸 /
+    帧缓冲 / 手柄事件全量打印，每秒汇报一次状态。
+  - `examples/multi-window.c`：一个事件循环驱动三个窗口，演示用户指针、隐藏 / 显示、
+    图标化 / 还原、装饰切换、原生句柄（HWND / X11 Window / wl_surface / NSView）、
+    窗口落在哪块显示器、跨窗口剪贴板。
+  - `tests/smoke.c`：自检式冒烟测试（注册到 CTest 的 `smoke`），覆盖初始化、版本、
+    平台后端、定时器、显示器与视频模式、无图形 API 建窗、`share` 参数被忽略、
+    窗口尺寸 / 帧缓冲尺寸 / 帧尺寸、可见性 / 图标化 / 可缩放属性、光标与键鼠状态、
+    窗口尺寸与位置设置、剪贴板往返、手柄枚举、键扫描码、事件泵、关闭请求与销毁。
+    该测试按后端能力自适应：无显示环境自动回落到 headless 后端；Null 后端跳过窗口
+    几何断言；Wayland 跳过窗口定位断言（协议不允许客户端定位）；后端声明剪贴板不可用
+    时跳过剪贴板断言。
 - 文档：`docs/context.md`、`docs/vulkan.md` 已删除；`docs/` 下其余页面保留上游
   原文，其中涉及“创建上下文”的段落已经失效。
 
@@ -70,12 +96,15 @@
    （`GLFW_CLIENT_API`、`GLFW_CONTEXT_CREATION_API`、`GLFW_CONTEXT_VERSION_*`、
    `GLFW_OPENGL_*` 等）。
 4. **`GLFW_NO_CURRENT_CONTEXT` 错误码保留但不再产生**（源码/ABI 兼容）。
-5. **平台范围只有 Win32**。本改造只适配并验证了 Win32（MinGW-w64 + CMake + Ninja）。
-   X11 / Wayland / Cocoa 的源码仍留在 `src/` 中，但它们调用的上下文层已被删除，
-   因此顶层 `CMakeLists.txt` 在非 Windows 平台会直接 `FATAL_ERROR` 拒绝配置，
-   而不是留到链接阶段报错。要恢复这些平台，需要重新接回上下文实现。
+5. **平台范围覆盖所有后端**：Win32 / X11 / Wayland / Cocoa 的上下文层引用都已清理，
+   顶层 `CMakeLists.txt` 按上游规则为各平台启用对应后端，不再有“仅 Win32”的限制。
+   四个后端的编译与运行验证情况见下一节，其中 Cocoa 只有静态适配与代码审查，
+   没有 macOS 环境可编译验证。
 6. **null 后端可用**（`GLFW_PLATFORM_NULL`），用于无窗口系统的自动化测试；
    其版本串同样只列 “window/input only”。
+7. **Wayland 的剪贴板在无 seat 时明确报错而不是崩溃**。合成器不提供
+   `wl_data_device_manager` 或 seat 时，`glfwSetClipboardString` /
+   `glfwGetClipboardString` 返回 `GLFW_PLATFORM_ERROR`（上游会解引用空指针）。
 
 ### 构建与验证
 
@@ -93,17 +122,46 @@ cmake --build build
 
 # 交互演示：800x480 窗口，打印按键 / 字符 / 鼠标 / 滚轮 / 焦点 / 尺寸 / 手柄事件
 ./build/examples/window-input.exe
+
+# 多窗口演示（三个窗口 + 原生句柄 + 跨窗口剪贴板）
+./build/examples/multi-window.exe
 ```
 
-本机实测（MinGW-w64 GCC 15.2.0 UCRT + CMake 4.3.2 + Ninja）：
+Linux（X11 与 Wayland 同时启用）用同一条 CMake 流程，依赖 `libx11-dev`、
+`libxrandr-dev`、`libxinerama-dev`、`libxcursor-dev`、`libxi-dev`、
+`libxkbcommon-dev`、`libwayland-dev`、`wayland-protocols`。无显示环境下可用
+`xvfb-run` / `weston --backend=headless-backend.so` 提供 X11 / Wayland 服务。
 
-- 库与程序全部编译通过，无警告（`-std=c99 -Wall`）；
-- `tests/smoke.exe`：31 项检查全部 ok，含窗口创建（无图形上下文）、窗口/帧缓冲尺寸、
+#### 实测结果
+
+MinGW-w64 GCC 15.2.0 UCRT + CMake 4.3.2 + Ninja（Windows）：
+
+- 库与三个程序全部编译通过，无警告；
+- `tests/smoke.exe`：全部检查 ok，含窗口创建（无图形上下文）、窗口/帧缓冲尺寸、
   位置与尺寸设置、窗口属性、光标位置、键鼠状态查询、剪贴板往返、显示器与视频模式、
   手柄枚举、事件泵 30 次唤醒、关闭请求与销毁；
 - `examples/window-input.exe`：桌面出现 800x480 窗口（句柄与标题可被 `FindWindow`
-  / `WM_CLOSE` 命中），事件循环稳定（1 秒 46 帧、2 秒 83 帧），光标坐标回报正确，
-  显示器枚举 “Generic PnP Monitor 1920x1080 @ 60 Hz”，收到 `WM_CLOSE` 后正常退出。
+  / `WM_CLOSE` 命中），事件循环稳定（1 秒 46 帧、2 秒 83 帧），收到 `WM_CLOSE` 后正常退出；
+- `examples/multi-window.exe`：三个窗口同时存在（`HWND 0x370650` / `0x610688` /
+  `0x234080A`），各自报告所在显示器 “Generic PnP Monitor (1 of 1)”，窗口 2 读回窗口 1
+  写入的剪贴板内容，关闭请求后干净退出。
+
+GCC 11.4.0 + CMake 3.22.1 + Ninja（Ubuntu 22.04，同一份源码，X11 + Wayland 双后端）：
+
+- 编译：库、两个示例、测试全部通过，`warning:` / `error:` 计数为 0；
+- 运行 `tests/smoke`，三个后端分别验证：
+  - **X11**（`xvfb-run -s "-screen 0 1280x1024x24"`）：全部检查 ok，含窗口缩放与
+    移动、剪贴板往返；
+  - **Wayland**（`weston --backend=headless-backend.so`）：除窗口定位外全部 ok
+    （Wayland 协议本身不允许客户端放置窗口，测试按后端能力跳过该断言）；
+    该合成器不提供 seat，于是剪贴板按预期报 `GLFW_PLATFORM_ERROR` 并被跳过——
+    修复前这里是空指针解引用导致的段错误；
+  - **headless**（无 `DISPLAY` / `WAYLAND_DISPLAY`）：测试自动以
+    `GLFW_PLATFORM_NULL` 重试初始化并跑完，窗口几何断言按后端能力跳过。
+
+Cocoa：**未编译、未运行**。改造是对 `cocoa_platform.h` / `cocoa_window.m` /
+`cocoa_init.m` 的静态适配（删除 NSGL / EGL / OSMesa 分支与 Vulkan 图层），
+改动本身与 Win32 / X11 / Wayland 同构，但没有 macOS 环境做编译确认。
 
 ### 已知不再成立的上游内容
 

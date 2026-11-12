@@ -1,6 +1,7 @@
 
-# Only example left after the graphics removal: a console program that
-# demonstrates window creation, input and event handling with no graphics
+# The upstream examples were all graphics rendering demos, so they went away
+# together with the context layer.  What remains is written for this build: it
+# demonstrates windowing, input, monitors and event handling with no graphics
 # API at all.
 
 link_libraries(glfw)
@@ -15,7 +16,8 @@ if (MSVC OR CMAKE_C_SIMULATE_ID STREQUAL "MSVC")
 endif()
 
 add_executable(window-input window-input.c)
+add_executable(multi-window multi-window.c)
 
-set_target_properties(window-input PROPERTIES
+set_target_properties(window-input multi-window PROPERTIES
                       C_STANDARD 99
                       FOLDER "GLFW3/Examples")

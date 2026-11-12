@@ -58,7 +58,7 @@
 
 // Wait for event data to arrive on the X11 display socket
 // This avoids blocking other threads via the per-display Xlib lock that also
-// covers GLX functions
+// covers Xlib calls
 //
 static GLFWbool waitForX11Event(double* timeout)
 {
@@ -75,7 +75,7 @@ static GLFWbool waitForX11Event(double* timeout)
 
 // Wait for event data to arrive on any event file descriptor
 // This avoids blocking other threads via the per-display Xlib lock that also
-// covers GLX functions
+// covers Xlib calls
 //
 static GLFWbool waitForAnyEvent(double* timeout)
 {
@@ -1962,65 +1962,15 @@ void _glfwCreateInputContextX11(_GLFWwindow* window)
 
 GLFWbool _glfwCreateWindowX11(_GLFWwindow* window,
                               const _GLFWwndconfig* wndconfig,
-                              const _GLFWctxconfig* ctxconfig,
                               const _GLFWfbconfig* fbconfig)
 {
-    Visual* visual = NULL;
-    int depth;
-
-    if (ctxconfig->client != GLFW_NO_API)
-    {
-        if (ctxconfig->source == GLFW_NATIVE_CONTEXT_API)
-        {
-            if (!_glfwInitGLX())
-                return GLFW_FALSE;
-            if (!_glfwChooseVisualGLX(wndconfig, ctxconfig, fbconfig, &visual, &depth))
-                return GLFW_FALSE;
-        }
-        else if (ctxconfig->source == GLFW_EGL_CONTEXT_API)
-        {
-            if (!_glfwInitEGL())
-                return GLFW_FALSE;
-            if (!_glfwChooseVisualEGL(wndconfig, ctxconfig, fbconfig, &visual, &depth))
-                return GLFW_FALSE;
-        }
-        else if (ctxconfig->source == GLFW_OSMESA_CONTEXT_API)
-        {
-            if (!_glfwInitOSMesa())
-                return GLFW_FALSE;
-        }
-    }
-
-    if (!visual)
-    {
-        visual = DefaultVisual(_glfw.x11.display, _glfw.x11.screen);
-        depth = DefaultDepth(_glfw.x11.display, _glfw.x11.screen);
-    }
+    // No graphics context is created: the window uses the default visual and
+    // all rendering is left to the application.
+    Visual* visual = DefaultVisual(_glfw.x11.display, _glfw.x11.screen);
+    int depth = DefaultDepth(_glfw.x11.display, _glfw.x11.screen);
 
     if (!createNativeWindow(window, wndconfig, visual, depth))
         return GLFW_FALSE;
-
-    if (ctxconfig->client != GLFW_NO_API)
-    {
-        if (ctxconfig->source == GLFW_NATIVE_CONTEXT_API)
-        {
-            if (!_glfwCreateContextGLX(window, ctxconfig, fbconfig))
-                return GLFW_FALSE;
-        }
-        else if (ctxconfig->source == GLFW_EGL_CONTEXT_API)
-        {
-            if (!_glfwCreateContextEGL(window, ctxconfig, fbconfig))
-                return GLFW_FALSE;
-        }
-        else if (ctxconfig->source == GLFW_OSMESA_CONTEXT_API)
-        {
-            if (!_glfwCreateContextOSMesa(window, ctxconfig, fbconfig))
-                return GLFW_FALSE;
-        }
-
-        if (!_glfwRefreshContextAttribs(window, ctxconfig))
-            return GLFW_FALSE;
-    }
 
     if (wndconfig->mousePassthrough)
         _glfwSetWindowMousePassthroughX11(window, GLFW_TRUE);
@@ -2061,9 +2011,6 @@ void _glfwDestroyWindowX11(_GLFWwindow* window)
         XDestroyIC(window->x11.ic);
         window->x11.ic = NULL;
     }
-
-    if (window->context.destroy)
-        window->context.destroy(window);
 
     if (window->x11.handle)
     {
@@ -3109,205 +3056,6 @@ const char* _glfwGetClipboardStringX11(void)
 {
     return getSelectionString(_glfw.x11.CLIPBOARD);
 }
-
-EGLenum _glfwGetEGLPlatformX11(EGLint** attribs)
-{
-    if (_glfw.egl.ANGLE_platform_angle)
-    {
-        int type = 0;
-
-        if (_glfw.egl.ANGLE_platform_angle_opengl)
-        {
-            if (_glfw.hints.init.angleType == GLFW_ANGLE_PLATFORM_TYPE_OPENGL)
-                type = EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE;
-        }
-
-        if (_glfw.egl.ANGLE_platform_angle_vulkan)
-        {
-            if (_glfw.hints.init.angleType == GLFW_ANGLE_PLATFORM_TYPE_VULKAN)
-                type = EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE;
-        }
-
-        if (type)
-        {
-            *attribs = _glfw_calloc(5, sizeof(EGLint));
-            (*attribs)[0] = EGL_PLATFORM_ANGLE_TYPE_ANGLE;
-            (*attribs)[1] = type;
-            (*attribs)[2] = EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE;
-            (*attribs)[3] = EGL_PLATFORM_X11_EXT;
-            (*attribs)[4] = EGL_NONE;
-            return EGL_PLATFORM_ANGLE_ANGLE;
-        }
-    }
-
-    if (_glfw.egl.EXT_platform_base && _glfw.egl.EXT_platform_x11)
-        return EGL_PLATFORM_X11_EXT;
-
-    return 0;
-}
-
-EGLNativeDisplayType _glfwGetEGLNativeDisplayX11(void)
-{
-    return _glfw.x11.display;
-}
-
-EGLNativeWindowType _glfwGetEGLNativeWindowX11(_GLFWwindow* window)
-{
-    if (_glfw.egl.platform)
-        return &window->x11.handle;
-    else
-        return (EGLNativeWindowType) window->x11.handle;
-}
-
-void _glfwGetRequiredInstanceExtensionsX11(char** extensions)
-{
-    if (!_glfw.vk.KHR_surface)
-        return;
-
-    if (!_glfw.vk.KHR_xcb_surface || !_glfw.x11.x11xcb.handle)
-    {
-        if (!_glfw.vk.KHR_xlib_surface)
-            return;
-    }
-
-    extensions[0] = "VK_KHR_surface";
-
-    // NOTE: VK_KHR_xcb_surface is preferred due to some early ICDs exposing but
-    //       not correctly implementing VK_KHR_xlib_surface
-    if (_glfw.vk.KHR_xcb_surface && _glfw.x11.x11xcb.handle)
-        extensions[1] = "VK_KHR_xcb_surface";
-    else
-        extensions[1] = "VK_KHR_xlib_surface";
-}
-
-GLFWbool _glfwGetPhysicalDevicePresentationSupportX11(VkInstance instance,
-                                                      VkPhysicalDevice device,
-                                                      uint32_t queuefamily)
-{
-    VisualID visualID = XVisualIDFromVisual(DefaultVisual(_glfw.x11.display,
-                                                          _glfw.x11.screen));
-
-    if (_glfw.vk.KHR_xcb_surface && _glfw.x11.x11xcb.handle)
-    {
-        PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR
-            vkGetPhysicalDeviceXcbPresentationSupportKHR =
-            (PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR)
-            vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceXcbPresentationSupportKHR");
-        if (!vkGetPhysicalDeviceXcbPresentationSupportKHR)
-        {
-            _glfwInputError(GLFW_API_UNAVAILABLE,
-                            "X11: Vulkan instance missing VK_KHR_xcb_surface extension");
-            return GLFW_FALSE;
-        }
-
-        xcb_connection_t* connection = XGetXCBConnection(_glfw.x11.display);
-        if (!connection)
-        {
-            _glfwInputError(GLFW_PLATFORM_ERROR,
-                            "X11: Failed to retrieve XCB connection");
-            return GLFW_FALSE;
-        }
-
-        return vkGetPhysicalDeviceXcbPresentationSupportKHR(device,
-                                                            queuefamily,
-                                                            connection,
-                                                            visualID);
-    }
-    else
-    {
-        PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR
-            vkGetPhysicalDeviceXlibPresentationSupportKHR =
-            (PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR)
-            vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceXlibPresentationSupportKHR");
-        if (!vkGetPhysicalDeviceXlibPresentationSupportKHR)
-        {
-            _glfwInputError(GLFW_API_UNAVAILABLE,
-                            "X11: Vulkan instance missing VK_KHR_xlib_surface extension");
-            return GLFW_FALSE;
-        }
-
-        return vkGetPhysicalDeviceXlibPresentationSupportKHR(device,
-                                                             queuefamily,
-                                                             _glfw.x11.display,
-                                                             visualID);
-    }
-}
-
-VkResult _glfwCreateWindowSurfaceX11(VkInstance instance,
-                                     _GLFWwindow* window,
-                                     const VkAllocationCallbacks* allocator,
-                                     VkSurfaceKHR* surface)
-{
-    if (_glfw.vk.KHR_xcb_surface && _glfw.x11.x11xcb.handle)
-    {
-        VkResult err;
-        VkXcbSurfaceCreateInfoKHR sci;
-        PFN_vkCreateXcbSurfaceKHR vkCreateXcbSurfaceKHR;
-
-        xcb_connection_t* connection = XGetXCBConnection(_glfw.x11.display);
-        if (!connection)
-        {
-            _glfwInputError(GLFW_PLATFORM_ERROR,
-                            "X11: Failed to retrieve XCB connection");
-            return VK_ERROR_EXTENSION_NOT_PRESENT;
-        }
-
-        vkCreateXcbSurfaceKHR = (PFN_vkCreateXcbSurfaceKHR)
-            vkGetInstanceProcAddr(instance, "vkCreateXcbSurfaceKHR");
-        if (!vkCreateXcbSurfaceKHR)
-        {
-            _glfwInputError(GLFW_API_UNAVAILABLE,
-                            "X11: Vulkan instance missing VK_KHR_xcb_surface extension");
-            return VK_ERROR_EXTENSION_NOT_PRESENT;
-        }
-
-        memset(&sci, 0, sizeof(sci));
-        sci.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
-        sci.connection = connection;
-        sci.window = window->x11.handle;
-
-        err = vkCreateXcbSurfaceKHR(instance, &sci, allocator, surface);
-        if (err)
-        {
-            _glfwInputError(GLFW_PLATFORM_ERROR,
-                            "X11: Failed to create Vulkan XCB surface: %s",
-                            _glfwGetVulkanResultString(err));
-        }
-
-        return err;
-    }
-    else
-    {
-        VkResult err;
-        VkXlibSurfaceCreateInfoKHR sci;
-        PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR;
-
-        vkCreateXlibSurfaceKHR = (PFN_vkCreateXlibSurfaceKHR)
-            vkGetInstanceProcAddr(instance, "vkCreateXlibSurfaceKHR");
-        if (!vkCreateXlibSurfaceKHR)
-        {
-            _glfwInputError(GLFW_API_UNAVAILABLE,
-                            "X11: Vulkan instance missing VK_KHR_xlib_surface extension");
-            return VK_ERROR_EXTENSION_NOT_PRESENT;
-        }
-
-        memset(&sci, 0, sizeof(sci));
-        sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-        sci.dpy = _glfw.x11.display;
-        sci.window = window->x11.handle;
-
-        err = vkCreateXlibSurfaceKHR(instance, &sci, allocator, surface);
-        if (err)
-        {
-            _glfwInputError(GLFW_PLATFORM_ERROR,
-                            "X11: Failed to create Vulkan X11 surface: %s",
-                            _glfwGetVulkanResultString(err));
-        }
-
-        return err;
-    }
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 //////                        GLFW native API                       //////

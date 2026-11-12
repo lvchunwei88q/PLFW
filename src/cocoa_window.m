@@ -28,8 +28,6 @@
 
 #if defined(_GLFW_COCOA)
 
-#import <QuartzCore/CAMetalLayer.h>
-
 #include <float.h>
 #include <string.h>
 #include <assert.h>
@@ -231,9 +229,6 @@ static const NSRange kEmptyRange = { NSNotFound, 0 };
 
 - (void)windowDidResize:(NSNotification *)notification
 {
-    if (window->context.source == GLFW_NATIVE_CONTEXT_API)
-        [window->context.nsgl.object update];
-
     if (_glfw.ns.disabledCursorWindow == window)
         _glfwCenterCursorInContentArea(window);
 
@@ -266,9 +261,6 @@ static const NSRange kEmptyRange = { NSNotFound, 0 };
 
 - (void)windowDidMove:(NSNotification *)notification
 {
-    if (window->context.source == GLFW_NATIVE_CONTEXT_API)
-        [window->context.nsgl.object update];
-
     if (_glfw.ns.disabledCursorWindow == window)
         _glfwCenterCursorInContentArea(window);
 
@@ -386,9 +378,6 @@ static const NSRange kEmptyRange = { NSNotFound, 0 };
 
 - (void)updateLayer
 {
-    if (window->context.source == GLFW_NATIVE_CONTEXT_API)
-        [window->context.nsgl.object update];
-
     _glfwInputWindowDamage(window);
 }
 
@@ -514,9 +503,6 @@ static const NSRange kEmptyRange = { NSNotFound, 0 };
 
     if (xscale != window->ns.xscale || yscale != window->ns.yscale)
     {
-        if (window->ns.scaleFramebuffer && window->ns.layer)
-            [window->ns.layer setContentsScale:[window->ns.object backingScaleFactor]];
-
         window->ns.xscale = xscale;
         window->ns.yscale = yscale;
         _glfwInputWindowContentScale(window, xscale, yscale);
@@ -947,7 +933,6 @@ float _glfwTransformYCocoa(float y)
 
 GLFWbool _glfwCreateWindowCocoa(_GLFWwindow* window,
                                 const _GLFWwndconfig* wndconfig,
-                                const _GLFWctxconfig* ctxconfig,
                                 const _GLFWfbconfig* fbconfig)
 {
     @autoreleasepool {
@@ -955,38 +940,8 @@ GLFWbool _glfwCreateWindowCocoa(_GLFWwindow* window,
     if (!createNativeWindow(window, wndconfig, fbconfig))
         return GLFW_FALSE;
 
-    if (ctxconfig->client != GLFW_NO_API)
-    {
-        if (ctxconfig->source == GLFW_NATIVE_CONTEXT_API)
-        {
-            if (!_glfwInitNSGL())
-                return GLFW_FALSE;
-            if (!_glfwCreateContextNSGL(window, ctxconfig, fbconfig))
-                return GLFW_FALSE;
-        }
-        else if (ctxconfig->source == GLFW_EGL_CONTEXT_API)
-        {
-            // EGL implementation on macOS use CALayer* EGLNativeWindowType so we
-            // need to get the layer for EGL window surface creation.
-            [window->ns.view setWantsLayer:YES];
-            window->ns.layer = [window->ns.view layer];
-
-            if (!_glfwInitEGL())
-                return GLFW_FALSE;
-            if (!_glfwCreateContextEGL(window, ctxconfig, fbconfig))
-                return GLFW_FALSE;
-        }
-        else if (ctxconfig->source == GLFW_OSMESA_CONTEXT_API)
-        {
-            if (!_glfwInitOSMesa())
-                return GLFW_FALSE;
-            if (!_glfwCreateContextOSMesa(window, ctxconfig, fbconfig))
-                return GLFW_FALSE;
-        }
-
-        if (!_glfwRefreshContextAttribs(window, ctxconfig))
-            return GLFW_FALSE;
-    }
+    // No graphics context is created: the window owns an NSView and leaves
+    // drawing (Metal, CoreGraphics, ...) to the application.
 
     if (wndconfig->mousePassthrough)
         _glfwSetWindowMousePassthroughCocoa(window, GLFW_TRUE);
@@ -1026,9 +981,6 @@ void _glfwDestroyWindowCocoa(_GLFWwindow* window)
 
     if (window->monitor)
         releaseMonitor(window);
-
-    if (window->context.destroy)
-        window->context.destroy(window);
 
     [window->ns.object setDelegate:nil];
     [window->ns.delegate release];
@@ -1908,146 +1860,6 @@ const char* _glfwGetClipboardStringCocoa(void)
 
     } // autoreleasepool
 }
-
-EGLenum _glfwGetEGLPlatformCocoa(EGLint** attribs)
-{
-    if (_glfw.egl.ANGLE_platform_angle)
-    {
-        int type = 0;
-
-        if (_glfw.egl.ANGLE_platform_angle_opengl)
-        {
-            if (_glfw.hints.init.angleType == GLFW_ANGLE_PLATFORM_TYPE_OPENGL)
-                type = EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE;
-        }
-
-        if (_glfw.egl.ANGLE_platform_angle_metal)
-        {
-            if (_glfw.hints.init.angleType == GLFW_ANGLE_PLATFORM_TYPE_METAL)
-                type = EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE;
-        }
-
-        if (type)
-        {
-            *attribs = _glfw_calloc(3, sizeof(EGLint));
-            (*attribs)[0] = EGL_PLATFORM_ANGLE_TYPE_ANGLE;
-            (*attribs)[1] = type;
-            (*attribs)[2] = EGL_NONE;
-            return EGL_PLATFORM_ANGLE_ANGLE;
-        }
-    }
-
-    return 0;
-}
-
-EGLNativeDisplayType _glfwGetEGLNativeDisplayCocoa(void)
-{
-    return EGL_DEFAULT_DISPLAY;
-}
-
-EGLNativeWindowType _glfwGetEGLNativeWindowCocoa(_GLFWwindow* window)
-{
-    return window->ns.layer;
-}
-
-void _glfwGetRequiredInstanceExtensionsCocoa(char** extensions)
-{
-    if (_glfw.vk.KHR_surface && _glfw.vk.EXT_metal_surface)
-    {
-        extensions[0] = "VK_KHR_surface";
-        extensions[1] = "VK_EXT_metal_surface";
-    }
-    else if (_glfw.vk.KHR_surface && _glfw.vk.MVK_macos_surface)
-    {
-        extensions[0] = "VK_KHR_surface";
-        extensions[1] = "VK_MVK_macos_surface";
-    }
-}
-
-GLFWbool _glfwGetPhysicalDevicePresentationSupportCocoa(VkInstance instance,
-                                                        VkPhysicalDevice device,
-                                                        uint32_t queuefamily)
-{
-    return GLFW_TRUE;
-}
-
-VkResult _glfwCreateWindowSurfaceCocoa(VkInstance instance,
-                                       _GLFWwindow* window,
-                                       const VkAllocationCallbacks* allocator,
-                                       VkSurfaceKHR* surface)
-{
-    @autoreleasepool {
-
-    // NOTE: Create the layer here as makeBackingLayer should not return nil
-    window->ns.layer = [CAMetalLayer layer];
-    if (!window->ns.layer)
-    {
-        _glfwInputError(GLFW_PLATFORM_ERROR,
-                        "Cocoa: Failed to create layer for view");
-        return VK_ERROR_EXTENSION_NOT_PRESENT;
-    }
-
-    if (window->ns.scaleFramebuffer)
-        [window->ns.layer setContentsScale:[window->ns.object backingScaleFactor]];
-
-    [window->ns.view setLayer:window->ns.layer];
-    [window->ns.view setWantsLayer:YES];
-
-    VkResult err;
-
-    if (_glfw.vk.EXT_metal_surface)
-    {
-        VkMetalSurfaceCreateInfoEXT sci;
-
-        PFN_vkCreateMetalSurfaceEXT vkCreateMetalSurfaceEXT;
-        vkCreateMetalSurfaceEXT = (PFN_vkCreateMetalSurfaceEXT)
-            vkGetInstanceProcAddr(instance, "vkCreateMetalSurfaceEXT");
-        if (!vkCreateMetalSurfaceEXT)
-        {
-            _glfwInputError(GLFW_API_UNAVAILABLE,
-                            "Cocoa: Vulkan instance missing VK_EXT_metal_surface extension");
-            return VK_ERROR_EXTENSION_NOT_PRESENT;
-        }
-
-        memset(&sci, 0, sizeof(sci));
-        sci.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
-        sci.pLayer = window->ns.layer;
-
-        err = vkCreateMetalSurfaceEXT(instance, &sci, allocator, surface);
-    }
-    else
-    {
-        VkMacOSSurfaceCreateInfoMVK sci;
-
-        PFN_vkCreateMacOSSurfaceMVK vkCreateMacOSSurfaceMVK;
-        vkCreateMacOSSurfaceMVK = (PFN_vkCreateMacOSSurfaceMVK)
-            vkGetInstanceProcAddr(instance, "vkCreateMacOSSurfaceMVK");
-        if (!vkCreateMacOSSurfaceMVK)
-        {
-            _glfwInputError(GLFW_API_UNAVAILABLE,
-                            "Cocoa: Vulkan instance missing VK_MVK_macos_surface extension");
-            return VK_ERROR_EXTENSION_NOT_PRESENT;
-        }
-
-        memset(&sci, 0, sizeof(sci));
-        sci.sType = VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK;
-        sci.pView = window->ns.view;
-
-        err = vkCreateMacOSSurfaceMVK(instance, &sci, allocator, surface);
-    }
-
-    if (err)
-    {
-        _glfwInputError(GLFW_PLATFORM_ERROR,
-                        "Cocoa: Failed to create Vulkan surface: %s",
-                        _glfwGetVulkanResultString(err));
-    }
-
-    return err;
-
-    } // autoreleasepool
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 //////                        GLFW native API                       //////

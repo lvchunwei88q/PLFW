@@ -29,12 +29,6 @@
 #include <Carbon/Carbon.h>
 #include <IOKit/hid/IOHIDLib.h>
 
-// NOTE: All of NSGL was deprecated in the 10.14 SDK
-//       This disables the pointless warnings for every symbol we use
-#ifndef GL_SILENCE_DEPRECATION
-#define GL_SILENCE_DEPRECATION
-#endif
-
 #if defined(__OBJC__)
 #import <Cocoa/Cocoa.h>
 #else
@@ -45,11 +39,6 @@ typedef void* id;
 //       SDK versions where one is unavailable or deprecated.
 //       We use the newer names in code and replace them with the older names if
 //       the base SDK does not provide the newer names.
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED < 101400
- #define NSOpenGLContextParameterSwapInterval NSOpenGLCPSwapInterval
- #define NSOpenGLContextParameterSurfaceOpacity NSOpenGLCPSurfaceOpacity
-#endif
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 101200
  #define NSBitmapFormatAlphaNonpremultiplied NSAlphaNonpremultipliedBitmapFormat
@@ -78,35 +67,10 @@ typedef void* id;
  #define NSPasteboardTypeURL NSURLPboardType
 #endif
 
-typedef VkFlags VkMacOSSurfaceCreateFlagsMVK;
-typedef VkFlags VkMetalSurfaceCreateFlagsEXT;
-
-typedef struct VkMacOSSurfaceCreateInfoMVK
-{
-    VkStructureType                 sType;
-    const void*                     pNext;
-    VkMacOSSurfaceCreateFlagsMVK    flags;
-    const void*                     pView;
-} VkMacOSSurfaceCreateInfoMVK;
-
-typedef struct VkMetalSurfaceCreateInfoEXT
-{
-    VkStructureType                 sType;
-    const void*                     pNext;
-    VkMetalSurfaceCreateFlagsEXT    flags;
-    const void*                     pLayer;
-} VkMetalSurfaceCreateInfoEXT;
-
-typedef VkResult (APIENTRY *PFN_vkCreateMacOSSurfaceMVK)(VkInstance,const VkMacOSSurfaceCreateInfoMVK*,const VkAllocationCallbacks*,VkSurfaceKHR*);
-typedef VkResult (APIENTRY *PFN_vkCreateMetalSurfaceEXT)(VkInstance,const VkMetalSurfaceCreateInfoEXT*,const VkAllocationCallbacks*,VkSurfaceKHR*);
-
 #define GLFW_COCOA_WINDOW_STATE         _GLFWwindowNS  ns;
 #define GLFW_COCOA_LIBRARY_WINDOW_STATE _GLFWlibraryNS ns;
 #define GLFW_COCOA_MONITOR_STATE        _GLFWmonitorNS ns;
 #define GLFW_COCOA_CURSOR_STATE         _GLFWcursorNS  ns;
-
-#define GLFW_NSGL_CONTEXT_STATE         _GLFWcontextNSGL nsgl;
-#define GLFW_NSGL_LIBRARY_CONTEXT_STATE _GLFWlibraryNSGL nsgl;
 
 // HIToolbox.framework pointer typedefs
 #define kTISPropertyUnicodeKeyLayoutData _glfw.ns.tis.kPropertyUnicodeKeyLayoutData
@@ -118,22 +82,6 @@ typedef UInt8 (*PFN_LMGetKbdType)(void);
 #define LMGetKbdType _glfw.ns.tis.GetKbdType
 
 
-// NSGL-specific per-context data
-//
-typedef struct _GLFWcontextNSGL
-{
-    id                pixelFormat;
-    id                object;
-} _GLFWcontextNSGL;
-
-// NSGL-specific global data
-//
-typedef struct _GLFWlibraryNSGL
-{
-    // dlopen handle for OpenGL.framework (for glfwGetProcAddress)
-    CFBundleRef     framework;
-} _GLFWlibraryNSGL;
-
 // Cocoa-specific per-window data
 //
 typedef struct _GLFWwindowNS
@@ -141,7 +89,6 @@ typedef struct _GLFWwindowNS
     id              object;
     id              delegate;
     id              view;
-    id              layer;
 
     GLFWbool        maximized;
     GLFWbool        occluded;
@@ -214,7 +161,7 @@ GLFWbool _glfwConnectCocoa(int platformID, _GLFWplatform* platform);
 int _glfwInitCocoa(void);
 void _glfwTerminateCocoa(void);
 
-GLFWbool _glfwCreateWindowCocoa(_GLFWwindow* window, const _GLFWwndconfig* wndconfig, const _GLFWctxconfig* ctxconfig, const _GLFWfbconfig* fbconfig);
+GLFWbool _glfwCreateWindowCocoa(_GLFWwindow* window, const _GLFWwndconfig* wndconfig, const _GLFWfbconfig* fbconfig);
 void _glfwDestroyWindowCocoa(_GLFWwindow* window);
 void _glfwSetWindowTitleCocoa(_GLFWwindow* window, const char* title);
 void _glfwSetWindowIconCocoa(_GLFWwindow* window, int count, const GLFWimage* images);
@@ -268,14 +215,6 @@ void _glfwSetCursorCocoa(_GLFWwindow* window, _GLFWcursor* cursor);
 void _glfwSetClipboardStringCocoa(const char* string);
 const char* _glfwGetClipboardStringCocoa(void);
 
-EGLenum _glfwGetEGLPlatformCocoa(EGLint** attribs);
-EGLNativeDisplayType _glfwGetEGLNativeDisplayCocoa(void);
-EGLNativeWindowType _glfwGetEGLNativeWindowCocoa(_GLFWwindow* window);
-
-void _glfwGetRequiredInstanceExtensionsCocoa(char** extensions);
-GLFWbool _glfwGetPhysicalDevicePresentationSupportCocoa(VkInstance instance, VkPhysicalDevice device, uint32_t queuefamily);
-VkResult _glfwCreateWindowSurfaceCocoa(VkInstance instance, _GLFWwindow* window, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
-
 void _glfwFreeMonitorCocoa(_GLFWmonitor* monitor);
 void _glfwGetMonitorPosCocoa(_GLFWmonitor* monitor, int* xpos, int* ypos);
 void _glfwGetMonitorContentScaleCocoa(_GLFWmonitor* monitor, float* xscale, float* yscale);
@@ -290,11 +229,4 @@ void _glfwSetVideoModeCocoa(_GLFWmonitor* monitor, const GLFWvidmode* desired);
 void _glfwRestoreVideoModeCocoa(_GLFWmonitor* monitor);
 
 float _glfwTransformYCocoa(float y);
-
-GLFWbool _glfwInitNSGL(void);
-void _glfwTerminateNSGL(void);
-GLFWbool _glfwCreateContextNSGL(_GLFWwindow* window,
-                                const _GLFWctxconfig* ctxconfig,
-                                const _GLFWfbconfig* fbconfig);
-void _glfwDestroyContextNSGL(_GLFWwindow* window);
 
