@@ -1,0 +1,3 @@
+# Normalize all text files to LF in the repository and in the working tree,
+# so the tree stays consistent with upstream GLFW on every platform.
+* text=auto eol=lf
