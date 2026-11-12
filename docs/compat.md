@@ -55,7 +55,8 @@ Windows 上只有 Win32 后端，没有别的选择；`GLFW_BUILD_WIN32=OFF` 会
   给的值；
 - **显示器全局坐标**：`glfwGetMonitorPos` 恒为 `0, 0`；
 - **窗口图标**：`glfwSetWindowIcon` 被忽略，图标来自 `.desktop` 与 `app_id`；
-- **gamma**：`glfwSetGamma` 报 `GLFW_PLATFORM_ERROR`，`glfwGetGammaRamp` 返回 `NULL`；
+- **gamma**：`glfwGetGammaRamp` 报 `GLFW_FEATURE_UNAVAILABLE` 并返回 `NULL`，
+  `glfwSetGamma` 随之直接返回（不生效也不崩溃）；
 - **指针摆放**：`glfwSetCursorPos` 报 `GLFW_FEATURE_UNAVAILABLE`；
 - **抢焦点**：`glfwFocusWindow` 只是请求，合成器可拒绝。
 

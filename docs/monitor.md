@@ -118,9 +118,10 @@ glfwSetGammaRamp(monitor, ramp);
 `GLFWgammaramp` 是三条 `unsigned short` 表（红、绿、蓝）与长度。`glfwSetGamma`
 按给定 gamma 值生成一条近似线性化曲线，比手写表更方便。
 
-支持情况：Win32 实现了 gamma；Wayland 没有 gamma 概念，`glfwSetGamma` 会报
-`GLFW_PLATFORM_ERROR`，`glfwGetGammaRamp` 返回 `NULL`。程序应当把 gamma 当作
-可选能力，查询失败就跳过。
+支持情况：Win32 实现了 gamma。Wayland 没有 gamma 概念：`glfwGetGammaRamp` 报
+`GLFW_FEATURE_UNAVAILABLE` 并返回 `NULL`，`glfwSetGamma` 拿不到原始 ramp 就直接返回
+（窗口不会因此崩溃，设置也确实没生效）。程序应当把 gamma 当作可选能力，查询失败就
+跳过。
 
 ## 全屏窗口与显示器
 

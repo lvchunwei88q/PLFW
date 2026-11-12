@@ -147,8 +147,8 @@ GLFW_RESIZE_NWSE_CURSOR, GLFW_RESIZE_NESW_CURSOR, GLFW_RESIZE_ALL_CURSOR,
 GLFW_NOT_ALLOWED_CURSOR, GLFW_HRESIZE_CURSOR, GLFW_VRESIZE_CURSOR
 ```
 
-`glfwCreateStandardCursor` 从 `GLFW_STANDARD_CURSOR_*` 描述符集合（[shapes](@ref shapes)）里
-挑一个形状。主题里没有这个形状时可能失败并报 `GLFW_CURSOR_UNAVAILABLE`，要有回退。
+`glfwCreateStandardCursor` 从标准形状枚举（[shapes](@ref shapes)）里
+挑一个。光标主题里没有这个形状时可能失败并报 `GLFW_CURSOR_UNAVAILABLE`，要有回退。
 
 ### 自定义光标 {#cursor_custom}
 
