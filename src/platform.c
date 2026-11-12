@@ -47,14 +47,8 @@ static const struct
 #if defined(_GLFW_WIN32)
     { GLFW_PLATFORM_WIN32, _glfwConnectWin32 },
 #endif
-#if defined(_GLFW_COCOA)
-    { GLFW_PLATFORM_COCOA, _glfwConnectCocoa },
-#endif
 #if defined(_GLFW_WAYLAND)
     { GLFW_PLATFORM_WAYLAND, _glfwConnectWayland },
-#endif
-#if defined(_GLFW_X11)
-    { GLFW_PLATFORM_X11, _glfwConnectX11 },
 #endif
 };
 
@@ -63,6 +57,10 @@ GLFWbool _glfwSelectPlatform(int desiredID, _GLFWplatform* platform)
     const size_t count = sizeof(supportedPlatforms) / sizeof(supportedPlatforms[0]);
     size_t i;
 
+    // The X11 and Cocoa identifiers are still accepted as known platform IDs so
+    // that a caller asking for a removed backend gets GLFW_PLATFORM_UNAVAILABLE
+    // instead of GLFW_INVALID_ENUM.  They are never listed in
+    // supportedPlatforms, so they cannot be selected.
     if (desiredID != GLFW_ANY_PLATFORM &&
         desiredID != GLFW_PLATFORM_WIN32 &&
         desiredID != GLFW_PLATFORM_COCOA &&
@@ -82,22 +80,6 @@ GLFWbool _glfwSelectPlatform(int desiredID, _GLFWplatform* platform)
         _glfwInputError(GLFW_PLATFORM_UNAVAILABLE, "This binary only supports the Null platform");
         return GLFW_FALSE;
     }
-
-#if defined(_GLFW_WAYLAND) && defined(_GLFW_X11)
-    if (desiredID == GLFW_ANY_PLATFORM)
-    {
-        const char* const session = getenv("XDG_SESSION_TYPE");
-        if (session)
-        {
-            // Only follow XDG_SESSION_TYPE if it is set correctly and the
-            // environment looks plausble; otherwise fall back to detection
-            if (strcmp(session, "wayland") == 0 && getenv("WAYLAND_DISPLAY"))
-                desiredID = GLFW_PLATFORM_WAYLAND;
-            else if (strcmp(session, "x11") == 0 && getenv("DISPLAY"))
-                desiredID = GLFW_PLATFORM_X11;
-        }
-    }
-#endif
 
     if (desiredID == GLFW_ANY_PLATFORM)
     {
@@ -173,14 +155,8 @@ GLFWAPI const char* glfwGetVersionString(void)
 #if defined(_GLFW_WIN32)
         " Win32"
 #endif
-#if defined(_GLFW_COCOA)
-        " Cocoa"
-#endif
 #if defined(_GLFW_WAYLAND)
         " Wayland"
-#endif
-#if defined(_GLFW_X11)
-        " X11"
 #endif
         " Null"
         " window/input only"

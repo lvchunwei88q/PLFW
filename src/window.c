@@ -323,7 +323,6 @@ GLFWAPI void glfwWindowHint(int hint, int value)
             _glfw.hints.window.scaleToMonitor = value;
             return;
         case GLFW_SCALE_FRAMEBUFFER:
-        case GLFW_COCOA_RETINA_FRAMEBUFFER:
             _glfw.hints.window.scaleFramebuffer = value;
             return;
         case GLFW_CENTER_CURSOR:
@@ -351,18 +350,6 @@ GLFWAPI void glfwWindowHintString(int hint, const char* value)
 
     switch (hint)
     {
-        case GLFW_COCOA_FRAME_NAME:
-            strncpy(_glfw.hints.window.ns.frameName, value,
-                    sizeof(_glfw.hints.window.ns.frameName) - 1);
-            return;
-        case GLFW_X11_CLASS_NAME:
-            strncpy(_glfw.hints.window.x11.className, value,
-                    sizeof(_glfw.hints.window.x11.className) - 1);
-            return;
-        case GLFW_X11_INSTANCE_NAME:
-            strncpy(_glfw.hints.window.x11.instanceName, value,
-                    sizeof(_glfw.hints.window.x11.instanceName) - 1);
-            return;
         case GLFW_WAYLAND_APP_ID:
             strncpy(_glfw.hints.window.wl.appId, value,
                     sizeof(_glfw.hints.window.wl.appId) - 1);

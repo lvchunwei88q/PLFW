@@ -110,10 +110,6 @@ struct _GLFWinitconfig
     bool          hatButtons;
     int           platformID;
     struct {
-        bool      menubar;
-        bool      chdir;
-    } ns;
-    struct {
         int       libdecorMode;
     } wl;
 };
@@ -142,13 +138,6 @@ struct _GLFWwndconfig
     bool          mousePassthrough;
     bool          scaleToMonitor;
     bool          scaleFramebuffer;
-    struct {
-        char      frameName[256];
-    } ns;
-    struct {
-        char      className[256];
-        char      instanceName[256];
-    } x11;
     struct {
         bool      keymenu;
         bool      showDefault;

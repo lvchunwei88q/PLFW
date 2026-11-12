@@ -51,11 +51,6 @@ static _GLFWinitconfig _glfwInitHints =
 {
     .hatButtons = true,
     .platformID = GLFW_ANY_PLATFORM,
-    .ns =
-    {
-        .menubar = true,
-        .chdir = true
-    },
     .wl =
     {
         .libdecorMode = GLFW_WAYLAND_PREFER_LIBDECOR
@@ -437,12 +432,6 @@ GLFWAPI void glfwInitHint(int hint, int value)
             return;
         case GLFW_PLATFORM:
             _glfwInitHints.platformID = value;
-            return;
-        case GLFW_COCOA_CHDIR_RESOURCES:
-            _glfwInitHints.ns.chdir = value;
-            return;
-        case GLFW_COCOA_MENUBAR:
-            _glfwInitHints.ns.menubar = value;
             return;
         case GLFW_WAYLAND_LIBDECOR:
             _glfwInitHints.wl.libdecorMode = value;

@@ -58,9 +58,7 @@ static const char* platformName(int platform)
     switch (platform)
     {
         case GLFW_PLATFORM_WIN32:   return "Win32";
-        case GLFW_PLATFORM_COCOA:   return "Cocoa";
         case GLFW_PLATFORM_WAYLAND: return "Wayland";
-        case GLFW_PLATFORM_X11:     return "X11";
         case GLFW_PLATFORM_NULL:    return "Null";
         default:                    return "unknown";
     }
@@ -98,10 +96,15 @@ int main(void)
     printf("active platform backend: %s\n", platformName(platform));
     check("platform backend is a supported window system backend",
           platform == GLFW_PLATFORM_WIN32 ||
-          platform == GLFW_PLATFORM_COCOA ||
           platform == GLFW_PLATFORM_WAYLAND ||
-          platform == GLFW_PLATFORM_X11 ||
           platform == GLFW_PLATFORM_NULL);
+
+    // The library ships Win32, Wayland and Null only; the platform identifiers
+    // for the removed backends must still be known but never supported.
+    check("X11 backend is not part of the build",
+          glfwPlatformSupported(GLFW_PLATFORM_X11) == GLFW_FALSE);
+    check("Cocoa backend is not part of the build",
+          glfwPlatformSupported(GLFW_PLATFORM_COCOA) == GLFW_FALSE);
     check("timer value advances",
           glfwGetTimerValue() > 0 && glfwGetTimerFrequency() > 0);
     check("time starts near zero", glfwGetTime() >= 0.0);

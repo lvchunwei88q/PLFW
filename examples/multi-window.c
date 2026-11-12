@@ -12,8 +12,7 @@
 //    - creating several windows from one event loop
 //    - a per-window user pointer, so one callback set serves every window
 //    - window state: hide / show, focus, iconify / restore, decorations
-//    - native window handles: glfwGetWin32Window, glfwGetX11Window,
-//      glfwGetWaylandWindow, glfwGetCocoaWindow
+//    - native window handles: glfwGetWin32Window, glfwGetWaylandWindow
 //    - monitor enumeration and which monitor a window sits on
 //
 //  Keys: 1 / 2 / 3 hide or show that window, I iconifies the first window,
@@ -26,10 +25,8 @@
 
 #if defined(_WIN32)
  #define GLFW_EXPOSE_NATIVE_WIN32
-#elif defined(__APPLE__)
- #define GLFW_EXPOSE_NATIVE_COCOA
 #else
- #define GLFW_EXPOSE_NATIVE_X11
+ // The library carries no X11 backend on Linux anymore, only Wayland.
  #if defined(__has_include)
   #if __has_include(<wayland-client.h>)
    #define GLFW_EXPOSE_NATIVE_WAYLAND
@@ -92,33 +89,11 @@ static void printNativeHandle(GLFWwindow* window)
 #endif
         }
 
-        case GLFW_PLATFORM_X11:
-        {
-#if defined(GLFW_EXPOSE_NATIVE_X11)
-            Window handle = glfwGetX11Window(window);
-            printf("X11 window 0x%08lX\n", (unsigned long) handle);
-            return;
-#else
-            break;
-#endif
-        }
-
         case GLFW_PLATFORM_WAYLAND:
         {
 #if defined(GLFW_EXPOSE_NATIVE_WAYLAND)
             struct wl_surface* surface = glfwGetWaylandWindow(window);
             printf("wl_surface %p\n", (void*) surface);
-            return;
-#else
-            break;
-#endif
-        }
-
-        case GLFW_PLATFORM_COCOA:
-        {
-#if defined(GLFW_EXPOSE_NATIVE_COCOA)
-            id view = glfwGetCocoaWindow(window);
-            printf("NSView %p\n", (void*) view);
             return;
 #else
             break;

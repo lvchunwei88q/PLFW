@@ -816,29 +816,6 @@ extern "C" {
  *  [window hint](@ref GLFW_SCALE_FRAMEBUFFER_hint).
  */
 #define GLFW_SCALE_FRAMEBUFFER      0x0002200D
-/*! @brief Legacy name for compatibility.
- *
- *  This is an alias for the
- *  [GLFW_SCALE_FRAMEBUFFER](@ref GLFW_SCALE_FRAMEBUFFER_hint) window hint for
- *  compatibility with earlier versions.
- */
-#define GLFW_COCOA_RETINA_FRAMEBUFFER 0x00023001
-/*! @brief macOS specific
- *  [window hint](@ref GLFW_COCOA_FRAME_NAME_hint).
- */
-#define GLFW_COCOA_FRAME_NAME         0x00023002
-/*! @brief macOS specific
- *  [window hint](@ref GLFW_COCOA_GRAPHICS_SWITCHING_hint).
- */
-#define GLFW_COCOA_GRAPHICS_SWITCHING 0x00023003
-/*! @brief X11 specific
- *  [window hint](@ref GLFW_X11_CLASS_NAME_hint).
- */
-#define GLFW_X11_CLASS_NAME         0x00024001
-/*! @brief X11 specific
- *  [window hint](@ref GLFW_X11_CLASS_NAME_hint).
- */
-#define GLFW_X11_INSTANCE_NAME      0x00024002
 #define GLFW_WIN32_KEYBOARD_MENU    0x00025001
 /*! @brief Win32 specific [window hint](@ref GLFW_WIN32_SHOWDEFAULT_hint).
  */
@@ -916,14 +893,8 @@ extern "C" {
  *  The top-left to bottom-right diagonal resize/move shape.  This is usually
  *  a diagonal double-headed arrow.
  *
- *  @note __macOS:__ This shape is provided by a private system API and may fail
- *  with @ref GLFW_CURSOR_UNAVAILABLE in the future.
- *
  *  @note __Wayland:__ This shape is provided by a newer standard not supported by
  *  all cursor themes.
- *
- *  @note __X11:__ This shape is provided by a newer standard not supported by all
- *  cursor themes.
  */
 #define GLFW_RESIZE_NWSE_CURSOR     0x00036007
 /*! @brief The top-right to bottom-left diagonal resize/move arrow shape.
@@ -931,14 +902,8 @@ extern "C" {
  *  The top-right to bottom-left diagonal resize/move shape.  This is usually
  *  a diagonal double-headed arrow.
  *
- *  @note __macOS:__ This shape is provided by a private system API and may fail
- *  with @ref GLFW_CURSOR_UNAVAILABLE in the future.
- *
  *  @note __Wayland:__ This shape is provided by a newer standard not supported by
  *  all cursor themes.
- *
- *  @note __X11:__ This shape is provided by a newer standard not supported by all
- *  cursor themes.
  */
 #define GLFW_RESIZE_NESW_CURSOR     0x00036008
 /*! @brief The omni-directional resize/move cursor shape.
@@ -954,9 +919,6 @@ extern "C" {
  *
  *  @note __Wayland:__ This shape is provided by a newer standard not supported by
  *  all cursor themes.
- *
- *  @note __X11:__ This shape is provided by a newer standard not supported by all
- *  cursor themes.
  */
 #define GLFW_NOT_ALLOWED_CURSOR     0x0003600A
 /*! @brief Legacy name for compatibility.
@@ -986,31 +948,11 @@ extern "C" {
  *  Joystick hat buttons [init hint](@ref GLFW_JOYSTICK_HAT_BUTTONS).
  */
 #define GLFW_JOYSTICK_HAT_BUTTONS   0x00050001
-/*! @brief ANGLE rendering backend init hint.
- *
- *  ANGLE rendering backend [init hint](@ref GLFW_ANGLE_PLATFORM_TYPE_hint).
- */
-#define GLFW_ANGLE_PLATFORM_TYPE    0x00050002
 /*! @brief Platform selection init hint.
  *
  *  Platform selection [init hint](@ref GLFW_PLATFORM).
  */
 #define GLFW_PLATFORM               0x00050003
-/*! @brief macOS specific init hint.
- *
- *  macOS specific [init hint](@ref GLFW_COCOA_CHDIR_RESOURCES_hint).
- */
-#define GLFW_COCOA_CHDIR_RESOURCES  0x00051001
-/*! @brief macOS specific init hint.
- *
- *  macOS specific [init hint](@ref GLFW_COCOA_MENUBAR_hint).
- */
-#define GLFW_COCOA_MENUBAR          0x00051002
-/*! @brief X11 specific init hint.
- *
- *  X11 specific [init hint](@ref GLFW_X11_XCB_VULKAN_SURFACE_hint).
- */
-#define GLFW_X11_XCB_VULKAN_SURFACE 0x00052001
 /*! @brief Wayland specific init hint.
  *
  *  Wayland specific [init hint](@ref GLFW_WAYLAND_LIBDECOR_hint).
@@ -1847,30 +1789,6 @@ typedef struct GLFWallocator
  *  @errors Possible errors include @ref GLFW_PLATFORM_UNAVAILABLE and @ref
  *  GLFW_PLATFORM_ERROR.
  *
- *  @remark __macOS:__ This function will change the current directory of the
- *  application to the `Contents/Resources` subdirectory of the application's
- *  bundle, if present.  This can be disabled with the @ref
- *  GLFW_COCOA_CHDIR_RESOURCES init hint.
- *
- *  @remark __macOS:__ This function will create the main menu and dock icon for the
- *  application.  If GLFW finds a `MainMenu.nib` it is loaded and assumed to
- *  contain a menu bar.  Otherwise a minimal menu bar is created manually with
- *  common commands like Hide, Quit and About.  The About entry opens a minimal
- *  about dialog with information from the application's bundle.  The menu bar
- *  and dock icon can be disabled entirely with the @ref GLFW_COCOA_MENUBAR init
- *  hint.
- *
- *  @remark __Wayland, X11:__ If the library was compiled with support for both
- *  Wayland and X11, and the @ref GLFW_PLATFORM init hint is set to
- *  `GLFW_ANY_PLATFORM`, the `XDG_SESSION_TYPE` environment variable affects
- *  which platform is picked.  If the environment variable is not set, or is set
- *  to something other than `wayland` or `x11`, the regular detection mechanism
- *  will be used instead.
- *
- *  @remark __X11:__ This function will set the `LC_CTYPE` category of the
- *  application locale according to the current environment if that category is
- *  still "C".  This is because the "C" locale breaks Unicode text input.
- *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref intro_init
@@ -2122,8 +2040,10 @@ GLFWAPI GLFWerrorfun glfwSetErrorCallback(GLFWerrorfun callback);
 /*! @brief Returns the currently selected platform.
  *
  *  This function returns the platform that was selected during initialization.  The
- *  returned value will be one of `GLFW_PLATFORM_WIN32`, `GLFW_PLATFORM_COCOA`,
- *  `GLFW_PLATFORM_WAYLAND`, `GLFW_PLATFORM_X11` or `GLFW_PLATFORM_NULL`.
+ *  returned value will be one of `GLFW_PLATFORM_WIN32`, `GLFW_PLATFORM_WAYLAND` or
+ *  `GLFW_PLATFORM_NULL`.  This build carries no X11 or Cocoa backend, so
+ *  `GLFW_PLATFORM_X11` and `GLFW_PLATFORM_COCOA` remain declared identifiers that
+ *  are never returned.
  *
  *  @return The currently selected platform, or zero if an error occurred.
  *
@@ -2143,8 +2063,10 @@ GLFWAPI int glfwGetPlatform(void);
 /*! @brief Returns whether the library includes support for the specified platform.
  *
  *  This function returns whether the library was compiled with support for the specified
- *  platform.  The platform must be one of `GLFW_PLATFORM_WIN32`, `GLFW_PLATFORM_COCOA`,
- *  `GLFW_PLATFORM_WAYLAND`, `GLFW_PLATFORM_X11` or `GLFW_PLATFORM_NULL`.
+ *  platform.  The platform must be one of `GLFW_PLATFORM_WIN32`,
+ *  `GLFW_PLATFORM_WAYLAND` or `GLFW_PLATFORM_NULL`.  `GLFW_PLATFORM_X11` and
+ *  `GLFW_PLATFORM_COCOA` are accepted as known identifiers but always report
+ *  `GLFW_FALSE`, as neither backend is part of this build.
  *
  *  @param[in] platform The platform to query.
  *  @return `GLFW_TRUE` if the platform is supported, or `GLFW_FALSE` otherwise.
@@ -2795,10 +2717,6 @@ GLFWAPI void glfwWindowHintString(int hint, const char* value);
  *
  *  [hidpi-guide]: https://developer.apple.com/library/mac/documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/Explained/Explained.html
  *
- *  @remark __macOS:__ When activating frame autosaving with
- *  [GLFW_COCOA_FRAME_NAME](@ref GLFW_COCOA_FRAME_NAME_hint), the specified
- *  window size and position may be overridden by previously saved values.
- *
  *  @remark __Wayland:__ GLFW uses [libdecor][] where available to create its window
  *  decorations.  This in turn uses server-side XDG decorations where available
  *  and provides high quality client-side decorations on compositors like GNOME.
@@ -2807,22 +2725,6 @@ GLFWAPI void glfwWindowHintString(int hint, const char* value);
  *  and the window manager's right-click menu.
  *
  *  [libdecor]: https://gitlab.freedesktop.org/libdecor/libdecor
- *
- *  @remark __X11:__ Some window managers will not respect the placement of
- *  initially hidden windows.
- *
- *  @remark __X11:__ Due to the asynchronous nature of X11, it may take a moment for
- *  a window to reach its requested state.  This means you may not be able to
- *  query the final size, position or other attributes directly after window
- *  creation.
- *
- *  @remark __X11:__ The class part of the `WM_CLASS` window property will by
- *  default be set to the window title passed to this function.  The instance
- *  part will use the contents of the `RESOURCE_NAME` environment variable, if
- *  present and not empty, or fall back to the window title.  Set the
- *  [GLFW_X11_CLASS_NAME](@ref GLFW_X11_CLASS_NAME_hint) and
- *  [GLFW_X11_INSTANCE_NAME](@ref GLFW_X11_INSTANCE_NAME_hint) window hints to
- *  override this.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -4671,22 +4573,20 @@ GLFWAPI GLFWcursor* glfwCreateCursor(const GLFWimage* image, int xhot, int yhot)
  *  Most of these shapes are guaranteed to exist on every supported platform but
  *  a few may not be present.  See the table below for details.
  *
- *  Cursor shape                   | Windows | macOS | X11    | Wayland
- *  ------------------------------ | ------- | ----- | ------ | -------
- *  @ref GLFW_ARROW_CURSOR         | Yes     | Yes   | Yes    | Yes
- *  @ref GLFW_IBEAM_CURSOR         | Yes     | Yes   | Yes    | Yes
- *  @ref GLFW_CROSSHAIR_CURSOR     | Yes     | Yes   | Yes    | Yes
- *  @ref GLFW_POINTING_HAND_CURSOR | Yes     | Yes   | Yes    | Yes
- *  @ref GLFW_RESIZE_EW_CURSOR     | Yes     | Yes   | Yes    | Yes
- *  @ref GLFW_RESIZE_NS_CURSOR     | Yes     | Yes   | Yes    | Yes
- *  @ref GLFW_RESIZE_NWSE_CURSOR   | Yes     | Yes<sup>1</sup> | Maybe<sup>2</sup> | Maybe<sup>2</sup>
- *  @ref GLFW_RESIZE_NESW_CURSOR   | Yes     | Yes<sup>1</sup> | Maybe<sup>2</sup> | Maybe<sup>2</sup>
- *  @ref GLFW_RESIZE_ALL_CURSOR    | Yes     | Yes   | Yes    | Yes
- *  @ref GLFW_NOT_ALLOWED_CURSOR   | Yes     | Yes   | Maybe<sup>2</sup> | Maybe<sup>2</sup>
+ *  Cursor shape                   | Windows | Wayland
+ *  ------------------------------ | ------- | -------
+ *  @ref GLFW_ARROW_CURSOR         | Yes     | Yes
+ *  @ref GLFW_IBEAM_CURSOR         | Yes     | Yes
+ *  @ref GLFW_CROSSHAIR_CURSOR     | Yes     | Yes
+ *  @ref GLFW_POINTING_HAND_CURSOR | Yes     | Yes
+ *  @ref GLFW_RESIZE_EW_CURSOR     | Yes     | Yes
+ *  @ref GLFW_RESIZE_NS_CURSOR     | Yes     | Yes
+ *  @ref GLFW_RESIZE_NWSE_CURSOR   | Yes     | Maybe<sup>1</sup>
+ *  @ref GLFW_RESIZE_NESW_CURSOR   | Yes     | Maybe<sup>1</sup>
+ *  @ref GLFW_RESIZE_ALL_CURSOR    | Yes     | Yes
+ *  @ref GLFW_NOT_ALLOWED_CURSOR   | Yes     | Maybe<sup>1</sup>
  *
- *  1) This uses a private system API and may fail in the future.
- *
- *  2) This uses a newer standard that not all cursor themes support.
+ *  1) This uses a newer standard that not all cursor themes support.
  *
  *  If the requested shape is not available, this function emits a @ref
  *  GLFW_CURSOR_UNAVAILABLE error and returns `NULL`.
