@@ -24,8 +24,9 @@ Vulkan、GDI 头自由共存，包含顺序无关。
 #include <GLFW/glfw3native.h>
 ```
 
-`glfw3native.h` 只暴露这两段，`glfwGetWin32Window`、`glfwGetWin32Instance`、
-`glfwGetWaylandDisplay`、`glfwGetWaylandWindow`；对应后端没编译时这些符号不存在。
+`glfw3native.h` 只暴露这两段、共 6 个访问器：Win32 侧 `glfwGetWin32Adapter`（适配器设备名）、
+`glfwGetWin32Monitor`（显示器设备名）、`glfwGetWin32Window`（`HWND`）；Wayland 侧 `glfwGetWaylandDisplay`、
+`glfwGetWaylandMonitor`（`wl_output*`）、`glfwGetWaylandWindow`（`wl_surface*`）。对应后端没编译时这些符号不存在。
 
 ## 编译宏 {#build_macros}
 
