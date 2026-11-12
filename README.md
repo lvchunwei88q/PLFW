@@ -115,7 +115,7 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
   - `examples/multi-window.c`：一个事件循环驱动三个窗口，演示用户指针、隐藏 / 显示、
     图标化 / 还原、装饰切换、原生句柄（HWND / wl_surface）、窗口落在哪块显示器、
     跨窗口剪贴板。
-  - `tests/smoke.c`：自检式冒烟测试（注册到 CTest 的 `smoke`），覆盖初始化、版本、
+  - `tests/smoke.c`：自检式冒烟测试（注册到 CTest 的 `smoke`），覆盖初始化、
     平台后端、定时器、显示器与视频模式、无图形 API 建窗、`share` 参数被忽略、
     窗口尺寸 / 帧缓冲尺寸 / 帧尺寸、可见性 / 图标化 / 可缩放属性、光标与键鼠状态、
     窗口尺寸与位置设置、剪贴板往返、手柄枚举、键扫描码、事件泵、关闭请求与销毁。
@@ -124,8 +124,8 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
     时跳过剪贴板断言。另有两条断言专门守住后端范围：
     `glfwPlatformSupported(GLFW_PLATFORM_X11)` 与 `(GLFW_PLATFORM_COCOA)` 必须返回
     `GLFW_FALSE`。
-- 文档：`docs/context.md`、`docs/vulkan.md` 已删除；`docs/` 下其余页面保留上游
-  原文，其中涉及“创建上下文”的段落已经失效。
+- 文档：`docs/` 下 10 篇中文指南与 `SUPPORT.md` 全部按当前能力重写，直接用 Markdown
+  阅读即可；仓库不带 Doxygen 配置，构建时也不再生成 HTML。
 
 ### 语义变化（迁移时注意）
 
@@ -165,7 +165,7 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
 # 配置（需要 CMake 3.16+、Ninja 与 C99 编译器）
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_C_COMPILER=gcc.exe \
-      -DGLFW_BUILD_DOCS=OFF -DGLFW_INSTALL=OFF
+      -DGLFW_INSTALL=OFF
 
 # 编译：静态库 + 示例 + 冒烟测试
 cmake --build build
@@ -189,7 +189,7 @@ Linux 侧只剩 Wayland 一个后端，构建依赖随之变少：`libwayland-de
 ```sh
 # Linux（Wayland + Null）
 cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release \
-      -DGLFW_BUILD_DOCS=OFF -DGLFW_INSTALL=OFF
+      -DGLFW_INSTALL=OFF
 cmake --build build-linux
 
 # 有 Wayland 合成器时
@@ -242,10 +242,9 @@ X11 与 Cocoa：**已从本仓库删除**，不再需要 macOS 或 X 服务器�
 - 上游 README 中“为 OpenGL / OpenGL ES / Vulkan 应用开发”“creating windows,
   contexts and surfaces”“On Linux both Wayland and X11 are supported”等描述属于
   上游原文，对本分支不再准确：本分支只保留 Win32 与 Wayland 两个后端。
-- `docs/quick.md`、`docs/intro.md`、`docs/window.md`、`docs/moving.md`、
-  `docs/compat.md` 中关于上下文创建、`glfwGetProcAddress`、Vulkan 表面创建、
-  `glfwSwapBuffers` 的段落均不适用；`docs/internal.md` 中提到的
-  `_glfwCreateContext*` 系列函数已不存在。
+- `docs/quick.md`、`docs/intro.md`、`docs/window.md`、`docs/compat.md`、
+  `docs/internal.md` 已按现状重写，不再是上游原文；`docs/moving.md`、`docs/news.md`、
+  `docs/CONTRIBUTING.md` 已删除。
 - `deps/` 里只剩 **`deps/wayland/` 的 9 个协议 XML**（`wayland.xml`、`viewporter.xml`、
   `xdg-shell.xml`、`idle-inhibit-unstable-v1.xml`、`pointer-constraints-unstable-v1.xml`、
   `relative-pointer-unstable-v1.xml`、`fractional-scale-v1.xml`、`xdg-activation-v1.xml`、
@@ -343,9 +342,8 @@ bundled in the `deps/` directory.  The repository has no submodules.
  - [Nuklear](https://github.com/Immediate-Mode-UI/Nuklear) for test and example UI
  - [stb\_image\_write](https://github.com/nothings/stb) for writing images to disk
 
-The documentation is generated with [Doxygen](https://doxygen.org/) when the
-library is built, provided CMake could find a sufficiently new version of it
-during configuration.
+The documentation is plain Markdown under `docs/`.  This branch ships no Doxygen
+configuration and does not generate HTML during the build.
 
 
 ## Using GLFW

@@ -1,14 +1,12 @@
-# 上手 {#quick_guide}
-
-[TOC]
+# 上手 <a name="quick_guide"></a>
 
 本指南带你从零写一个完整的小程序：创建一个窗口，处理键盘与关闭事件，读取计时器，
 然后干净退出。它只用 `glfw3.h` 里现存的 API——本库**不创建任何图形上下文**，
 窗口里画什么由你自己决定。
 
-## 分步说明 {#quick_steps}
+## 分步说明 <a name="quick_steps"></a>
 
-### 包含 GLFW 头文件 {#quick_include}
+### 包含 GLFW 头文件 <a name="quick_include"></a>
 
 ```c
 #include <GLFW/glfw3.h>
@@ -23,7 +21,7 @@ OSMesa 头文件**，所以不会和你的 D3D、Vulkan 或 GDI 头文件抢占�
 #include <GLFW/glfw3native.h>
 ```
 
-### 初始化与终止 {#quick_init_term}
+### 初始化与终止 <a name="quick_init_term"></a>
 
 ```c
 if (!glfwInit())
@@ -34,11 +32,11 @@ if (!glfwInit())
 glfwTerminate();
 ```
 
-@ref glfwInit 成功返回 `GLFW_TRUE`，失败返回 `GLFW_FALSE` 并设置错误。
-@ref glfwTerminate 会销毁所有剩余窗口、显示器与手柄对象。窗口在终止时不会自动
+`glfwInit` 成功返回 `GLFW_TRUE`，失败返回 `GLFW_FALSE` 并设置错误。
+`glfwTerminate` 会销毁所有剩余窗口、显示器与手柄对象。窗口在终止时不会自动
 “优雅关闭”，它只是被销毁，所以不要跳过这一步。
 
-### 设置错误回调 {#quick_capture_error}
+### 设置错误回调 <a name="quick_capture_error"></a>
 
 错误不会自动打印，必须自己接：
 
@@ -52,9 +50,9 @@ glfwSetErrorCallback(errorCallback);
 ```
 
 回调里的 `code` 是 `GLFW_*_UNAVAILABLE`、`GLFW_PLATFORM_ERROR` 这类类别，具体
-含义见 [error_handling](@ref error_handling)。回调里不要调用 GLFW，只能记录。
+含义见 [error_handling](intro.md#error_handling)。回调里不要调用 GLFW，只能记录。
 
-### 创建窗口 {#quick_create_window}
+### 创建窗口 <a name="quick_create_window"></a>
 
 ```c
 GLFWwindow* window = glfwCreateWindow(800, 480, "GLFW window", NULL, NULL);
@@ -66,11 +64,11 @@ GLFWwindow* window = glfwCreateWindow(800, 480, "GLFW window", NULL, NULL);
 - 第 5 个参数 `share` 在**这个构建里被忽略**：保留它是为了让上游代码继续编译，
   传什么都一样，建议直接写 `NULL`。
 
-窗口创建失败返回 `NULL`，此时别忘了 [glfwTerminate](@ref glfwTerminate)。创建后的窗口默认可见、
-可缩放、有装饰、接收焦点；这些都可以用 [窗口提示](@ref window_hints) 在创建前
+窗口创建失败返回 `NULL`，此时别忘了 `glfwTerminate`。创建后的窗口默认可见、
+可缩放、有装饰、接收焦点；这些都可以用 [窗口提示](window.md#window_hints) 在创建前
 改掉。
 
-### 检查关闭标志 {#quick_window_close}
+### 检查关闭标志 <a name="quick_window_close"></a>
 
 ```c
 while (!glfwWindowShouldClose(window))
@@ -86,10 +84,10 @@ while (!glfwWindowShouldClose(window))
 glfwSetWindowShouldClose(window, GLFW_TRUE);
 ```
 
-想先问一句“真的要关吗”，用 @ref glfwSetWindowCloseCallback 接住关闭请求，在里面
+想先问一句“真的要关吗”，用 `glfwSetWindowCloseCallback` 接住关闭请求，在里面
 决定是否让标志保持 `GLFW_FALSE`。
 
-### 接收键盘输入 {#quick_key_input}
+### 接收键盘输入 <a name="quick_key_input"></a>
 
 ```c
 static void keyCallback(GLFWwindow* window, int key, int scancode,
@@ -103,20 +101,20 @@ glfwSetKeyCallback(window, keyCallback);
 ```
 
 `action` 是 `GLFW_PRESS` / `GLFW_RELEASE` / `GLFW_REPEAT`。`key` 是与布局无关的
-物理键常量（见 [keys](@ref keys)），`scancode` 是平台原始扫描码；要拿到“这个键在这个
-键盘布局上印的字符”，用 [glfwGetKeyName](@ref glfwGetKeyName)。文字输入（输入法、组合键）走
-[glfwSetCharCallback](@ref glfwSetCharCallback)，不要从按键拼字符串。
+物理键常量（见 [keys](../include/GLFW/glfw3.h)），`scancode` 是平台原始扫描码；要拿到“这个键在这个
+键盘布局上印的字符”，用 `glfwGetKeyName`。文字输入（输入法、组合键）走
+`glfwSetCharCallback`，不要从按键拼字符串。
 
-### 读计时器 {#quick_timer}
+### 读计时器 <a name="quick_timer"></a>
 
 ```c
 const double now = glfwGetTime();
 ```
 
-@ref glfwGetTime 返回自 @ref glfwInit 起的秒数（双精度），可以直接拿来做帧间隔；
-精度用 @ref glfwGetTimerFrequency 判断。@ref glfwSetTime 可以把它归零。
+`glfwGetTime` 返回自 `glfwInit` 起的秒数（双精度），可以直接拿来做帧间隔；
+精度用 `glfwGetTimerFrequency` 判断。`glfwSetTime` 可以把它归零。
 
-### 处理事件 {#quick_process_events}
+### 处理事件 <a name="quick_process_events"></a>
 
 ```c
 glfwPollEvents();          // 不阻塞：把已有事件取回来分发
@@ -124,14 +122,14 @@ glfwWaitEvents();          // 阻塞：没事件就睡，省电
 glfwWaitEventsTimeout(0.1); // 最多阻塞 0.1 秒
 ```
 
-事件是按到达顺序分发的（见 [event_order](@ref event_order)）。窗口内容需要重绘时，GLFW 会调用
-[glfwSetWindowRefreshCallback](@ref glfwSetWindowRefreshCallback)；渲染循环里通常把它和 `glfwPollEvents` 结合使用。
-从别的线程唤醒阻塞中的主循环，用 [glfwPostEmptyEvent](@ref glfwPostEmptyEvent)。
+事件是按到达顺序分发的（见 [event_order](intro.md#event_order)）。窗口内容需要重绘时，GLFW 会调用
+`glfwSetWindowRefreshCallback`；渲染循环里通常把它和 `glfwPollEvents` 结合使用。
+从别的线程唤醒阻塞中的主循环，用 `glfwPostEmptyEvent`。
 
-## 完整示例 {#quick_example}
+## 完整示例 <a name="quick_example"></a>
 
 下面这段可以直接编译运行（Windows 用 `gcc demo.c -lglfw3 -lgdi32`，
-Linux 见 [build_guide](@ref build_guide)）。它创建 800×480 窗口，打印每一次按键与光标位置，
+Linux 见 [build_guide](build.md#build_guide)）。它创建 800×480 窗口，打印每一次按键与光标位置，
 每秒打印一次时间，`Escape` 或关闭窗口退出。
 
 ```c

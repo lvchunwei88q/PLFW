@@ -1,23 +1,21 @@
-# 内部结构 {#internals_guide}
-
-[TOC]
+# 内部结构 <a name="internals_guide"></a>
 
 本页给要改这个库的人看：源码树怎么分层、抽象接口在哪、加后端要动什么。
 
-## 公共接口 {#internals_public}
+## 公共接口 <a name="internals_public"></a>
 
 `include/GLFW/glfw3.h` 是唯一的公共头，`include/GLFW/glfw3native.h` 暴露原生句柄。
 所有导出符号都以 `GLFWAPI` 修饰（`__declspec(dllexport)` 或可见性属性），并在
 `src/*.c` 里定义。公共头只依赖 `<stddef.h>`、`<stdint.h>`、`<stdarg.h>` 这类 C 标准
 头与平台基础类型，不引入任何图形 API 头。
 
-## 原生接口 {#internals_native}
+## 原生接口 <a name="internals_native"></a>
 
 `glfw3native.h` 的实现散在 `src/win32_window.c`（`glfwGetWin32Window`）与
 `src/wl_window.c`（`glfwGetWaylandDisplay` / `glfwGetWaylandWindow`）里。每个访问器
 都只在对应后端编译时才存在，所以缺后端时是链接错误而不是运行期 `NULL`——这是有意的。
 
-## 内部接口 {#internals_internal}
+## 内部接口 <a name="internals_internal"></a>
 
 `src/internal.h` 定义所有内部结构：
 
@@ -30,7 +28,7 @@
 **没有** `_GLFWcontext`、`_GLFWctxconfig`，也没有 `window->context`：这是它和上游
 最大的结构差异，任何“给窗口挂上下文”的代码都不该存在。
 
-## 平台层 {#internals_platform}
+## 平台层 <a name="internals_platform"></a>
 
 `src/platform.h` 用 `_GLFW_WIN32` / `_GLFW_WAYLAND` / （Null 永远可用）定义
 `_GLFW_PLATFORM_*` 状态宏，并把对应后端的头文件 include 进来。
@@ -45,7 +43,7 @@
   `GLFW_PLATFORM_UNAVAILABLE` 而不是 `GLFW_INVALID_ENUM`——这样调用方的 `switch`
   不会编译不过；
 
-## 事件接口 {#internals_event}
+## 事件接口 <a name="internals_event"></a>
 
 后端在自己的消息循环里调用 `_glfwInput*` 系列函数（`_glfwInputKey`、`_glfwInputMouseClick`、
 `_glfwInputCursorPos`、`_glfwInputWindowSize`、`_glfwInputWindowCloseRequest` 等），
@@ -56,7 +54,7 @@
 `glfwWaitEvents` 在 Linux 上靠 `posix_poll.c` 的 `poll()`，Windows 上靠
 `MsgWaitForMultipleObjects`；`glfwPostEmptyEvent` 通过一对内部事件 / pipe 唤醒。
 
-## 静态分析工具 {#internals_static}
+## 静态分析工具 <a name="internals_static"></a>
 
 - `src/mappings.h` 由 `src/mappings.h.in` + `CMake/GenerateMappings.cmake` 生成，
   内置 SDL_GameControllerDB 映射。更新用 `cmake --build build --target update_mappings`。
@@ -64,7 +62,7 @@
   构建里，防止误把后端加回来。
 - 编译时 `-Wall` / `/W3` 默认打开；本仓库要求零警告。
 
-## 配置宏 {#internals_config}
+## 配置宏 <a name="internals_config"></a>
 
 宏 | 作用
 --- | ----

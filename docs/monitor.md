@@ -1,16 +1,14 @@
-# 显示器指南 {#monitor_guide}
-
-[TOC]
+# 显示器指南 <a name="monitor_guide"></a>
 
 显示器对象由 GLFW 管理，应用不能创建或销毁它们。它们只用于查询视频模式、摆放
 全屏窗口、读取工作区与 gamma。
 
-## 显示器对象 {#monitor_object}
+## 显示器对象 <a name="monitor_object"></a>
 
 `GLFWmonitor*` 是不透明句柄。显示器热插拔时，GLFW 会销毁失效的句柄、为新显示器
 创建新句柄，所以**不要在回调之外长期缓存显示器指针**。
 
-### 取回显示器 {#monitor_monitors}
+### 取回显示器 <a name="monitor_monitors"></a>
 
 ```c
 int count;
@@ -19,11 +17,11 @@ GLFWmonitor* primary = glfwGetPrimaryMonitor();
 ```
 
 返回的数组由库持有，在下次调用前有效。主显示器由系统决定，可能不是你期望的那块。
-每个显示器都有名字（[glfwGetMonitorName](@ref glfwGetMonitorName)），可以据此选择。
+每个显示器都有名字（`glfwGetMonitorName`），可以据此选择。
 
 Wayland 下“主显示器”与显示器位置不可靠：协议不暴露全局坐标，位置恒为 `0,0`。
 
-### 显示器配置变化 {#monitor_event}
+### 显示器配置变化 <a name="monitor_event"></a>
 
 ```c
 void monitorCallback(GLFWmonitor* monitor, int event);
@@ -34,9 +32,9 @@ glfwSetMonitorCallback(monitorCallback);
 `event` 是 `GLFW_CONNECTED` 或 `GLFW_DISCONNECTED`。回调发生时管理器状态可能还在
 更新，回调里只能记录，不要枚举显示器。
 
-## 显示器属性 {#monitor_properties}
+## 显示器属性 <a name="monitor_properties"></a>
 
-### 视频模式 {#monitor_modes}
+### 视频模式 <a name="monitor_modes"></a>
 
 ```c
 int count;
@@ -51,7 +49,7 @@ const GLFWvidmode* current = glfwGetVideoMode(monitor);
 本构建没有帧缓冲位深提示，`*Bits` 只是平台报告的名义值，不能拿来要求特定格式；
 Wayland 下这些字段通常固定为 8/8/8。
 
-### 物理尺寸 {#monitor_size}
+### 物理尺寸 <a name="monitor_size"></a>
 
 ```c
 int widthMM, heightMM;
@@ -60,7 +58,7 @@ glfwGetMonitorPhysicalSize(monitor, &widthMM, &heightMM);
 
 单位毫米。很多后端拿不到真实尺寸，此时返回 0，不要用它在 0 值上做除法。
 
-### 内容缩放 {#monitor_scale}
+### 内容缩放 <a name="monitor_scale"></a>
 
 ```c
 float xscale, yscale;
@@ -71,7 +69,7 @@ glfwGetMonitorContentScale(monitor, &xscale, &yscale);
 尺寸（真实像素）之间的换算。缩放可在运行期改变，变化会触发显示器回调与窗口的
 内容缩放回调。
 
-### 虚拟位置 {#monitor_pos}
+### 虚拟位置 <a name="monitor_pos"></a>
 
 ```c
 int xpos, ypos;
@@ -81,7 +79,7 @@ glfwGetMonitorPos(monitor, &xpos, &ypos);
 显示器左上角在虚拟桌面中的位置，以主显示器左上角为原点（主显示器
 `x = y = 0`）。Wayland 恒为 `0,0`。
 
-### 工作区 {#monitor_workarea}
+### 工作区 <a name="monitor_workarea"></a>
 
 ```c
 int xpos, ypos, width, height;
@@ -90,7 +88,7 @@ glfwGetMonitorWorkarea(monitor, &xpos, &ypos, &width, &height);
 
 去掉任务栏 / 顶栏 / Dock 之后可用的矩形，适合算“无边框全屏窗口”的位置。
 
-### 可读名字 {#monitor_name}
+### 可读名字 <a name="monitor_name"></a>
 
 ```c
 const char* name = glfwGetMonitorName(monitor);
@@ -98,7 +96,7 @@ const char* name = glfwGetMonitorName(monitor);
 
 例如 Windows 上的 `Generic PnP Monitor`、Weston 的 `weston headless`。指针由库持有。
 
-### 用户指针 {#monitor_userptr}
+### 用户指针 <a name="monitor_userptr"></a>
 
 ```c
 glfwSetMonitorUserPointer(monitor, pointer);
@@ -107,7 +105,7 @@ void* pointer = glfwGetMonitorUserPointer(monitor);
 
 存自己的结构，便于在监视器回调里定位。
 
-### Gamma {#monitor_gamma}
+### Gamma <a name="monitor_gamma"></a>
 
 ```c
 glfwSetGamma(monitor, 1.0f);                 // 线性
@@ -125,6 +123,6 @@ glfwSetGammaRamp(monitor, ramp);
 
 ## 全屏窗口与显示器
 
-@ref glfwCreateWindow 的第 4 个参数传显示器就得到全屏窗口，见
-[window_monitor](@ref window_monitor)；切换窗口模式用 [glfwSetWindowMonitor](@ref glfwSetWindowMonitor)。全屏窗口的尺寸
+`glfwCreateWindow` 的第 4 个参数传显示器就得到全屏窗口，见
+[window_monitor](window.md#window_monitor)；切换窗口模式用 `glfwSetWindowMonitor`。全屏窗口的尺寸
 会成为“期望视频模式”，后端会选最接近的支持模式。

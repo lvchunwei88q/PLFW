@@ -1,11 +1,9 @@
-# 兼容性 {#compat_guide}
-
-[TOC]
+# 兼容性 <a name="compat_guide"></a>
 
 本页列出这个构建依赖哪些平台能力，以及缺了它们会发生什么。因为图形上下文层已经
 删除，过去关于 OpenGL / EGL / Vulkan 的兼容矩阵不再适用。
 
-## Windows（Win32 后端） {#compat_win32}
+## Windows（Win32 后端） <a name="compat_win32"></a>
 
 依赖 | 说明 | 缺失后果
 ---- | ---- | ----
@@ -22,7 +20,7 @@ Raw Input | `GLFW_RAW_MOUSE_MOTION` | 模式下退化为普通鼠标
 Windows 上只有 Win32 后端，没有别的选择；`GLFW_BUILD_WIN32=OFF` 会得到一个只剩 Null
 的库。
 
-## Wayland {#compat_wayland}
+## Wayland <a name="compat_wayland"></a>
 
 ### 必需协议
 

@@ -1,11 +1,9 @@
-# 编译指南 {#compile_guide}
-
-[TOC]
+# 编译指南 <a name="compile_guide"></a>
 
 本仓库用 CMake 构建，源码树里带 `CMakeLists.txt`、`deps/wayland/` 的协议 XML 与
 `docs/`。用 CMake 是最省事的方式，手动编译也在最后一节给出。
 
-## 用 CMake 构建 {#compile_cmake}
+## 用 CMake 构建 <a name="compile_cmake"></a>
 
 ```sh
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
@@ -29,7 +27,7 @@ ctest --test-dir build
 `tests/smoke.c` 是不依赖图形上下文的冒烟测试：初始化、建窗、查询属性、收事件、退出，
 并在 Wayland 上跳过需要的合成器能力。
 
-## 依赖 {#compile_deps}
+## 依赖 <a name="compile_deps"></a>
 
 ### Windows
 
@@ -54,15 +52,13 @@ Ubuntu / Debian 一行装齐：
 sudo apt install build-essential cmake ninja-build                  libwayland-dev libxkbcommon-dev wayland-protocols libdecor-0-dev
 ```
 
-Nine header 由 `wayland-scanner` 生成，见 [compile_generate](@ref compile_generate)。
+协议头文件由 `wayland-scanner` 生成，见下文生成 Wayland 协议代码。
 
 ### 可选工具
 
-- Doxygen ≥ 1.9.8：只在 `GLFW_BUILD_DOCS=ON` 时需要。默认是 `ON`，纯用户构建时
-  建议关掉。
 - Weston 或其它 Wayland 合成器：运行验证需要；CI 里可以用 `weston --headless`。
 
-## 生成 Wayland 协议代码 {#compile_generate}
+## 生成 Wayland 协议代码 <a name="compile_generate"></a>
 
 `src/CMakeLists.txt` 对 `deps/wayland/` 下这 9 个 XML 逐个调用
 
@@ -86,12 +82,12 @@ wayland-scanner private-code  <file>.xml <file>-client-protocol-code.h
 生成物落在构建目录，不污染源码树。**打包源码时必须带上这 9 个 XML**，否则配置
 阶段就会报缺文件。
 
-## 编译 {#compile_compile}
+## 编译 <a name="compile_compile"></a>
 
 最小构建（只要库）：
 
 ```sh
-cmake -S . -B build -DGLFW_BUILD_DOCS=OFF -DGLFW_BUILD_TESTS=OFF       -DGLFW_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release
+cmake -S . -B build -DGLFW_BUILD_TESTS=OFF -DGLFW_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j
 ```
 
@@ -104,16 +100,15 @@ cmake -S . -B build -DGLFW_BUILD_WAYLAND=ON -DCMAKE_BUILD_TYPE=Release
 构建过程中你应当看到且只看到 `-- Including Wayland support`（Windows 上是
 `-- Including Win32 support`），不会再有 X11 相关提示。
 
-## 构建选项 {#compile_options}
+## 构建选项 <a name="compile_options"></a>
 
 选项 | 默认值 | 说明
 ---- | ------ | ----
-`BUILD_SHARED_LIBS` | `OFF` | 建动态库；见 @ref compile_options_shared
+`BUILD_SHARED_LIBS` | `OFF` | 建动态库；见 [动态库](#compile_options_shared)
 `GLFW_BUILD_WIN32` | Windows 上 `ON` | 编译 Win32 后端
 `GLFW_BUILD_WAYLAND` | 非 Apple 的 Unix 上 `ON` | 编译 Wayland 后端
 `GLFW_BUILD_EXAMPLES` | 源码树为顶层时 `ON` | 构建 `examples/` 里的两个示例
 `GLFW_BUILD_TESTS` | 源码树为顶层时 `ON` | 构建 `tests/smoke.c`
-`GLFW_BUILD_DOCS` | `ON` | 用 Doxygen 生成 HTML 文档
 `GLFW_INSTALL` | `ON` | 生成 `install` 目标与 CMake 包配置
 `GLFW_USE_HYBRID_HPG` | `OFF` | 只在 Win32 下有意义：强制高性能 GPU；本构建无上下文，
 | | | 该选项保留但基本无效果
@@ -122,7 +117,7 @@ cmake -S . -B build -DGLFW_BUILD_WAYLAND=ON -DCMAKE_BUILD_TYPE=Release
 `GLFW_BUILD_X11`、`GLFW_BUILD_COCOA` **已删除**，传了也不会被识别（CMake 会提示
 “未被工程使用”）。
 
-### 动态库 {#compile_options_shared}
+### 动态库 <a name="compile_options_shared"></a>
 
 ```sh
 cmake -S . -B build-shared -DBUILD_SHARED_LIBS=ON
@@ -132,14 +127,14 @@ cmake -S . -B build-shared -DBUILD_SHARED_LIBS=ON
 DLL 会自动生成 `.rc` 版本资源。用 DLL 的应用必须定义 `GLFW_DLL`，CMake 的 `glfw`
 目标会以 `INTERFACE` 方式自动加上它。
 
-### Windows 专用选项 {#compile_options_win32}
+### Windows 专用选项 <a name="compile_options_win32"></a>
 
 - `USE_MSVC_RUNTIME_LIBRARY_DLL=OFF`：静态 CRT，通常只在你确定整条依赖链都静态
   链接时用。
 - 用 MinGW 建 DLL 时 CMake 会去掉 `lib` 前缀、把导入库改名为 `.dll.a`，还会自动
   探测并启用 `--nxcompat`、`--dynamicbase`、`--high-entropy-va` 三项加固。
 
-### Unix 专用选项 {#compile_options_unix}
+### Unix 专用选项 <a name="compile_options_unix"></a>
 
 - `GLFW_BUILD_WAYLAND=OFF`：得到一个只有 Null 后端的库，用于纯后台或无显示
   的 CI 环境。
@@ -147,7 +142,7 @@ DLL 会自动生成 `.rc` 版本资源。用 DLL 的应用必须定义 `GLFW_DLL
   也只是被 CMake 标注为“未被工程使用”，不会报错。
 - `WAYLAND_SCANNER_EXECUTABLE`：手动指定 `wayland-scanner` 路径。
 
-### MinGW 交叉编译 {#compile_mingw_cross}
+### MinGW 交叉编译 <a name="compile_mingw_cross"></a>
 
 从 Linux 上给 Windows 编（需要 `mingw-w64`）：
 
@@ -161,7 +156,7 @@ cmake --build build-win -j
 产物 `libglfw3.a` 可以直接给 Windows 上的 MinGW 或 MSVC（用 `.a` 需转换，推荐在
 Windows 上重新构建）。
 
-## 手动编译 {#compile_manual}
+## 手动编译 <a name="compile_manual"></a>
 
 不想用 CMake 时，自己指定源文件与宏。**公共核心**（两个后端都要）：
 

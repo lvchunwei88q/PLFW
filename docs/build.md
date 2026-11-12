@@ -1,10 +1,8 @@
-# 链接指南 {#build_guide}
-
-[TOC]
+# 链接指南 <a name="build_guide"></a>
 
 本页讲怎么在自己的程序里用上这个库：包含什么头、宏是什么、链接要加哪些库。
 
-## 包含头文件 {#build_include}
+## 包含头文件 <a name="build_include"></a>
 
 ```c
 #include <GLFW/glfw3.h>
@@ -28,7 +26,7 @@ Vulkan、GDI 头自由共存，包含顺序无关。
 `glfwGetWin32Monitor`（显示器设备名）、`glfwGetWin32Window`（`HWND`）；Wayland 侧 `glfwGetWaylandDisplay`、
 `glfwGetWaylandMonitor`（`wl_output*`）、`glfwGetWaylandWindow`（`wl_surface*`）。对应后端没编译时这些符号不存在。
 
-## 编译宏 {#build_macros}
+## 编译宏 <a name="build_macros"></a>
 
 宏 | 用途
 --- | ----
@@ -39,7 +37,7 @@ Vulkan、GDI 头自由共存，包含顺序无关。
 库本身用 `_GLFW_WIN32` / `_GLFW_WAYLAND` 选择后端，这两个宏由构建系统定义，不要
 在应用里手动定义。
 
-## 链接 {#build_link}
+## 链接 <a name="build_link"></a>
 
 静态库（本构建默认）在 Windows 上需要额外链 `gdi32`：
 
@@ -47,9 +45,9 @@ Vulkan、GDI 头自由共存，包含顺序无关。
 - Linux：`libglfw3.a`，另需 `wayland-client`、`wayland-cursor`、`xkbcommon`、
   `dl`、`rt`、`m`
 
-Linux 上这些依赖大多数情况由 pkg-config 帮你补齐，见 [build_link_pkgconfig](@ref build_link_pkgconfig)。
+Linux 上这些依赖大多数情况由 pkg-config 帮你补齐，见 [build_link_pkgconfig](#build_link_pkgconfig)。
 
-### Windows（Visual Studio） {#build_link_win32}
+### Windows（Visual Studio） <a name="build_link_win32"></a>
 
 把 `glfw3.lib` 加进“附加依赖项”，再补系统库：
 
@@ -62,7 +60,7 @@ gdi32.lib
 等于 `ON`（默认）就是动态 CRT。DLL 版还要链接 `glfw3dll.lib` 并在代码里定义
 `GLFW_DLL`。
 
-### Windows（MinGW） {#build_link_mingw}
+### Windows（MinGW） <a name="build_link_mingw"></a>
 
 ```sh
 gcc my_program.c -o my_program.exe -I/path/to/include -L/path/to/lib -lglfw3 -lgdi32
@@ -71,10 +69,9 @@ gcc my_program.c -o my_program.exe -I/path/to/include -L/path/to/lib -lglfw3 -lg
 顺序不能反：`-lglfw3` 在前，`-lgdi32` 在后。C++ 程序用 `g++`，并在
 `extern "C"` 之外调用即可（头文件已处理）。
 
-### 用 CMake 的源码构建 {#build_link_cmake_source}
+### 用 CMake 的源码构建 <a name="build_link_cmake_source"></a>
 
 ```cmake
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(path/to/glfw)
@@ -83,9 +80,10 @@ target_link_libraries(my_app PRIVATE glfw)
 ```
 
 `add_subdirectory` 会把 `glfw` 目标加到同一构建里，包含目录与依赖库自动传播。
-`GLFW_BUILD_DOCS` 默认是 `ON`，只是想用库的话关掉它，省一次 Doxygen 运行。
+`GLFW_BUILD_TESTS` / `GLFW_BUILD_EXAMPLES` 只在顶层构建时默认 `ON`，作为子目录
+引入时本来就关着；想更彻底可以把它们显式设为 `OFF`。
 
-### 用 CMake 的已安装包 {#build_link_cmake_package}
+### 用 CMake 的已安装包 <a name="build_link_cmake_package"></a>
 
 ```cmake
 find_package(glfw3 3.5 REQUIRED)
@@ -95,7 +93,7 @@ target_link_libraries(my_app PRIVATE glfw)
 需要先 `cmake --install` 到某个前缀，并让 CMake 找到它：`-DCMAKE_PREFIX_PATH=/path/to/prefix`。
 包配置导出了 `glfw` 目标及其依赖。
 
-### 用 pkg-config {#build_link_pkgconfig}
+### 用 pkg-config <a name="build_link_pkgconfig"></a>
 
 ```sh
 cc my_program.c -o my_program $(pkg-config --cflags --libs glfw3)
