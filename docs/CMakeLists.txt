@@ -7,9 +7,7 @@ set(MINIMUM_DOXYGEN_VERSION 1.9.8)
 #       (i.e. Pages) list in the generated documentation
 set(source_files
     main.md
-    news.md
     quick.md
-    moving.md
     compile.md
     build.md
     intro.md

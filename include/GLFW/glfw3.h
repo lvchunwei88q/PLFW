@@ -46,18 +46,6 @@ extern "C" {
  *
  *  For more information about how to use this file, see @ref build_include.
  */
-/*! @defgroup context Context reference
- *  @brief Functions and types related to OpenGL and OpenGL ES contexts.
- *
- *  This is the reference documentation for OpenGL and OpenGL ES context related
- *  functions.  For more task-oriented information, see the @ref context_guide.
- */
-/*! @defgroup vulkan Vulkan support reference
- *  @brief Functions and types related to Vulkan.
- *
- *  This is the reference documentation for Vulkan related functions and types.
- *  For more task-oriented information, see the @ref vulkan_guide.
- */
 /*! @defgroup init Initialization, version and error reference
  *  @brief Functions and types related to initialization and error handling.
  *
@@ -448,7 +436,7 @@ extern "C" {
 /*! @defgroup joysticks Joysticks
  *  @brief Joystick IDs.
  *
- *  See [joystick input](@ref joystick) for how these are used.
+ *  See [joystick input](@ref joysticks) for how these are used.
  *
  *  @ingroup input
  *  @{ */
@@ -553,7 +541,7 @@ extern "C" {
 /*! @brief One of the arguments to the function was an invalid enum value.
  *
  *  One of the arguments to the function was an invalid enum value, for example
- *  requesting @ref GLFW_RED_BITS with @ref glfwGetWindowAttrib.
+ *  asking @ref glfwGetWindowAttrib for an attribute this build does not have.
  *
  *  @analysis Application programmer error.  Fix the offending call.
  */
@@ -561,10 +549,7 @@ extern "C" {
 /*! @brief One of the arguments to the function was an invalid value.
  *
  *  One of the arguments to the function was an invalid value, for example
- *  requesting a non-existent OpenGL or OpenGL ES version like 2.7.
- *
- *  Requesting a valid but unavailable OpenGL or OpenGL ES version will instead
- *  result in a @ref GLFW_VERSION_UNAVAILABLE error.
+ *  requesting a window size of zero.
  *
  *  @analysis Application programmer error.  Fix the offending call.
  */
@@ -579,35 +564,20 @@ extern "C" {
 #define GLFW_OUT_OF_MEMORY          0x00010005
 /*! @brief GLFW could not find support for the requested API on the system.
  *
- *  GLFW could not find support for the requested API on the system.
+ *  Retained for source and ABI compatibility with upstream GLFW, where it was
+ *  reported when a requested client API was unsupported.  This build creates no
+ *  client API, so no function reports this code.
  *
- *  @analysis The installed graphics driver does not support the requested
- *  API, or does not support it via the chosen context creation API.
- *  Below are a few examples.
- *
- *  @par
- *  Some pre-installed Windows graphics drivers do not support OpenGL.  AMD only
- *  supports OpenGL ES via EGL, while Nvidia and Intel only support it via
- *  a WGL or GLX extension.  macOS does not provide OpenGL ES at all.  The Mesa
- *  EGL, OpenGL and OpenGL ES libraries do not interface with the Nvidia binary
- *  driver.  Older graphics drivers do not support Vulkan.
+ *  @analysis No action required; the category is unused by this build.
  */
 #define GLFW_API_UNAVAILABLE        0x00010006
 /*! @brief The requested OpenGL or OpenGL ES version is not available.
  *
- *  The requested OpenGL or OpenGL ES version (including any requested context
- *  or framebuffer hints) is not available on this machine.
+ *  Retained for source and ABI compatibility with upstream GLFW, where it was
+ *  reported when a requested context version could not be provided.  This build
+ *  creates no context, so no function reports this code.
  *
- *  @analysis The machine does not support your requirements.  If your
- *  application is sufficiently flexible, downgrade your requirements and try
- *  again.  Otherwise, inform the user that their machine does not match your
- *  requirements.
- *
- *  @par
- *  Future invalid OpenGL and OpenGL ES versions, for example OpenGL 4.8 if 5.0
- *  comes out before the 4.x series gets that far, also fail with this error and
- *  not @ref GLFW_INVALID_VALUE, because GLFW cannot know what future versions
- *  will exist.
+ *  @analysis No action required; the category is unused by this build.
  */
 #define GLFW_VERSION_UNAVAILABLE    0x00010007
 /*! @brief A platform-specific error occurred that does not match any of the
@@ -2444,9 +2414,6 @@ GLFWAPI const GLFWvidmode* glfwGetVideoMode(GLFWmonitor* monitor);
  *  This means that setting a perfectly linear ramp, or gamma 1.0, will produce
  *  the default (usually sRGB-like) behavior.
  *
- *  For gamma correct rendering with OpenGL or OpenGL ES, see the @ref
- *  GLFW_SRGB_CAPABLE hint.
- *
  *  @param[in] monitor The monitor whose gamma ramp to set.
  *  @param[in] gamma The desired exponent.
  *
@@ -2506,9 +2473,6 @@ GLFWAPI const GLFWgammaramp* glfwGetGammaRamp(GLFWmonitor* monitor);
  *  gamma correction, which today is usually an approximation of sRGB gamma.
  *  This means that setting a perfectly linear ramp, or gamma 1.0, will produce
  *  the default (usually sRGB-like) behavior.
- *
- *  For gamma correct rendering with OpenGL or OpenGL ES, see the @ref
- *  GLFW_SRGB_CAPABLE hint.
  *
  *  @param[in] monitor The monitor whose gamma ramp to set.
  *  @param[in] ramp The gamma ramp to use.
@@ -2629,23 +2593,24 @@ GLFWAPI void glfwWindowHint(int hint, int value);
  */
 GLFWAPI void glfwWindowHintString(int hint, const char* value);
 
-/*! @brief Creates a window and its associated context.
+/*! @brief Creates a window.
  *
- *  This function creates a window and its associated OpenGL or OpenGL ES
- *  context.  Most of the options controlling how the window and its context
- *  should be created are specified with [window hints](@ref window_hints).
+ *  This function creates a window and nothing else: this build of GLFW carries
+ *  no OpenGL, OpenGL ES, EGL or Vulkan support, so no context or surface is
+ *  created alongside it.  Paint into the window with whatever API you prefer
+ *  (D3D11/12, Vulkan, GDI, a child control, ...).  Most of the options
+ *  controlling how the window is created are specified with
+ *  [window hints](@ref window_hints).
  *
- *  Successful creation does not change which context is current.  Before you
- *  can use the newly created context, you need to
- *  [make it current](@ref context_current).  For information about the `share`
- *  parameter, see @ref context_sharing.
+ *  The `share` parameter is accepted for source compatibility with upstream
+ *  GLFW and is ignored.
  *
- *  The created window, framebuffer and context may differ from what you
- *  requested, as not all parameters and hints are
+ *  The created window and framebuffer may differ from what you requested, as
+ *  not all parameters and hints are
  *  [hard constraints](@ref window_hints_hard).  This includes the size of the
  *  window, especially for full screen windows.  To query the actual attributes
- *  of the created window, framebuffer and context, see @ref
- *  glfwGetWindowAttrib, @ref glfwGetWindowSize and @ref glfwGetFramebufferSize.
+ *  of the created window and framebuffer, see @ref glfwGetWindowAttrib, @ref
+ *  glfwGetWindowSize and @ref glfwGetFramebufferSize.
  *
  *  To create a full screen window, you need to specify the monitor the window
  *  will cover.  If no monitor is specified, the window will be windowed mode.
@@ -4989,7 +4954,7 @@ GLFWAPI GLFWdropfun glfwSetDropCallback(GLFWwindow* window, GLFWdropfun callback
  *
  *  @thread_safety This function must only be called from the main thread.
  *
- *  @sa @ref joystick
+ *  @sa @ref joysticks
  *
  *  @since Added in version 3.0.  Replaces `glfwGetJoystickParam`.
  *

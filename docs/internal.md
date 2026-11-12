@@ -1,120 +1,80 @@
-# Internal structure {#internals_guide}
+# 内部结构 {#internals_guide}
 
 [TOC]
 
-There are several interfaces inside GLFW.  Each interface has its own area of
-responsibility and its own naming conventions.
+本页给要改这个库的人看：源码树怎么分层、抽象接口在哪、加后端要动什么。
 
+## 公共接口 {#internals_public}
 
-## Public interface {#internals_public}
+`include/GLFW/glfw3.h` 是唯一的公共头，`include/GLFW/glfw3native.h` 暴露原生句柄。
+所有导出符号都以 `GLFWAPI` 修饰（`__declspec(dllexport)` 或可见性属性），并在
+`src/*.c` 里定义。公共头只依赖 `<stddef.h>`、`<stdint.h>`、`<stdarg.h>` 这类 C 标准
+头与平台基础类型，不引入任何图形 API 头。
 
-The most well-known is the public interface, described in the glfw3.h header
-file.  This is implemented in source files shared by all platforms and these
-files contain no platform-specific code.  This code usually ends up calling the
-platform and internal interfaces to do the actual work.
+## 原生接口 {#internals_native}
 
-The public interface uses the OpenGL naming conventions except with GLFW and
-glfw instead of GL and gl.  For struct members, where OpenGL sets no precedent,
-it use headless camel case.
+`glfw3native.h` 的实现散在 `src/win32_window.c`（`glfwGetWin32Window`）与
+`src/wl_window.c`（`glfwGetWaylandDisplay` / `glfwGetWaylandWindow`）里。每个访问器
+都只在对应后端编译时才存在，所以缺后端时是链接错误而不是运行期 `NULL`——这是有意的。
 
-Examples: `glfwCreateWindow`, `GLFWwindow`, `GLFW_RED_BITS`
+## 内部接口 {#internals_internal}
 
+`src/internal.h` 定义所有内部结构：
 
-## Native interface {#internals_native}
+- `_GLFWwindow`：原生句柄、输入状态、回调表、尺寸与缩放缓存、用户指针；
+- `_GLFWmonitor`、`_GLFWvidmode`、`_GLFWcursor`；
+- `_GLFWjoystick`：轴 / 按键 / 帽的缓冲区与映射；
+- `_GLFWlibrary`：全局单例，含平台表、错误状态、计时器、手柄数组；
+- `_GLFWallocator` 与 `_GLFW_REQUIRE_INIT` 之类的辅助宏。
 
-The [native interface](@ref native) is a small set of publicly available
-but platform-specific functions, described in the glfw3native.h header file and
-used to gain access to the underlying window, context and (on some platforms)
-display handles used by the platform interface.
+**没有** `_GLFWcontext`、`_GLFWctxconfig`，也没有 `window->context`：这是它和上游
+最大的结构差异，任何“给窗口挂上下文”的代码都不该存在。
 
-The function names of the native interface are similar to those of the public
-interface, but embeds the name of the interface that the returned handle is
-from.
+## 平台层 {#internals_platform}
 
-Examples: `glfwGetX11Window`, `glfwGetWGLContext`
+`src/platform.h` 用 `_GLFW_WIN32` / `_GLFW_WAYLAND` / （Null 永远可用）定义
+`_GLFW_PLATFORM_*` 状态宏，并把对应后端的头文件 include 进来。
 
+`src/platform.c` 里有一张平台表（`_GLFWplatform` 结构数组），每项提供
+`init` / `terminate` / `createWindow` / `destroyWindow` / `pollEvents` 等函数指针，
+`glfwInit` 按 `GLFW_PLATFORM` 提示与 `glfwPlatformSupported` 的结果选一个。
 
-## Internal interface {#internals_internal}
+- 平台表只剩 Win32、Wayland、Null 三项；
+- `GLFW_PLATFORM_X11`、`GLFW_PLATFORM_COCOA` 的标识符保留，但
+  `glfwPlatformSupported` 对它们返回 `GLFW_FALSE`，显式请求得到
+  `GLFW_PLATFORM_UNAVAILABLE` 而不是 `GLFW_INVALID_ENUM`——这样调用方的 `switch`
+  不会编译不过；
+- 版本串由 `platform.c` 拼接，形如 `3.5.1 Win32 Null window/input only ...`。
 
-The internal interface consists of utility functions used by all other
-interfaces.  It is shared code implemented in the same shared source files as
-the public and event interfaces.  The internal interface is described in the
-internal.h header file.
+## 事件接口 {#internals_event}
 
-The internal interface is in charge of GLFW's global data, which it stores in
-a `_GLFWlibrary` struct named `_glfw`.
+后端在自己的消息循环里调用 `_glfwInput*` 系列函数（`_glfwInputKey`、`_glfwInputMouseClick`、
+`_glfwInputCursorPos`、`_glfwInputWindowSize`、`_glfwInputWindowCloseRequest` 等），
+由 `src/input.c` 与 `src/window.c` 统一维护状态并派发回调。加一个新后端只需实现
+平台表里的函数，事件上报一律走这些 `_glfwInput*`，不要直接调用户回调。
 
-The internal interface uses the same style as the public interface, except all
-global names have a leading underscore.
+`glfwPollEvents` → 平台表 `pollEvents` → 后端读原生事件 → `_glfwInput*`。阻塞版本
+`glfwWaitEvents` 在 Linux 上靠 `posix_poll.c` 的 `poll()`，Windows 上靠
+`MsgWaitForMultipleObjects`；`glfwPostEmptyEvent` 通过一对内部事件 / pipe 唤醒。
 
-Examples: `_glfwIsValidContextConfig`, `_GLFWwindow`, `_glfw.monitorCount`
+## 静态分析工具 {#internals_static}
 
+- `src/mappings.h` 由 `src/mappings.h.in` + `CMake/GenerateMappings.cmake` 生成，
+  内置 SDL_GameControllerDB 映射。更新用 `cmake --build build --target update_mappings`。
+- `tests/smoke.c` 是唯一的自动化测试，随 `ctest` 跑；它断言 X11 / Cocoa 后端不在
+  构建里，防止误把后端加回来。
+- 编译时 `-Wall` / `/W3` 默认打开；本仓库要求零警告。
 
-## Platform interface {#internals_platform}
+## 配置宏 {#internals_config}
 
-The platform interface implements all platform-specific operations as a service
-to the public interface.  This includes event processing.  The platform
-interface is never directly called by application code and never directly calls
-application-provided callbacks.  It is also prohibited from modifying the
-platform-independent part of the internal structs.  Instead, it calls the event
-interface when events interesting to GLFW are received.
+宏 | 作用
+--- | ----
+`_GLFW_WIN32` | 编译 Win32 后端
+`_GLFW_WAYLAND` | 编译 Wayland 后端
+`_GLFW_BUILD_DLL` | 目标定义为 DLL（由 CMake 设置）
+`HAVE_MEMFD_CREATE` | Linux 上用 `memfd_create` 分配匿名缓冲（自动探测）
+`_GLFW_USE_HYBRID_HPG` | Win32 强制高性能 GPU（`GLFW_USE_HYBRID_HPG`）
+`_CRT_SECURE_NO_WARNINGS` | MSVC 下屏蔽 CRT 弃用警告
+`_DEFAULT_SOURCE` | Linux 上用 glibc 的 POSIX 扩展（`poll` 等）
 
-The platform interface mostly mirrors those parts of the public interface that needs to
-perform platform-specific operations on some or all platforms.
-
-The window system bits of the platform API is called through the `_GLFWplatform` struct of
-function pointers, to allow runtime selection of platform.  This includes the window and
-context creation, input and event processing, monitor and Vulkan surface creation parts of
-GLFW.  This is located in the global `_glfw` struct.
-
-Examples: `_glfw.platform.createWindow`
-
-The timer, threading and module loading bits of the platform API are plain functions with
-a `_glfwPlatform` prefix, as these things are independent of what window system is being
-used.
-
-Examples: `_glfwPlatformGetTimerValue`
-
-The platform interface also defines structs that contain platform-specific
-global and per-object state.  Their names mirror those of the internal
-interface, except that an interface-specific suffix is added.
-
-Examples: `_GLFWwindowX11`, `_GLFWcontextWGL`
-
-These structs are incorporated as members into the internal interface structs
-using special macros that name them after the specific interface used.  This
-prevents shared code from accidentally using these members.
-
-Examples: `window->win32.handle`, `_glfw.x11.display`
-
-
-## Event interface {#internals_event}
-
-The event interface is implemented in the same shared source files as the public
-interface and is responsible for delivering the events it receives to the
-application, either via callbacks, via window state changes or both.
-
-The function names of the event interface use a `_glfwInput` prefix and the
-ObjectEvent pattern.
-
-Examples: `_glfwInputWindowFocus`, `_glfwInputCursorPos`
-
-
-## Static functions {#internals_static}
-
-Static functions may be used by any interface and have no prefixes or suffixes.
-These use headless camel case.
-
-Examples: `isValidElementForJoystick`
-
-
-## Configuration macros {#internals_config}
-
-GLFW uses a number of configuration macros to select at compile time which
-interfaces and code paths to use.  They are defined in the GLFW CMake target.
-
-Configuration macros the same style as tokens in the public interface, except
-with a leading underscore.
-
-Examples: `_GLFW_WIN32`, `_GLFW_BUILD_DLL`
-
+Null 后端没有自己的宏：它总是被编译进去，只在显式请求 `GLFW_PLATFORM_NULL` 时启用。

@@ -89,6 +89,9 @@ if (GLFW_BUILD_EXAMPLES)
 endif()
 
 if (GLFW_BUILD_TESTS)
+    # Registered at the top level so that "ctest --test-dir build" finds the
+    # smoke test instead of requiring the build/tests subdirectory
+    enable_testing()
     add_subdirectory(tests)
 endif()
 

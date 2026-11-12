@@ -1,38 +1,29 @@
-# Introduction {#mainpage}
+# 简介 {#mainpage}
 
-GLFW is a free, Open Source, multi-platform library for OpenGL, OpenGL ES and
-Vulkan application development.  It provides a simple, platform-independent API
-for creating windows, contexts and surfaces, reading input, handling events, etc.
+GLFW 是一个自由、开源、跨平台的**窗口、输入与事件**库。本仓库是 GLFW 3.5.1 的
+改造分支：图形初始化部分（OpenGL、OpenGL ES、EGL、WGL、GLX、NSGL、OSMesa、
+Vulkan）已全部移除，库只负责创建窗口、接收输入、分发事件。
 
-@ref news list new features, caveats and deprecations.
+后端只保留 Windows 的 **Win32** 与 Linux 的 **Wayland**，外加 **Null**
+（headless，用于无窗口系统的自动化测试）。X11 与 Cocoa 后端已经整体删除：
+`GLFW_PLATFORM_X11` / `GLFW_PLATFORM_COCOA` 仍作为标识符存在，但
+@ref glfwPlatformSupported 对它们一律返回 `GLFW_FALSE`。
 
-@ref quick_guide is a guide for users new to GLFW.  It takes you through how to
-write a small but complete program.
+@ref quick_guide 带新手从零写一个能跑的程序。
 
-There are guides for each section of the API:
+各部分的指南：
 
- - @ref intro_guide – initialization, error handling and high-level design
- - @ref window_guide – creating and working with windows and framebuffers
- - @ref context_guide – working with OpenGL and OpenGL ES contexts
- - @ref vulkan_guide - working with Vulkan objects and extensions
- - @ref monitor_guide – enumerating and working with monitors and video modes
- - @ref input_guide – receiving events, polling and processing input
+ - @ref intro_guide – 初始化、错误处理与整体设计
+ - @ref window_guide – 窗口创建、窗口属性与窗口事件
+ - @ref monitor_guide – 显示器的枚举、视频模式与 gamma
+ - @ref input_guide – 键盘、鼠标、手柄、时间、剪贴板与拖放
+ - @ref compat_guide – 本库依赖的平台能力与协议
 
-Once you have written a program, see @ref compile_guide and @ref build_guide.
+要编译这个库，看 [compile_guide](@ref compile_guide)；要把它链进自己的程序，看 [build_guide](@ref build_guide)。
 
-The [reference documentation](modules.html) provides more detailed information
-about specific functions.
+[API 参考](modules.html) 是逐函数的详细文档。
 
-@ref moving_guide explains what has changed and how to update existing code to
-use the new API.
+因为库不再创建任何图形上下文，**怎么在窗口里画东西完全由应用决定**：D3D11/D3D12、
+Vulkan、GDI、Direct2D，或者干脆把窗口当成一个纯事件来源。
 
-There is a section on @ref guarantees_limitations for pointer lifetimes,
-reentrancy, thread safety, event order and backward and forward compatibility.
-
-Finally, @ref compat_guide explains what APIs, standards and protocols GLFW uses
-and what happens when they are not present on a given machine.
-
-This documentation was generated with Doxygen.  The sources for it are available
-in both the [source distribution](https://www.glfw.org/download.html) and
-[GitHub repository](https://github.com/glfw/glfw).
-
+本文档由 Doxygen 从 `docs/` 与公共头文件生成。
