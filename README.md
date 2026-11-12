@@ -240,8 +240,15 @@ X11 与 Cocoa：**已从本仓库删除**，不再需要 macOS 或 X 服务器�
   `docs/compat.md` 中关于上下文创建、`glfwGetProcAddress`、Vulkan 表面创建、
   `glfwSwapBuffers` 的段落均不适用；`docs/internal.md` 中提到的
   `_glfwCreateContext*` 系列函数已不存在。
-- `deps/glad`（OpenGL / Vulkan 加载器头文件）与 `deps/` 下的 getopt、TinyCThread、
-  linmath、Nuklear、stb 等示例依赖仍留在树中，但当前的示例与测试都不再使用它们。
+- `deps/` 里只剩 **`deps/wayland/` 的 9 个协议 XML**（`wayland.xml`、`viewporter.xml`、
+  `xdg-shell.xml`、`idle-inhibit-unstable-v1.xml`、`pointer-constraints-unstable-v1.xml`、
+  `relative-pointer-unstable-v1.xml`、`fractional-scale-v1.xml`、`xdg-activation-v1.xml`、
+  `xdg-decoration-unstable-v1.xml`）。构建时 `wayland-scanner` 要读它们生成
+  `-client-protocol.h` / `-client-protocol-code.h`，**不能删**。
+  其余曾用于上游 GL 示例的第三方依赖（`deps/glad`、`deps/nuklear.h`、
+  `deps/nuklear_glfw_gl2.h`、`deps/stb_image_write.h`、`deps/linmath.h`、
+  `deps/tinycthread.*`、`deps/getopt.*`，共 43,949 行）已删除——图形层与 GL 示例
+  都不在了，它们在源码、示例、测试与 CMake 中均为零引用。
 
 ---
 
