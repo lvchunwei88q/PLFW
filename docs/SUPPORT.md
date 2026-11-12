@@ -5,8 +5,8 @@
 
 - 使用问题、编译问题：先看 [quick_guide](@ref quick_guide)、[compile_guide](@ref compile_guide)、@ref build_guide
   与 [compat_guide](@ref compat_guide)。
-- 改造引入的缺陷：在本仓库的 issue 里报，附上平台、后端（`glfwGetVersionString()`
-  的输出）、最小复现代码。
+- 改造引入的缺陷：在本仓库的 issue 里报，附上平台与正在运行的后端
+  （`glfwGetPlatform()` 的返回值）、编译选项、最小复现代码。
 - 与上游 GLFW 的行为差异：对照 `README.md` 的“语义变化”一节，里面列了本构建有意
   改变的行为（后端集合、忽略的 hint、不再产生的错误码等）。
 

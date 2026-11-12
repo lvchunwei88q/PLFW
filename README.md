@@ -22,7 +22,7 @@
 | 输入 | 键盘（键、扫描码、键名、字符回调、粘滞键 / 锁定键）、鼠标（按键、光标位置、光标模式、原始鼠标运动、滚轮）、手柄 / 游戏杆（连接热插拔、轴、按键、帽、映射、用户映射文件） |
 | 事件 | `glfwPollEvents`、`glfwWaitEvents`、`glfwWaitEventsTimeout`、`glfwPostEmptyEvent`、全部窗口 / 输入 / 显示器 / 手柄回调 |
 | 显示器 | 枚举、名称、位置、工作区、内容缩放、视频模式、gamma ramp |
-| 其他 | 剪贴板、光标形状、定时器、错误回调、线程相关的 TLS / 互斥量、`glfwGetVersionString`、平台选择 |
+| 其他 | 剪贴板、光标形状、定时器、错误回调、线程相关的 TLS / 互斥量、平台选择 |
 
 ### 被移除的东西
 
@@ -42,6 +42,9 @@
   分支。保留 `glfwGetWin32Window`、`glfwGetWin32Adapter`、`glfwGetWin32Monitor` 与
   `glfwGetWaylandDisplay`、`glfwGetWaylandMonitor`、`glfwGetWaylandWindow` 这些原生句柄
   访问器（Cocoa / X11 访问器随后端一起删除，见下文）。
+- 版本查询 API：`glfwGetVersion`、`glfwGetVersionString` 与
+  `GLFW_VERSION_MAJOR` / `GLFW_VERSION_MINOR` / `GLFW_VERSION_REVISION` 三个宏全部删除
+  （见“语义变化”第 9 条）。
 - 内部结构（`src/internal.h`）：`_GLFWctxconfig`、`_GLFWcontext`、`window->context`、
   `window->doublebuffer`、平台表中的 EGL / OSMesa / Vulkan 函数指针、
   `library.egl` / `library.osmesa` / `library.vk`、`hints.context`、
@@ -77,8 +80,7 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
   `_GLFW_X11 || _GLFW_WAYLAND` 收敛为 `_GLFW_WAYLAND`（二者 Wayland 仍需要）。
 - `src/platform.c`：`supportedPlatforms` 表只剩 Win32 / Wayland；删掉
   “Wayland 与 X11 同时编译时才需要”的 `XDG_SESSION_TYPE` 探测块（只剩一个后端后
-  没有选择问题）；版本串去掉 " X11" / " Cocoa"，Linux 构建现在是
-  `3.5.1 Wayland Null window/input only`（Wayland 运行时再追加 `monotonic`）。
+  平台表只剩 Win32 / Wayland 两项（当时的版本串随后也整体删除，见“语义变化”第 9 条）。
 - `src/CMakeLists.txt` 与顶层 `CMakeLists.txt`：删掉 `GLFW_BUILD_X11` /
   `GLFW_BUILD_COCOA` 两个 `cmake_dependent_option` 与启动时的 “Including … support”
   汇报、Cocoa 的 `enable_language(OBJC)` 与 `-framework Cocoa/IOKit/QuartzCore` 链接、
@@ -144,7 +146,7 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
    Win32 + Null。顶层 `CMakeLists.txt` 只保留 `GLFW_BUILD_WIN32` /
    `GLFW_BUILD_WAYLAND` 两个后端选项。
 6. **null 后端可用**（`GLFW_PLATFORM_NULL`），用于无窗口系统的自动化测试；
-   其版本串同样只列 “window/input only”。
+   它与另外两个后端一样只做窗口与输入，不创建任何图形上下文。
 7. **Wayland 的剪贴板在无 seat 时明确报错而不是崩溃**。合成器不提供
    `wl_data_device_manager` 或 seat 时，`glfwSetClipboardString` /
    `glfwGetClipboardString` 返回 `GLFW_PLATFORM_ERROR`（上游会解引用空指针）。
@@ -152,6 +154,10 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
    的 X 服务器不会有任何效果——`glfwInit()` 会直接在 Wayland 连接阶段失败
    （`GLFW_PLATFORM_UNAVAILABLE` / 平台错误），需要 headless 时显式使用
    `GLFW_PLATFORM_NULL`。
+9. **不提供版本查询 API**：`glfwGetVersion` / `glfwGetVersionString` 与三个
+   `GLFW_VERSION_*` 宏已删除，库不再报告自身版本；版本号只留在 `CMakeLists.txt` 的
+   `project(GLFW VERSION 3.5.1)`（供 `glfw3.pc` 与 CMake 包配置使用），二进制本身
+   不带版本信息。
 
 ### 构建与验证
 
@@ -201,7 +207,7 @@ MinGW-w64 GCC 15.2.0 UCRT + CMake 4.3.2 + Ninja（Windows）：
 - `tests/smoke.exe`：全部检查 ok，含窗口创建（无图形上下文）、窗口/帧缓冲尺寸、
   位置与尺寸设置、窗口属性、光标位置、键鼠状态查询、剪贴板往返、显示器与视频模式、
   手柄枚举、事件泵 30 次唤醒、关闭请求与销毁，以及“X11 / Cocoa 后端不在构建中”
-  两条断言；版本串 `3.5.1 Win32 Null window/input only MinGW-w64`；
+  两条断言；`active platform backend: Win32`；
 - `examples/window-input.exe`：桌面出现 800x480 窗口（句柄与标题可被 `FindWindow`
   / `WM_CLOSE` 命中），事件循环稳定（1 秒 46 帧、2 秒 83 帧），收到 `WM_CLOSE` 后正常退出；
 - `examples/multi-window.exe`：三个窗口同时存在（`HWND 0x370650` / `0x610688` /
@@ -216,7 +222,7 @@ GCC 11.4.0 + CMake 3.22.1 + Ninja（Ubuntu 22.04，删除 X11 后的 Wayland 单
   “未被工程使用”，即工程里已不存在 `find_package(X11)`）；
 - 编译：库、两个示例、测试全部通过，`warning:` / `error:` 计数为 0；
 - `env -u DISPLAY -u WAYLAND_DISPLAY ./tests/smoke`（无显示）：以
-  `GLFW_PLATFORM_NULL` 重试成功，版本串 `3.5.1 Wayland Null window/input only`，
+  `GLFW_PLATFORM_NULL` 重试成功（`active platform backend: Null`），全部检查 ok；
   全部检查 ok；
 - `weston --backend=headless-backend.so --socket=wl-test` 下跑 `tests/smoke`：
   `active platform backend: Wayland`，除两项按后端能力跳过的断言外全部 ok——

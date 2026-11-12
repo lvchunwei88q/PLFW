@@ -315,7 +315,7 @@ uint64_t freq  = glfwGetTimerFrequency();
 差值计算而不受双精度累积误差影响。
 
 三者都可在任意线程调用，且保证单调（不受系统时间调整影响）。Wayland 下用
-`CLOCK_MONOTONIC` 实现（版本串里带 `monotonic`），Win32 下用
+`CLOCK_MONOTONIC` 实现，Win32 下用
 `QueryPerformanceCounter`。
 
 ## 剪贴板 {#clipboard}

@@ -30,10 +30,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-// These construct a string literal from individual numeric constants
-#define _GLFW_CONCAT_VERSION(m, n, r) #m "." #n "." #r
-#define _GLFW_MAKE_VERSION(m, n, r) _GLFW_CONCAT_VERSION(m, n, r)
-
 //////////////////////////////////////////////////////////////////////////
 //////                       GLFW internal API                      //////
 //////////////////////////////////////////////////////////////////////////
@@ -145,41 +141,5 @@ GLFWAPI int glfwPlatformSupported(int platformID)
     }
 
     return GLFW_FALSE;
-}
-
-GLFWAPI const char* glfwGetVersionString(void)
-{
-    return _GLFW_MAKE_VERSION(GLFW_VERSION_MAJOR,
-                              GLFW_VERSION_MINOR,
-                              GLFW_VERSION_REVISION)
-#if defined(_GLFW_WIN32)
-        " Win32"
-#endif
-#if defined(_GLFW_WAYLAND)
-        " Wayland"
-#endif
-        " Null"
-        " window/input only"
-#if defined(__MINGW64_VERSION_MAJOR)
-        " MinGW-w64"
-#elif defined(_MSC_VER)
-        " VisualC"
-#endif
-#if defined(_GLFW_USE_HYBRID_HPG) || defined(_GLFW_USE_OPTIMUS_HPG)
-        " hybrid-GPU"
-#endif
-#if defined(_POSIX_MONOTONIC_CLOCK)
-        " monotonic"
-#endif
-#if defined(_GLFW_BUILD_DLL)
-#if defined(_WIN32)
-        " DLL"
-#elif defined(__APPLE__)
-        " dynamic"
-#else
-        " shared"
-#endif
-#endif
-        ;
 }
 

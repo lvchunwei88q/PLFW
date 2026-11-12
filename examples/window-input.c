@@ -146,8 +146,7 @@ int main(void)
     if (!glfwInit())
         return 1;
 
-    printf("GLFW %s, platform %s\n",
-           glfwGetVersionString(),
+    printf("windowing-only build, platform %s\n",
            glfwGetPlatform() == GLFW_PLATFORM_WIN32 ? "Win32" :
            glfwGetPlatform() == GLFW_PLATFORM_WAYLAND ? "Wayland" : "Null");
 

@@ -66,7 +66,6 @@ static const char* platformName(int platform)
 
 int main(void)
 {
-    int major = 0, minor = 0, rev = 0;
 
     glfwSetErrorCallback(errorCallback);
     printf("== GLFW windowing-only smoke test ==\n");
@@ -85,10 +84,6 @@ int main(void)
     check("glfwInit", initialized == GLFW_TRUE);
     if (failures)
         return failures;
-
-    glfwGetVersion(&major, &minor, &rev);
-    printf("version %d.%d.%d, \"%s\"\n", major, minor, rev, glfwGetVersionString());
-    check("version is 3.5.1", major == 3 && minor == 5 && rev == 1);
 
     // The build carries every window-system backend it can compile for, so the
     // running platform is whatever could be initialised here, not a fixed one.

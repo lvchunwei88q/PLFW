@@ -44,7 +44,6 @@
   `glfwPlatformSupported` 对它们返回 `GLFW_FALSE`，显式请求得到
   `GLFW_PLATFORM_UNAVAILABLE` 而不是 `GLFW_INVALID_ENUM`——这样调用方的 `switch`
   不会编译不过；
-- 版本串由 `platform.c` 拼接，形如 `3.5.1 Win32 Null window/input only ...`。
 
 ## 事件接口 {#internals_event}
 

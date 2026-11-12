@@ -230,7 +230,7 @@ int main(void)
     if (!glfwInit())
         return -1;
 
-    printf("version string: %s\n", glfwGetVersionString());
+    printf("windowing-only build, platform %d\n", glfwGetPlatform());
 
     // No graphics API is involved anywhere in this build, so there is no
     // context hint to set: the window is a plain native window.

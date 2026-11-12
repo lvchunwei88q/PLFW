@@ -551,7 +551,10 @@ int _glfwInitWayland(void)
     _glfw.wl.keyRepeatTimerfd = -1;
     _glfw.wl.cursorTimerfd = -1;
 
-    _glfw.wl.tag = glfwGetVersionString();
+    // libwayland identifies the client library that created a proxy by comparing
+// this tag's address, so any process-wide static string works here
+static const char* const tag = "PLFW window/input only";
+_glfw.wl.tag = tag;
 
     _glfw.wl.client.display_flush = (PFN_wl_display_flush)
         _glfwPlatformGetModuleSymbol(_glfw.wl.client.handle, "wl_display_flush");

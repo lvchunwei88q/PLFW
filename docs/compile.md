@@ -208,5 +208,5 @@ gcc my_program.o libglfw_objects.a -lwayland-client -lwayland-cursor \
     -lxkbcommon -lpthread -ldl -lrt -lm -o my_program
 ```
 
-**注意**：手动编译必须把 `src/platform.c` 一起带上，它负责后端选择与版本串，漏掉它
-会在链接期报 `glfwInit` 未定义。
+**注意**：手动编译必须把 `src/platform.c` 一起带上，它负责后端选择（平台表），漏掉
+它会在链接期报 `glfwInit` 未定义。

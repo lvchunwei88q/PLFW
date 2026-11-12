@@ -20,7 +20,7 @@ int glfwInit(void);
 且必须在主线程调用。成功之后窗口、输入、事件、显示器、手柄 API 才可用。
 
 可以在初始化之前调用的函数很少：[glfwSetErrorCallback](@ref glfwSetErrorCallback)、[glfwGetError](@ref glfwGetError)、
-[glfwGetVersion](@ref glfwGetVersion)、[glfwGetVersionString](@ref glfwGetVersionString)、[glfwInitHint](@ref glfwInitHint)、
+[glfwInitHint](@ref glfwInitHint)、
 [glfwInitAllocator](@ref glfwInitAllocator)。用它们来安装错误回调、选择后端、指定分配器。
 
 ### 初始化提示 {#init_hints}
@@ -172,29 +172,14 @@ GLFW 有两套坐标，混用是常见 bug 来源：
 
 同一帧里不要假定“所有按键都在鼠标之前”或“尺寸回调一定在帧缓冲回调之前”。
 
-## 版本管理 {#intro_version}
+## 版本与构建标识 {#intro_version}
 
-### 编译期版本 {#intro_version_compile}
+本构建**不提供版本查询 API**：`glfwGetVersion`、`glfwGetVersionString` 以及
+`GLFW_VERSION_MAJOR` / `GLFW_VERSION_MINOR` / `GLFW_VERSION_REVISION` 三个宏已全部
+删除。库不再回答“我是什么版本”，调用方也就不需要按版本号分支——能力差异直接用
+[glfwPlatformSupported](@ref glfwPlatformSupported) 与
+[glfwGetPlatform](@ref glfwGetPlatform) 判断。
 
-`GLFW_VERSION_MAJOR`、`GLFW_VERSION_MINOR`、`GLFW_VERSION_REVISION` 是头文件里的
-整数常量，本仓库为 `3`、`5`、`1`。
-
-### 运行期版本 {#intro_version_runtime}
-
-```c
-int major, minor, rev;
-glfwGetVersion(&major, &minor, &rev);
-```
-
-用它可以挡住“头文件比库新”的链接事故：头文件版本 ≥ 库版本时才有意义。
-
-### 版本串 {#intro_version_string}
-
-```c
-const char* str = glfwGetVersionString();
-```
-
-本构建会打印类似 `3.5.1 Win32 Null window/input only MinGW-w64` 或
-`3.5.1 Wayland Null window/input only monotonic` 的字符串：包含实际编译进去的
-后端列表、固定后缀 `window/input only`、编译器与计时器信息。它适合写进日志、
-崩溃报告和问题单。
+版本号只存在于仓库层面：`CMakeLists.txt` 里的 `project(GLFW VERSION 3.5.1)` 决定
+`glfw3.pc` 的 `Version` 字段与 CMake 包配置的兼容性检查。二进制本身不带版本信息，
+排查问题时记录平台后端、编译选项与提交哈希即可。
