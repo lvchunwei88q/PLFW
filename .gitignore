@@ -4,6 +4,8 @@ build-*/
 build_*/
 out/
 cmake-build-*/
+
+# CMake and Ninja artifacts (only produced when configuring in-tree)
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
@@ -12,11 +14,6 @@ CTestTestfile.cmake
 .ninja_deps
 .ninja_log
 
-# Generated documentation (Doxygen output)
-docs/html/
-docs/latex/
-docs/.doxygen/
-
 # Compiled artifacts
 *.o
 *.obj
@@ -24,7 +21,6 @@ docs/.doxygen/
 *.lib
 *.so
 *.so.*
-*.dylib
 *.dll
 *.exe
 *.pdb
@@ -47,6 +43,5 @@ docs/.doxygen/
 *~
 
 # OS files
-.DS_Store
 Thumbs.db
 desktop.ini
