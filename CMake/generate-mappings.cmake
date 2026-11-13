@@ -1,5 +1,7 @@
+# Regenerates src/mappings.h from the upstream SDL_GameControllerDB file.
+#
 # Usage:
-# cmake -P GenerateMappings.cmake <path/to/mappings.h.in> <path/to/mappings.h>
+# cmake -P generate-mappings.cmake <path/to/mappings.h.in> <path/to/mappings.h>
 
 cmake_policy(VERSION 3.16)
 

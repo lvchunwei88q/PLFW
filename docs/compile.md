@@ -144,17 +144,43 @@ DLL 会自动生成 `.rc` 版本资源。用 DLL 的应用必须定义 `PLFW_DLL
 
 ### MinGW 交叉编译 <a name="compile_mingw_cross"></a>
 
-从 Linux 上给 Windows 编（需要 `mingw-w64`）：
+从 Linux 上给 Windows 编（需要 `mingw-w64`）。仓库在 `CMake/toolchains/` 里带了四份
+工具链文件，直接选一份用即可：
+
+```sh
+cmake -S . -B build-win \
+      -DCMAKE_TOOLCHAIN_FILE=CMake/toolchains/mingw-x86_64-gcc.cmake
+cmake --build build-win -j
+```
+
+| 工具链文件 | 目标 |
+| --- | --- |
+| `CMake/toolchains/mingw-x86_64-gcc.cmake` | 64 位 Windows，GCC |
+| `CMake/toolchains/mingw-x86_64-clang.cmake` | 64 位 Windows，Clang |
+| `CMake/toolchains/mingw-i686-gcc.cmake` | 32 位 Windows，GCC |
+| `CMake/toolchains/mingw-i686-clang.cmake` | 32 位 Windows，Clang |
+
+不指定工具链文件时，等价的手写参数是：
 
 ```sh
 cmake -S . -B build-win -DCMAKE_SYSTEM_NAME=Windows \
       -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
       -DCMAKE_RC_COMPILER=x86_64-w64-mingw32-windres
-cmake --build build-win -j
 ```
 
 产物 `libplfw3.a` 可以直接给 Windows 上的 MinGW 或 MSVC（用 `.a` 需转换，推荐在
 Windows 上重新构建）。
+
+## `CMake/` 目录里的辅助文件 <a name="compile_cmake_dir"></a>
+
+文件 | 作用 | 谁在用
+---- | ---- | ----
+`CMake/generate-mappings.cmake` | 从上游 SDL_GameControllerDB 拉取数据库并生成 `src/mappings.h` | `update_mappings` 自定义目标
+`CMake/uninstall.cmake.in` | `uninstall` 目标的脚本模板，按 `install_manifest.txt` 删除已安装文件 | 顶层 `CMakeLists.txt`（配置期生成 `uninstall.cmake`）
+`CMake/plfw3.pc.in` | pkg-config 模板，生成 `plfw3.pc` | 安装流程
+`CMake/plfw3Config.cmake.in` | CMake 包配置模板，生成 `plfw3Config.cmake` | `find_package(plfw3 CONFIG)`
+`CMake/modules/FindEpollShim.cmake` | 查找 epoll-shim（非 Linux 上的 epoll 兼容层） | Wayland 后端
+`CMake/toolchains/*.cmake` | MinGW 交叉编译工具链，见上一节 | 手动传 `CMAKE_TOOLCHAIN_FILE`
 
 ## 手动编译 <a name="compile_manual"></a>
 

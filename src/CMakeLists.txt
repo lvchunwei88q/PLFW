@@ -21,10 +21,10 @@ else()
 endif()
 
 add_custom_target(update_mappings
-    COMMAND "${CMAKE_COMMAND}" -P "${PLFW_SOURCE_DIR}/CMake/GenerateMappings.cmake" mappings.h.in mappings.h
+    COMMAND "${CMAKE_COMMAND}" -P "${PLFW_SOURCE_DIR}/CMake/generate-mappings.cmake" mappings.h.in mappings.h
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     COMMENT "Updating gamepad mappings from upstream repository"
-    SOURCES mappings.h.in "${PLFW_SOURCE_DIR}/CMake/GenerateMappings.cmake"
+    SOURCES mappings.h.in "${PLFW_SOURCE_DIR}/CMake/generate-mappings.cmake"
     VERBATIM)
 
 set_target_properties(update_mappings PROPERTIES FOLDER "PLFW3")
