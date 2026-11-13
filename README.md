@@ -247,9 +247,13 @@ Ubuntu 26.04 LTS + WSL2 / WSLg（GCC 15.2.0 + CMake 4.2.3 + Ninja 1.13.2）：
   `warning` / `error` 计数为 0；
 - 直接在 WSLg 提供的合成器上跑 `tests/smoke`：`active platform backend: Wayland`，
   除两项按能力跳过的断言外全部 ok——窗口定位（Wayland 不允许客户端放置窗口），
-  以及剪贴板（新窗口在 WSLg 下不会自动拿到键盘焦点，读不到 data offer，按预期报
-  `PLFW_FORMAT_UNAVAILABLE: Wayland: No clipboard data available`；这与
-  `plfwFocusWindow` 只是“请求”的说明一致，不是本库的缺陷）；
+  以及剪贴板（smoke 故意用隐藏窗口 `PLFW_VISIBLE=FALSE`，隐藏窗口不会被映射，
+  也就拿不到 selection 的 data offer，按预期报
+  `PLFW_FORMAT_UNAVAILABLE: Wayland: No clipboard data available`）；
+- `examples/multi-window` 在同一个合成器上跑：三个窗口各自拿到 `wl_surface` 句柄、
+  报告 `"weston rdp"` 显示器，焦点按创建顺序依次切换（`[first] focused` →
+  `[second] focused` → `[third] focused`），并且 `clipboard through window 2`
+  成功读回窗口 1 写入的字符串——可见窗口的剪贴板往返在 Wayland 上是通的；
 - `ldd build/tests/smoke` 只有 `libm` / `libc`：Wayland 客户端库是运行时 `dlopen`
   的，静态库本身不带 X11 / Wayland 链接依赖；
 - `BUILD_SHARED_LIBS=ON` 得到 `libplfw.so.3.5`（SONAME `libplfw.so.3`），
