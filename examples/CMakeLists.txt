@@ -18,6 +18,13 @@ endif()
 add_executable(window-input window-input.c)
 add_executable(multi-window multi-window.c)
 
+# The native Wayland accessor is only compiled into the library when that
+# backend is enabled; tell the example so it does not reference a symbol that
+# a Wayland-less build does not export.
+if (PLFW_BUILD_WAYLAND)
+    target_compile_definitions(multi-window PRIVATE PLFW_EXAMPLE_HAS_WAYLAND)
+endif()
+
 set_target_properties(window-input multi-window PROPERTIES
                       C_STANDARD 99
                       FOLDER "PLFW3/Examples")

@@ -26,13 +26,12 @@
 
 #if defined(_WIN32)
  #define PLFW_EXPOSE_NATIVE_WIN32
-#else
- // The library carries no X11 backend on Linux anymore, only Wayland.
- #if defined(__has_include)
-  #if __has_include(<wayland-client.h>)
-   #define PLFW_EXPOSE_NATIVE_WAYLAND
-  #endif
- #endif
+#elif defined(PLFW_EXAMPLE_HAS_WAYLAND)
+ // Whether plfwGetWaylandWindow exists is a property of the library that was
+ // built, not of the headers that happen to be installed: a Wayland-less build
+ // (PLFW_BUILD_WAYLAND=OFF) has no such symbol, so examples/CMakeLists.txt
+ // passes this definition only when that backend was compiled in.
+ #define PLFW_EXPOSE_NATIVE_WAYLAND
 #endif
 
 #include <PLFW/plfw3.h>
