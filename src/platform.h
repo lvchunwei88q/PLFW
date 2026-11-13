@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.5 - www.glfw.org
+// PLFW 3.5 - windowing-only fork of GLFW (www.glfw.org)
 //------------------------------------------------------------------------
 // Copyright (c) 2002-2006 Marcus Geelnard
 // Copyright (c) 2006-2018 Camilla Löwy <elmindreda@glfw.org>
@@ -25,131 +25,131 @@
 //
 //========================================================================
 
-#if defined(GLFW_BUILD_WIN32_TIMER) || \
-    defined(GLFW_BUILD_WIN32_MODULE) || \
-    defined(GLFW_BUILD_WIN32_THREAD) || \
-    defined(GLFW_BUILD_MACOS_TIMER) || \
-    defined(GLFW_BUILD_POSIX_TIMER) || \
-    defined(GLFW_BUILD_POSIX_MODULE) || \
-    defined(GLFW_BUILD_POSIX_THREAD) || \
-    defined(GLFW_BUILD_POSIX_POLL) || \
-    defined(GLFW_BUILD_LINUX_JOYSTICK)
- #error "You must not define these; define zero or more _GLFW_<platform> macros instead"
+#if defined(PLFW_BUILD_WIN32_TIMER) || \
+    defined(PLFW_BUILD_WIN32_MODULE) || \
+    defined(PLFW_BUILD_WIN32_THREAD) || \
+    defined(PLFW_BUILD_MACOS_TIMER) || \
+    defined(PLFW_BUILD_POSIX_TIMER) || \
+    defined(PLFW_BUILD_POSIX_MODULE) || \
+    defined(PLFW_BUILD_POSIX_THREAD) || \
+    defined(PLFW_BUILD_POSIX_POLL) || \
+    defined(PLFW_BUILD_LINUX_JOYSTICK)
+ #error "You must not define these; define zero or more _PLFW_<platform> macros instead"
 #endif
 
 #include "null_platform.h"
 
-#if defined(_GLFW_WIN32)
+#if defined(_PLFW_WIN32)
  #include "win32_platform.h"
- #define GLFW_EXPOSE_NATIVE_WIN32
+ #define PLFW_EXPOSE_NATIVE_WIN32
 #else
- #define GLFW_WIN32_WINDOW_STATE
- #define GLFW_WIN32_MONITOR_STATE
- #define GLFW_WIN32_CURSOR_STATE
- #define GLFW_WIN32_LIBRARY_WINDOW_STATE
+ #define PLFW_WIN32_WINDOW_STATE
+ #define PLFW_WIN32_MONITOR_STATE
+ #define PLFW_WIN32_CURSOR_STATE
+ #define PLFW_WIN32_LIBRARY_WINDOW_STATE
 #endif
 
-#if defined(_GLFW_WAYLAND)
+#if defined(_PLFW_WAYLAND)
  #include "wl_platform.h"
- #define GLFW_EXPOSE_NATIVE_WAYLAND
+ #define PLFW_EXPOSE_NATIVE_WAYLAND
 #else
- #define GLFW_WAYLAND_WINDOW_STATE
- #define GLFW_WAYLAND_MONITOR_STATE
- #define GLFW_WAYLAND_CURSOR_STATE
- #define GLFW_WAYLAND_LIBRARY_WINDOW_STATE
+ #define PLFW_WAYLAND_WINDOW_STATE
+ #define PLFW_WAYLAND_MONITOR_STATE
+ #define PLFW_WAYLAND_CURSOR_STATE
+ #define PLFW_WAYLAND_LIBRARY_WINDOW_STATE
 #endif
 
 #include "null_joystick.h"
 
-#if defined(_GLFW_WIN32)
+#if defined(_PLFW_WIN32)
  #include "win32_joystick.h"
 #else
- #define GLFW_WIN32_JOYSTICK_STATE
- #define GLFW_WIN32_LIBRARY_JOYSTICK_STATE
+ #define PLFW_WIN32_JOYSTICK_STATE
+ #define PLFW_WIN32_LIBRARY_JOYSTICK_STATE
 #endif
 
-#if defined(_GLFW_WAYLAND) && defined(__linux__)
- #define GLFW_BUILD_LINUX_JOYSTICK
+#if defined(_PLFW_WAYLAND) && defined(__linux__)
+ #define PLFW_BUILD_LINUX_JOYSTICK
 #endif
 
-#if defined(GLFW_BUILD_LINUX_JOYSTICK)
+#if defined(PLFW_BUILD_LINUX_JOYSTICK)
  #include "linux_joystick.h"
 #else
- #define GLFW_LINUX_JOYSTICK_STATE
- #define GLFW_LINUX_LIBRARY_JOYSTICK_STATE
+ #define PLFW_LINUX_JOYSTICK_STATE
+ #define PLFW_LINUX_LIBRARY_JOYSTICK_STATE
 #endif
 
-#define GLFW_PLATFORM_WINDOW_STATE \
-        GLFW_WIN32_WINDOW_STATE \
-        GLFW_WAYLAND_WINDOW_STATE \
-        GLFW_NULL_WINDOW_STATE \
+#define PLFW_PLATFORM_WINDOW_STATE \
+        PLFW_WIN32_WINDOW_STATE \
+        PLFW_WAYLAND_WINDOW_STATE \
+        PLFW_NULL_WINDOW_STATE \
 
-#define GLFW_PLATFORM_MONITOR_STATE \
-        GLFW_WIN32_MONITOR_STATE \
-        GLFW_WAYLAND_MONITOR_STATE \
-        GLFW_NULL_MONITOR_STATE \
+#define PLFW_PLATFORM_MONITOR_STATE \
+        PLFW_WIN32_MONITOR_STATE \
+        PLFW_WAYLAND_MONITOR_STATE \
+        PLFW_NULL_MONITOR_STATE \
 
-#define GLFW_PLATFORM_CURSOR_STATE \
-        GLFW_WIN32_CURSOR_STATE \
-        GLFW_WAYLAND_CURSOR_STATE \
-        GLFW_NULL_CURSOR_STATE \
+#define PLFW_PLATFORM_CURSOR_STATE \
+        PLFW_WIN32_CURSOR_STATE \
+        PLFW_WAYLAND_CURSOR_STATE \
+        PLFW_NULL_CURSOR_STATE \
 
-#define GLFW_PLATFORM_JOYSTICK_STATE \
-        GLFW_WIN32_JOYSTICK_STATE \
-        GLFW_LINUX_JOYSTICK_STATE
+#define PLFW_PLATFORM_JOYSTICK_STATE \
+        PLFW_WIN32_JOYSTICK_STATE \
+        PLFW_LINUX_JOYSTICK_STATE
 
-#define GLFW_PLATFORM_LIBRARY_WINDOW_STATE \
-        GLFW_WIN32_LIBRARY_WINDOW_STATE \
-        GLFW_WAYLAND_LIBRARY_WINDOW_STATE \
-        GLFW_NULL_LIBRARY_WINDOW_STATE \
+#define PLFW_PLATFORM_LIBRARY_WINDOW_STATE \
+        PLFW_WIN32_LIBRARY_WINDOW_STATE \
+        PLFW_WAYLAND_LIBRARY_WINDOW_STATE \
+        PLFW_NULL_LIBRARY_WINDOW_STATE \
 
-#define GLFW_PLATFORM_LIBRARY_JOYSTICK_STATE \
-        GLFW_WIN32_LIBRARY_JOYSTICK_STATE \
-        GLFW_LINUX_LIBRARY_JOYSTICK_STATE
+#define PLFW_PLATFORM_LIBRARY_JOYSTICK_STATE \
+        PLFW_WIN32_LIBRARY_JOYSTICK_STATE \
+        PLFW_LINUX_LIBRARY_JOYSTICK_STATE
 
 #if defined(_WIN32)
- #define GLFW_BUILD_WIN32_THREAD
+ #define PLFW_BUILD_WIN32_THREAD
 #else
- #define GLFW_BUILD_POSIX_THREAD
+ #define PLFW_BUILD_POSIX_THREAD
 #endif
 
-#if defined(GLFW_BUILD_WIN32_THREAD)
+#if defined(PLFW_BUILD_WIN32_THREAD)
  #include "win32_thread.h"
- #define GLFW_PLATFORM_TLS_STATE    GLFW_WIN32_TLS_STATE
- #define GLFW_PLATFORM_MUTEX_STATE  GLFW_WIN32_MUTEX_STATE
-#elif defined(GLFW_BUILD_POSIX_THREAD)
+ #define PLFW_PLATFORM_TLS_STATE    PLFW_WIN32_TLS_STATE
+ #define PLFW_PLATFORM_MUTEX_STATE  PLFW_WIN32_MUTEX_STATE
+#elif defined(PLFW_BUILD_POSIX_THREAD)
  #include "posix_thread.h"
- #define GLFW_PLATFORM_TLS_STATE    GLFW_POSIX_TLS_STATE
- #define GLFW_PLATFORM_MUTEX_STATE  GLFW_POSIX_MUTEX_STATE
+ #define PLFW_PLATFORM_TLS_STATE    PLFW_POSIX_TLS_STATE
+ #define PLFW_PLATFORM_MUTEX_STATE  PLFW_POSIX_MUTEX_STATE
 #endif
 
 #if defined(_WIN32)
- #define GLFW_BUILD_WIN32_TIMER
+ #define PLFW_BUILD_WIN32_TIMER
 #elif defined(__APPLE__)
- #define GLFW_BUILD_MACOS_TIMER
+ #define PLFW_BUILD_MACOS_TIMER
 #else
- #define GLFW_BUILD_POSIX_TIMER
+ #define PLFW_BUILD_POSIX_TIMER
 #endif
 
-#if defined(GLFW_BUILD_WIN32_TIMER)
+#if defined(PLFW_BUILD_WIN32_TIMER)
  #include "win32_time.h"
- #define GLFW_PLATFORM_LIBRARY_TIMER_STATE  GLFW_WIN32_LIBRARY_TIMER_STATE
-#elif defined(GLFW_BUILD_MACOS_TIMER)
+ #define PLFW_PLATFORM_LIBRARY_TIMER_STATE  PLFW_WIN32_LIBRARY_TIMER_STATE
+#elif defined(PLFW_BUILD_MACOS_TIMER)
  #include "macos_time.h"
- #define GLFW_PLATFORM_LIBRARY_TIMER_STATE  GLFW_MACOS_LIBRARY_TIMER_STATE
-#elif defined(GLFW_BUILD_POSIX_TIMER)
+ #define PLFW_PLATFORM_LIBRARY_TIMER_STATE  PLFW_MACOS_LIBRARY_TIMER_STATE
+#elif defined(PLFW_BUILD_POSIX_TIMER)
  #include "posix_time.h"
- #define GLFW_PLATFORM_LIBRARY_TIMER_STATE  GLFW_POSIX_LIBRARY_TIMER_STATE
+ #define PLFW_PLATFORM_LIBRARY_TIMER_STATE  PLFW_POSIX_LIBRARY_TIMER_STATE
 #endif
 
 #if defined(_WIN32)
- #define GLFW_BUILD_WIN32_MODULE
+ #define PLFW_BUILD_WIN32_MODULE
 #else
- #define GLFW_BUILD_POSIX_MODULE
+ #define PLFW_BUILD_POSIX_MODULE
 #endif
 
-#if defined(_GLFW_WAYLAND)
+#if defined(_PLFW_WAYLAND)
  #include "posix_poll.h"
- #define GLFW_BUILD_POSIX_POLL
+ #define PLFW_BUILD_POSIX_POLL
 #endif
 

@@ -13,9 +13,9 @@ cmake --build build
 Windows + MinGW 时把 `-G Ninja` 换成 `-G "MinGW Makefiles"` 也可以；Visual Studio
 直接 `-G "Visual Studio 17 2022" -A x64`。构建产物：
 
-- `build/src/libglfw3.a`（Windows/MinGW）或 `libglfw3.a`（Linux）
+- `build/src/libplfw3.a`（Windows/MinGW）或 `libplfw3.a`（Linux）
 - `build/tests/smoke.exe`、`build/examples/window-input.exe`、
-  `build/examples/multi-window.exe`（`GLFW_BUILD_TESTS` / `GLFW_BUILD_EXAMPLES`
+  `build/examples/multi-window.exe`（`PLFW_BUILD_TESTS` / `PLFW_BUILD_EXAMPLES`
   打开时）
 
 想跑一遍自检：
@@ -43,7 +43,7 @@ Win32 后端用到 `user32`、`gdi32`、`dwmapi`、`shell32`、`winmm` 等系统
   pkg-config 名字就是这三个；
 - `wayland-scanner`（`wayland` 包里的命令行工具），用来把 `deps/wayland/` 下的
   XML 生成客户端协议头；
-- `wlroots`/`libdecor` 可选：`libdecor` 用于窗口装饰，缺失时退化为 GLFW 自带的
+- `wlroots`/`libdecor` 可选：`libdecor` 用于窗口装饰，缺失时退化为 PLFW 自带的
   简单装饰。
 
 Ubuntu / Debian 一行装齐：
@@ -87,14 +87,14 @@ wayland-scanner private-code  <file>.xml <file>-client-protocol-code.h
 最小构建（只要库）：
 
 ```sh
-cmake -S . -B build -DGLFW_BUILD_TESTS=OFF -DGLFW_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release
+cmake -S . -B build -DPLFW_BUILD_TESTS=OFF -DPLFW_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j
 ```
 
 只用 Wayland、不带 Win32 的交叉转发场景（在 Linux 上）：
 
 ```sh
-cmake -S . -B build -DGLFW_BUILD_WAYLAND=ON -DCMAKE_BUILD_TYPE=Release
+cmake -S . -B build -DPLFW_BUILD_WAYLAND=ON -DCMAKE_BUILD_TYPE=Release
 ```
 
 构建过程中你应当看到且只看到 `-- Including Wayland support`（Windows 上是
@@ -105,12 +105,12 @@ cmake -S . -B build -DGLFW_BUILD_WAYLAND=ON -DCMAKE_BUILD_TYPE=Release
 选项 | 默认值 | 说明
 ---- | ------ | ----
 `BUILD_SHARED_LIBS` | `OFF` | 建动态库；见 [动态库](#compile_options_shared)
-`GLFW_BUILD_WIN32` | Windows 上 `ON` | 编译 Win32 后端
-`GLFW_BUILD_WAYLAND` | 非 Apple 的 Unix 上 `ON` | 编译 Wayland 后端
-`GLFW_BUILD_EXAMPLES` | 源码树为顶层时 `ON` | 构建 `examples/` 里的两个示例
-`GLFW_BUILD_TESTS` | 源码树为顶层时 `ON` | 构建 `tests/smoke.c`
-`GLFW_INSTALL` | `ON` | 生成 `install` 目标与 CMake 包配置
-`GLFW_USE_HYBRID_HPG` | `OFF` | 只在 Win32 下有意义：强制高性能 GPU；本构建无上下文，
+`PLFW_BUILD_WIN32` | Windows 上 `ON` | 编译 Win32 后端
+`PLFW_BUILD_WAYLAND` | 非 Apple 的 Unix 上 `ON` | 编译 Wayland 后端
+`PLFW_BUILD_EXAMPLES` | 源码树为顶层时 `ON` | 构建 `examples/` 里的两个示例
+`PLFW_BUILD_TESTS` | 源码树为顶层时 `ON` | 构建 `tests/smoke.c`
+`PLFW_INSTALL` | `ON` | 生成 `install` 目标与 CMake 包配置
+`PLFW_USE_HYBRID_HPG` | `OFF` | 只在 Win32 下有意义：强制高性能 GPU；本构建无上下文，
 | | | 该选项保留但基本无效果
 `USE_MSVC_RUNTIME_LIBRARY_DLL` | `ON` | MSVC 下使用动态 CRT
 
@@ -123,8 +123,8 @@ cmake -S . -B build -DGLFW_BUILD_WAYLAND=ON -DCMAKE_BUILD_TYPE=Release
 cmake -S . -B build-shared -DBUILD_SHARED_LIBS=ON
 ```
 
-产物是 `glfw3.dll` + `glfw3dll.lib`（Windows）或 `libglfw.so.3`（Linux）。Windows
-DLL 会自动生成 `.rc` 版本资源。用 DLL 的应用必须定义 `GLFW_DLL`，CMake 的 `glfw`
+产物是 `plfw3.dll` + `plfw3dll.lib`（Windows）或 `libplfw.so.3`（Linux）。Windows
+DLL 会自动生成 `.rc` 版本资源。用 DLL 的应用必须定义 `PLFW_DLL`，CMake 的 `plfw`
 目标会以 `INTERFACE` 方式自动加上它。
 
 ### Windows 专用选项 <a name="compile_options_win32"></a>
@@ -136,7 +136,7 @@ DLL 会自动生成 `.rc` 版本资源。用 DLL 的应用必须定义 `GLFW_DLL
 
 ### Unix 专用选项 <a name="compile_options_unix"></a>
 
-- `GLFW_BUILD_WAYLAND=OFF`：得到一个只有 Null 后端的库，用于纯后台或无显示
+- `PLFW_BUILD_WAYLAND=OFF`：得到一个只有 Null 后端的库，用于纯后台或无显示
   的 CI 环境。
 - `CMAKE_DISABLE_FIND_PACKAGE_X11=TRUE`：本构建**完全不查 X11**，这个变量传了
   也只是被 CMake 标注为“未被工程使用”，不会报错。
@@ -153,7 +153,7 @@ cmake -S . -B build-win -DCMAKE_SYSTEM_NAME=Windows \
 cmake --build build-win -j
 ```
 
-产物 `libglfw3.a` 可以直接给 Windows 上的 MinGW 或 MSVC（用 `.a` 需转换，推荐在
+产物 `libplfw3.a` 可以直接给 Windows 上的 MinGW 或 MSVC（用 `.a` 需转换，推荐在
 Windows 上重新构建）。
 
 ## 手动编译 <a name="compile_manual"></a>
@@ -174,7 +174,7 @@ Windows： src/win32_time.c src/win32_thread.c src/win32_module.c
 Linux：   src/posix_time.c src/posix_thread.c src/posix_module.c
 ```
 
-Win32 后端（宏 `_GLFW_WIN32`、`UNICODE`、`_UNICODE`、`_CRT_SECURE_NO_WARNINGS`）：
+Win32 后端（宏 `_PLFW_WIN32`、`UNICODE`、`_UNICODE`、`_CRT_SECURE_NO_WARNINGS`）：
 
 ```text
 src/win32_init.c src/win32_joystick.c src/win32_monitor.c src/win32_window.c
@@ -182,8 +182,8 @@ src/win32_init.c src/win32_joystick.c src/win32_monitor.c src/win32_window.c
 
 链接：`-lgdi32`（其余系统库由默认链接补上）。
 
-Wayland 后端（宏 `_GLFW_WAYLAND`、`_DEFAULT_SOURCE`，Linux 上另有
-`_GLFW_LINUX` 语义的 `linux_joystick.c`）：
+Wayland 后端（宏 `_PLFW_WAYLAND`、`_DEFAULT_SOURCE`，Linux 上另有
+`_PLFW_LINUX` 语义的 `linux_joystick.c`）：
 
 ```text
 src/wl_init.c src/wl_monitor.c src/wl_window.c
@@ -197,11 +197,11 @@ deps/wayland/*.xml  → wayland-scanner 生成的 18 个头/源文件
 手动编译示例（Linux）：
 
 ```sh
-gcc -c -std=c99 -D_DEFAULT_SOURCE -D_GLFW_WAYLAND \
+gcc -c -std=c99 -D_DEFAULT_SOURCE -D_PLFW_WAYLAND \
     -Iinclude -Isrc src/*.c build/wl-proto/*.c
-gcc my_program.o libglfw_objects.a -lwayland-client -lwayland-cursor \
+gcc my_program.o libplfw_objects.a -lwayland-client -lwayland-cursor \
     -lxkbcommon -lpthread -ldl -lrt -lm -o my_program
 ```
 
 **注意**：手动编译必须把 `src/platform.c` 一起带上，它负责后端选择（平台表），漏掉
-它会在链接期报 `glfwInit` 未定义。
+它会在链接期报 `plfwInit` 未定义。

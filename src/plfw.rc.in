@@ -1,0 +1,30 @@
+
+#include <winver.h>
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION @PLFW_VERSION_MAJOR@,@PLFW_VERSION_MINOR@,@PLFW_VERSION_PATCH@,0
+PRODUCTVERSION @PLFW_VERSION_MAJOR@,@PLFW_VERSION_MINOR@,@PLFW_VERSION_PATCH@,0
+FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+FILEFLAGS 0
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_DLL
+FILESUBTYPE 0
+{
+    BLOCK "StringFileInfo"
+    {
+        BLOCK "040904B0"
+        {
+            VALUE "CompanyName", "PLFW"
+            VALUE "FileDescription", "PLFW @PLFW_VERSION@ DLL"
+            VALUE "FileVersion", "@PLFW_VERSION@"
+            VALUE "OriginalFilename", "plfw3.dll"
+            VALUE "ProductName", "PLFW"
+            VALUE "ProductVersion", "@PLFW_VERSION@"
+        }
+    }
+    BLOCK "VarFileInfo"
+    {
+        VALUE "Translation", 0x409, 1200
+    }
+}
+

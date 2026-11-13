@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.5 Win32 - www.glfw.org
+// PLFW 3.5 Win32 - windowing-only fork of GLFW (www.glfw.org)
 //------------------------------------------------------------------------
 // Copyright (c) 2006-2017 Camilla Löwy <elmindreda@glfw.org>
 //
@@ -24,28 +24,28 @@
 //
 //========================================================================
 
-#define GLFW_WIN32_JOYSTICK_STATE         _GLFWjoystickWin32 win32;
-#define GLFW_WIN32_LIBRARY_JOYSTICK_STATE
+#define PLFW_WIN32_JOYSTICK_STATE         _PLFWjoystickWin32 win32;
+#define PLFW_WIN32_LIBRARY_JOYSTICK_STATE
 
 // Joystick element (axis, button or slider)
 //
-typedef struct _GLFWjoyobjectWin32
+typedef struct _PLFWjoyobjectWin32
 {
     int                     offset;
     int                     type;
-} _GLFWjoyobjectWin32;
+} _PLFWjoyobjectWin32;
 
 // Win32-specific per-joystick data
 //
-typedef struct _GLFWjoystickWin32
+typedef struct _PLFWjoystickWin32
 {
-    _GLFWjoyobjectWin32*    objects;
+    _PLFWjoyobjectWin32*    objects;
     int                     objectCount;
     IDirectInputDevice8W*   device;
     DWORD                   index;
     GUID                    guid;
-} _GLFWjoystickWin32;
+} _PLFWjoystickWin32;
 
-void _glfwDetectJoystickConnectionWin32(void);
-void _glfwDetectJoystickDisconnectionWin32(void);
+void _plfwDetectJoystickConnectionWin32(void);
+void _plfwDetectJoystickDisconnectionWin32(void);
 

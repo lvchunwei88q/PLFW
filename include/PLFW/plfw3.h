@@ -1,5 +1,5 @@
 /*************************************************************************
- * GLFW 3.5 - www.glfw.org
+ * PLFW 3.5 - windowing-only fork of GLFW (www.glfw.org)
  * A library for OpenGL, window and input
  *------------------------------------------------------------------------
  * Copyright (c) 2002-2006 Marcus Geelnard
@@ -26,8 +26,8 @@
  *
  *************************************************************************/
 
-#ifndef _glfw3_h_
-#define _glfw3_h_
+#ifndef _plfw3_h_
+#define _plfw3_h_
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,10 +38,10 @@ extern "C" {
  * Doxygen documentation
  *************************************************************************/
 
-/*! @file glfw3.h
- *  @brief The header of the GLFW 3 API.
+/*! @file plfw3.h
+ *  @brief The header of the PLFW 3 API.
  *
- *  This is the header file of the GLFW 3 API.  It defines all its types and
+ *  This is the header file of the PLFW 3 API.  It defines all its types and
  *  declares all its functions.
  *
  *  For more information about how to use this file, see @ref build_include.
@@ -96,33 +96,33 @@ extern "C" {
 #include <stdint.h>
 
 
-#if defined(GLFW_DLL) && defined(_GLFW_BUILD_DLL)
- /* GLFW_DLL must be defined by applications that are linking against the DLL
-  * version of the GLFW library.  _GLFW_BUILD_DLL is defined by the GLFW
+#if defined(PLFW_DLL) && defined(_PLFW_BUILD_DLL)
+ /* PLFW_DLL must be defined by applications that are linking against the DLL
+  * version of the PLFW library.  _PLFW_BUILD_DLL is defined by the PLFW
   * configuration header when compiling the DLL version of the library.
   */
- #error "You must not have both GLFW_DLL and _GLFW_BUILD_DLL defined"
+ #error "You must not have both PLFW_DLL and _PLFW_BUILD_DLL defined"
 #endif
 
-/* GLFWAPI is used to declare public API functions for export
+/* PLFWAPI is used to declare public API functions for export
  * from the DLL / shared library / dynamic library.
  */
-#if defined(_WIN32) && defined(_GLFW_BUILD_DLL)
- /* We are building GLFW as a Win32 DLL */
- #define GLFWAPI __declspec(dllexport)
-#elif defined(_WIN32) && defined(GLFW_DLL)
- /* We are calling a GLFW Win32 DLL */
- #define GLFWAPI __declspec(dllimport)
-#elif defined(__GNUC__) && defined(_GLFW_BUILD_DLL)
- /* We are building GLFW as a Unix shared library */
- #define GLFWAPI __attribute__((visibility("default")))
+#if defined(_WIN32) && defined(_PLFW_BUILD_DLL)
+ /* We are building PLFW as a Win32 DLL */
+ #define PLFWAPI __declspec(dllexport)
+#elif defined(_WIN32) && defined(PLFW_DLL)
+ /* We are calling a PLFW Win32 DLL */
+ #define PLFWAPI __declspec(dllimport)
+#elif defined(__GNUC__) && defined(_PLFW_BUILD_DLL)
+ /* We are building PLFW as a Unix shared library */
+ #define PLFWAPI __attribute__((visibility("default")))
 #else
- #define GLFWAPI
+ #define PLFWAPI
 #endif
 
 
 /*************************************************************************
- * GLFW API tokens
+ * PLFW API tokens
  *************************************************************************/
 
 /*! @brief One.
@@ -133,7 +133,7 @@ extern "C" {
  *
  *  @ingroup init
  */
-#define GLFW_TRUE                   1
+#define PLFW_TRUE                   1
 /*! @brief Zero.
  *
  *  This is only semantic sugar for the number 0.  You can instead use `0` or
@@ -142,7 +142,7 @@ extern "C" {
  *
  *  @ingroup init
  */
-#define GLFW_FALSE                  0
+#define PLFW_FALSE                  0
 
 /*! @name Key and button actions
  *  @{ */
@@ -152,21 +152,21 @@ extern "C" {
  *
  *  @ingroup input
  */
-#define GLFW_RELEASE                0
+#define PLFW_RELEASE                0
 /*! @brief The key or mouse button was pressed.
  *
  *  The key or mouse button was pressed.
  *
  *  @ingroup input
  */
-#define GLFW_PRESS                  1
+#define PLFW_PRESS                  1
 /*! @brief The key was held down until it repeated.
  *
  *  The key was held down until it repeated.
  *
  *  @ingroup input
  */
-#define GLFW_REPEAT                 2
+#define PLFW_REPEAT                 2
 /*! @} */
 
 /*! @defgroup hat_state Joystick hat states
@@ -176,19 +176,19 @@ extern "C" {
  *
  *  @ingroup input
  *  @{ */
-#define GLFW_HAT_CENTERED           0
-#define GLFW_HAT_UP                 1
-#define GLFW_HAT_RIGHT              2
-#define GLFW_HAT_DOWN               4
-#define GLFW_HAT_LEFT               8
-#define GLFW_HAT_RIGHT_UP           (GLFW_HAT_RIGHT | GLFW_HAT_UP)
-#define GLFW_HAT_RIGHT_DOWN         (GLFW_HAT_RIGHT | GLFW_HAT_DOWN)
-#define GLFW_HAT_LEFT_UP            (GLFW_HAT_LEFT  | GLFW_HAT_UP)
-#define GLFW_HAT_LEFT_DOWN          (GLFW_HAT_LEFT  | GLFW_HAT_DOWN)
+#define PLFW_HAT_CENTERED           0
+#define PLFW_HAT_UP                 1
+#define PLFW_HAT_RIGHT              2
+#define PLFW_HAT_DOWN               4
+#define PLFW_HAT_LEFT               8
+#define PLFW_HAT_RIGHT_UP           (PLFW_HAT_RIGHT | PLFW_HAT_UP)
+#define PLFW_HAT_RIGHT_DOWN         (PLFW_HAT_RIGHT | PLFW_HAT_DOWN)
+#define PLFW_HAT_LEFT_UP            (PLFW_HAT_LEFT  | PLFW_HAT_UP)
+#define PLFW_HAT_LEFT_DOWN          (PLFW_HAT_LEFT  | PLFW_HAT_DOWN)
 
 /*! @ingroup input
  */
-#define GLFW_KEY_UNKNOWN            -1
+#define PLFW_KEY_UNKNOWN            -1
 
 /*! @} */
 
@@ -217,130 +217,130 @@ extern "C" {
  */
 
 /* Printable keys */
-#define GLFW_KEY_SPACE              32
-#define GLFW_KEY_APOSTROPHE         39  /* ' */
-#define GLFW_KEY_COMMA              44  /* , */
-#define GLFW_KEY_MINUS              45  /* - */
-#define GLFW_KEY_PERIOD             46  /* . */
-#define GLFW_KEY_SLASH              47  /* / */
-#define GLFW_KEY_0                  48
-#define GLFW_KEY_1                  49
-#define GLFW_KEY_2                  50
-#define GLFW_KEY_3                  51
-#define GLFW_KEY_4                  52
-#define GLFW_KEY_5                  53
-#define GLFW_KEY_6                  54
-#define GLFW_KEY_7                  55
-#define GLFW_KEY_8                  56
-#define GLFW_KEY_9                  57
-#define GLFW_KEY_SEMICOLON          59  /* ; */
-#define GLFW_KEY_EQUAL              61  /* = */
-#define GLFW_KEY_A                  65
-#define GLFW_KEY_B                  66
-#define GLFW_KEY_C                  67
-#define GLFW_KEY_D                  68
-#define GLFW_KEY_E                  69
-#define GLFW_KEY_F                  70
-#define GLFW_KEY_G                  71
-#define GLFW_KEY_H                  72
-#define GLFW_KEY_I                  73
-#define GLFW_KEY_J                  74
-#define GLFW_KEY_K                  75
-#define GLFW_KEY_L                  76
-#define GLFW_KEY_M                  77
-#define GLFW_KEY_N                  78
-#define GLFW_KEY_O                  79
-#define GLFW_KEY_P                  80
-#define GLFW_KEY_Q                  81
-#define GLFW_KEY_R                  82
-#define GLFW_KEY_S                  83
-#define GLFW_KEY_T                  84
-#define GLFW_KEY_U                  85
-#define GLFW_KEY_V                  86
-#define GLFW_KEY_W                  87
-#define GLFW_KEY_X                  88
-#define GLFW_KEY_Y                  89
-#define GLFW_KEY_Z                  90
-#define GLFW_KEY_LEFT_BRACKET       91  /* [ */
-#define GLFW_KEY_BACKSLASH          92  /* \ */
-#define GLFW_KEY_RIGHT_BRACKET      93  /* ] */
-#define GLFW_KEY_GRAVE_ACCENT       96  /* ` */
-#define GLFW_KEY_WORLD_1            161 /* non-US #1 */
-#define GLFW_KEY_WORLD_2            162 /* non-US #2 */
+#define PLFW_KEY_SPACE              32
+#define PLFW_KEY_APOSTROPHE         39  /* ' */
+#define PLFW_KEY_COMMA              44  /* , */
+#define PLFW_KEY_MINUS              45  /* - */
+#define PLFW_KEY_PERIOD             46  /* . */
+#define PLFW_KEY_SLASH              47  /* / */
+#define PLFW_KEY_0                  48
+#define PLFW_KEY_1                  49
+#define PLFW_KEY_2                  50
+#define PLFW_KEY_3                  51
+#define PLFW_KEY_4                  52
+#define PLFW_KEY_5                  53
+#define PLFW_KEY_6                  54
+#define PLFW_KEY_7                  55
+#define PLFW_KEY_8                  56
+#define PLFW_KEY_9                  57
+#define PLFW_KEY_SEMICOLON          59  /* ; */
+#define PLFW_KEY_EQUAL              61  /* = */
+#define PLFW_KEY_A                  65
+#define PLFW_KEY_B                  66
+#define PLFW_KEY_C                  67
+#define PLFW_KEY_D                  68
+#define PLFW_KEY_E                  69
+#define PLFW_KEY_F                  70
+#define PLFW_KEY_G                  71
+#define PLFW_KEY_H                  72
+#define PLFW_KEY_I                  73
+#define PLFW_KEY_J                  74
+#define PLFW_KEY_K                  75
+#define PLFW_KEY_L                  76
+#define PLFW_KEY_M                  77
+#define PLFW_KEY_N                  78
+#define PLFW_KEY_O                  79
+#define PLFW_KEY_P                  80
+#define PLFW_KEY_Q                  81
+#define PLFW_KEY_R                  82
+#define PLFW_KEY_S                  83
+#define PLFW_KEY_T                  84
+#define PLFW_KEY_U                  85
+#define PLFW_KEY_V                  86
+#define PLFW_KEY_W                  87
+#define PLFW_KEY_X                  88
+#define PLFW_KEY_Y                  89
+#define PLFW_KEY_Z                  90
+#define PLFW_KEY_LEFT_BRACKET       91  /* [ */
+#define PLFW_KEY_BACKSLASH          92  /* \ */
+#define PLFW_KEY_RIGHT_BRACKET      93  /* ] */
+#define PLFW_KEY_GRAVE_ACCENT       96  /* ` */
+#define PLFW_KEY_WORLD_1            161 /* non-US #1 */
+#define PLFW_KEY_WORLD_2            162 /* non-US #2 */
 
 /* Function keys */
-#define GLFW_KEY_ESCAPE             256
-#define GLFW_KEY_ENTER              257
-#define GLFW_KEY_TAB                258
-#define GLFW_KEY_BACKSPACE          259
-#define GLFW_KEY_INSERT             260
-#define GLFW_KEY_DELETE             261
-#define GLFW_KEY_RIGHT              262
-#define GLFW_KEY_LEFT               263
-#define GLFW_KEY_DOWN               264
-#define GLFW_KEY_UP                 265
-#define GLFW_KEY_PAGE_UP            266
-#define GLFW_KEY_PAGE_DOWN          267
-#define GLFW_KEY_HOME               268
-#define GLFW_KEY_END                269
-#define GLFW_KEY_CAPS_LOCK          280
-#define GLFW_KEY_SCROLL_LOCK        281
-#define GLFW_KEY_NUM_LOCK           282
-#define GLFW_KEY_PRINT_SCREEN       283
-#define GLFW_KEY_PAUSE              284
-#define GLFW_KEY_F1                 290
-#define GLFW_KEY_F2                 291
-#define GLFW_KEY_F3                 292
-#define GLFW_KEY_F4                 293
-#define GLFW_KEY_F5                 294
-#define GLFW_KEY_F6                 295
-#define GLFW_KEY_F7                 296
-#define GLFW_KEY_F8                 297
-#define GLFW_KEY_F9                 298
-#define GLFW_KEY_F10                299
-#define GLFW_KEY_F11                300
-#define GLFW_KEY_F12                301
-#define GLFW_KEY_F13                302
-#define GLFW_KEY_F14                303
-#define GLFW_KEY_F15                304
-#define GLFW_KEY_F16                305
-#define GLFW_KEY_F17                306
-#define GLFW_KEY_F18                307
-#define GLFW_KEY_F19                308
-#define GLFW_KEY_F20                309
-#define GLFW_KEY_F21                310
-#define GLFW_KEY_F22                311
-#define GLFW_KEY_F23                312
-#define GLFW_KEY_F24                313
-#define GLFW_KEY_F25                314
-#define GLFW_KEY_KP_0               320
-#define GLFW_KEY_KP_1               321
-#define GLFW_KEY_KP_2               322
-#define GLFW_KEY_KP_3               323
-#define GLFW_KEY_KP_4               324
-#define GLFW_KEY_KP_5               325
-#define GLFW_KEY_KP_6               326
-#define GLFW_KEY_KP_7               327
-#define GLFW_KEY_KP_8               328
-#define GLFW_KEY_KP_9               329
-#define GLFW_KEY_KP_DECIMAL         330
-#define GLFW_KEY_KP_DIVIDE          331
-#define GLFW_KEY_KP_MULTIPLY        332
-#define GLFW_KEY_KP_SUBTRACT        333
-#define GLFW_KEY_KP_ADD             334
-#define GLFW_KEY_KP_ENTER           335
-#define GLFW_KEY_KP_EQUAL           336
-#define GLFW_KEY_LEFT_SHIFT         340
-#define GLFW_KEY_LEFT_CONTROL       341
-#define GLFW_KEY_LEFT_ALT           342
-#define GLFW_KEY_LEFT_SUPER         343
-#define GLFW_KEY_RIGHT_SHIFT        344
-#define GLFW_KEY_RIGHT_CONTROL      345
-#define GLFW_KEY_RIGHT_ALT          346
-#define GLFW_KEY_RIGHT_SUPER        347
-#define GLFW_KEY_MENU               348
+#define PLFW_KEY_ESCAPE             256
+#define PLFW_KEY_ENTER              257
+#define PLFW_KEY_TAB                258
+#define PLFW_KEY_BACKSPACE          259
+#define PLFW_KEY_INSERT             260
+#define PLFW_KEY_DELETE             261
+#define PLFW_KEY_RIGHT              262
+#define PLFW_KEY_LEFT               263
+#define PLFW_KEY_DOWN               264
+#define PLFW_KEY_UP                 265
+#define PLFW_KEY_PAGE_UP            266
+#define PLFW_KEY_PAGE_DOWN          267
+#define PLFW_KEY_HOME               268
+#define PLFW_KEY_END                269
+#define PLFW_KEY_CAPS_LOCK          280
+#define PLFW_KEY_SCROLL_LOCK        281
+#define PLFW_KEY_NUM_LOCK           282
+#define PLFW_KEY_PRINT_SCREEN       283
+#define PLFW_KEY_PAUSE              284
+#define PLFW_KEY_F1                 290
+#define PLFW_KEY_F2                 291
+#define PLFW_KEY_F3                 292
+#define PLFW_KEY_F4                 293
+#define PLFW_KEY_F5                 294
+#define PLFW_KEY_F6                 295
+#define PLFW_KEY_F7                 296
+#define PLFW_KEY_F8                 297
+#define PLFW_KEY_F9                 298
+#define PLFW_KEY_F10                299
+#define PLFW_KEY_F11                300
+#define PLFW_KEY_F12                301
+#define PLFW_KEY_F13                302
+#define PLFW_KEY_F14                303
+#define PLFW_KEY_F15                304
+#define PLFW_KEY_F16                305
+#define PLFW_KEY_F17                306
+#define PLFW_KEY_F18                307
+#define PLFW_KEY_F19                308
+#define PLFW_KEY_F20                309
+#define PLFW_KEY_F21                310
+#define PLFW_KEY_F22                311
+#define PLFW_KEY_F23                312
+#define PLFW_KEY_F24                313
+#define PLFW_KEY_F25                314
+#define PLFW_KEY_KP_0               320
+#define PLFW_KEY_KP_1               321
+#define PLFW_KEY_KP_2               322
+#define PLFW_KEY_KP_3               323
+#define PLFW_KEY_KP_4               324
+#define PLFW_KEY_KP_5               325
+#define PLFW_KEY_KP_6               326
+#define PLFW_KEY_KP_7               327
+#define PLFW_KEY_KP_8               328
+#define PLFW_KEY_KP_9               329
+#define PLFW_KEY_KP_DECIMAL         330
+#define PLFW_KEY_KP_DIVIDE          331
+#define PLFW_KEY_KP_MULTIPLY        332
+#define PLFW_KEY_KP_SUBTRACT        333
+#define PLFW_KEY_KP_ADD             334
+#define PLFW_KEY_KP_ENTER           335
+#define PLFW_KEY_KP_EQUAL           336
+#define PLFW_KEY_LEFT_SHIFT         340
+#define PLFW_KEY_LEFT_CONTROL       341
+#define PLFW_KEY_LEFT_ALT           342
+#define PLFW_KEY_LEFT_SUPER         343
+#define PLFW_KEY_RIGHT_SHIFT        344
+#define PLFW_KEY_RIGHT_CONTROL      345
+#define PLFW_KEY_RIGHT_ALT          346
+#define PLFW_KEY_RIGHT_SUPER        347
+#define PLFW_KEY_MENU               348
 
-#define GLFW_KEY_LAST               GLFW_KEY_MENU
+#define PLFW_KEY_LAST               PLFW_KEY_MENU
 
 /*! @} */
 
@@ -356,34 +356,34 @@ extern "C" {
  *
  *  If this bit is set one or more Shift keys were held down.
  */
-#define GLFW_MOD_SHIFT           0x0001
+#define PLFW_MOD_SHIFT           0x0001
 /*! @brief If this bit is set one or more Control keys were held down.
  *
  *  If this bit is set one or more Control keys were held down.
  */
-#define GLFW_MOD_CONTROL         0x0002
+#define PLFW_MOD_CONTROL         0x0002
 /*! @brief If this bit is set one or more Alt keys were held down.
  *
  *  If this bit is set one or more Alt keys were held down.
  */
-#define GLFW_MOD_ALT             0x0004
+#define PLFW_MOD_ALT             0x0004
 /*! @brief If this bit is set one or more Super keys were held down.
  *
  *  If this bit is set one or more Super keys were held down.
  */
-#define GLFW_MOD_SUPER           0x0008
+#define PLFW_MOD_SUPER           0x0008
 /*! @brief If this bit is set the Caps Lock key is enabled.
  *
  *  If this bit is set the Caps Lock key is enabled and the @ref
- *  GLFW_LOCK_KEY_MODS input mode is set.
+ *  PLFW_LOCK_KEY_MODS input mode is set.
  */
-#define GLFW_MOD_CAPS_LOCK       0x0010
+#define PLFW_MOD_CAPS_LOCK       0x0010
 /*! @brief If this bit is set the Num Lock key is enabled.
  *
  *  If this bit is set the Num Lock key is enabled and the @ref
- *  GLFW_LOCK_KEY_MODS input mode is set.
+ *  PLFW_LOCK_KEY_MODS input mode is set.
  */
-#define GLFW_MOD_NUM_LOCK        0x0020
+#define PLFW_MOD_NUM_LOCK        0x0020
 
 /*! @} */
 
@@ -394,18 +394,18 @@ extern "C" {
  *
  *  @ingroup input
  *  @{ */
-#define GLFW_MOUSE_BUTTON_1         0
-#define GLFW_MOUSE_BUTTON_2         1
-#define GLFW_MOUSE_BUTTON_3         2
-#define GLFW_MOUSE_BUTTON_4         3
-#define GLFW_MOUSE_BUTTON_5         4
-#define GLFW_MOUSE_BUTTON_6         5
-#define GLFW_MOUSE_BUTTON_7         6
-#define GLFW_MOUSE_BUTTON_8         7
-#define GLFW_MOUSE_BUTTON_LAST      GLFW_MOUSE_BUTTON_8
-#define GLFW_MOUSE_BUTTON_LEFT      GLFW_MOUSE_BUTTON_1
-#define GLFW_MOUSE_BUTTON_RIGHT     GLFW_MOUSE_BUTTON_2
-#define GLFW_MOUSE_BUTTON_MIDDLE    GLFW_MOUSE_BUTTON_3
+#define PLFW_MOUSE_BUTTON_1         0
+#define PLFW_MOUSE_BUTTON_2         1
+#define PLFW_MOUSE_BUTTON_3         2
+#define PLFW_MOUSE_BUTTON_4         3
+#define PLFW_MOUSE_BUTTON_5         4
+#define PLFW_MOUSE_BUTTON_6         5
+#define PLFW_MOUSE_BUTTON_7         6
+#define PLFW_MOUSE_BUTTON_8         7
+#define PLFW_MOUSE_BUTTON_LAST      PLFW_MOUSE_BUTTON_8
+#define PLFW_MOUSE_BUTTON_LEFT      PLFW_MOUSE_BUTTON_1
+#define PLFW_MOUSE_BUTTON_RIGHT     PLFW_MOUSE_BUTTON_2
+#define PLFW_MOUSE_BUTTON_MIDDLE    PLFW_MOUSE_BUTTON_3
 /*! @} */
 
 /*! @defgroup joysticks Joysticks
@@ -415,23 +415,23 @@ extern "C" {
  *
  *  @ingroup input
  *  @{ */
-#define GLFW_JOYSTICK_1             0
-#define GLFW_JOYSTICK_2             1
-#define GLFW_JOYSTICK_3             2
-#define GLFW_JOYSTICK_4             3
-#define GLFW_JOYSTICK_5             4
-#define GLFW_JOYSTICK_6             5
-#define GLFW_JOYSTICK_7             6
-#define GLFW_JOYSTICK_8             7
-#define GLFW_JOYSTICK_9             8
-#define GLFW_JOYSTICK_10            9
-#define GLFW_JOYSTICK_11            10
-#define GLFW_JOYSTICK_12            11
-#define GLFW_JOYSTICK_13            12
-#define GLFW_JOYSTICK_14            13
-#define GLFW_JOYSTICK_15            14
-#define GLFW_JOYSTICK_16            15
-#define GLFW_JOYSTICK_LAST          GLFW_JOYSTICK_16
+#define PLFW_JOYSTICK_1             0
+#define PLFW_JOYSTICK_2             1
+#define PLFW_JOYSTICK_3             2
+#define PLFW_JOYSTICK_4             3
+#define PLFW_JOYSTICK_5             4
+#define PLFW_JOYSTICK_6             5
+#define PLFW_JOYSTICK_7             6
+#define PLFW_JOYSTICK_8             7
+#define PLFW_JOYSTICK_9             8
+#define PLFW_JOYSTICK_10            9
+#define PLFW_JOYSTICK_11            10
+#define PLFW_JOYSTICK_12            11
+#define PLFW_JOYSTICK_13            12
+#define PLFW_JOYSTICK_14            13
+#define PLFW_JOYSTICK_15            14
+#define PLFW_JOYSTICK_16            15
+#define PLFW_JOYSTICK_LAST          PLFW_JOYSTICK_16
 /*! @} */
 
 /*! @defgroup gamepad_buttons Gamepad buttons
@@ -441,27 +441,27 @@ extern "C" {
  *
  *  @ingroup input
  *  @{ */
-#define GLFW_GAMEPAD_BUTTON_A               0
-#define GLFW_GAMEPAD_BUTTON_B               1
-#define GLFW_GAMEPAD_BUTTON_X               2
-#define GLFW_GAMEPAD_BUTTON_Y               3
-#define GLFW_GAMEPAD_BUTTON_LEFT_BUMPER     4
-#define GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER    5
-#define GLFW_GAMEPAD_BUTTON_BACK            6
-#define GLFW_GAMEPAD_BUTTON_START           7
-#define GLFW_GAMEPAD_BUTTON_GUIDE           8
-#define GLFW_GAMEPAD_BUTTON_LEFT_THUMB      9
-#define GLFW_GAMEPAD_BUTTON_RIGHT_THUMB     10
-#define GLFW_GAMEPAD_BUTTON_DPAD_UP         11
-#define GLFW_GAMEPAD_BUTTON_DPAD_RIGHT      12
-#define GLFW_GAMEPAD_BUTTON_DPAD_DOWN       13
-#define GLFW_GAMEPAD_BUTTON_DPAD_LEFT       14
-#define GLFW_GAMEPAD_BUTTON_LAST            GLFW_GAMEPAD_BUTTON_DPAD_LEFT
+#define PLFW_GAMEPAD_BUTTON_A               0
+#define PLFW_GAMEPAD_BUTTON_B               1
+#define PLFW_GAMEPAD_BUTTON_X               2
+#define PLFW_GAMEPAD_BUTTON_Y               3
+#define PLFW_GAMEPAD_BUTTON_LEFT_BUMPER     4
+#define PLFW_GAMEPAD_BUTTON_RIGHT_BUMPER    5
+#define PLFW_GAMEPAD_BUTTON_BACK            6
+#define PLFW_GAMEPAD_BUTTON_START           7
+#define PLFW_GAMEPAD_BUTTON_GUIDE           8
+#define PLFW_GAMEPAD_BUTTON_LEFT_THUMB      9
+#define PLFW_GAMEPAD_BUTTON_RIGHT_THUMB     10
+#define PLFW_GAMEPAD_BUTTON_DPAD_UP         11
+#define PLFW_GAMEPAD_BUTTON_DPAD_RIGHT      12
+#define PLFW_GAMEPAD_BUTTON_DPAD_DOWN       13
+#define PLFW_GAMEPAD_BUTTON_DPAD_LEFT       14
+#define PLFW_GAMEPAD_BUTTON_LAST            PLFW_GAMEPAD_BUTTON_DPAD_LEFT
 
-#define GLFW_GAMEPAD_BUTTON_CROSS       GLFW_GAMEPAD_BUTTON_A
-#define GLFW_GAMEPAD_BUTTON_CIRCLE      GLFW_GAMEPAD_BUTTON_B
-#define GLFW_GAMEPAD_BUTTON_SQUARE      GLFW_GAMEPAD_BUTTON_X
-#define GLFW_GAMEPAD_BUTTON_TRIANGLE    GLFW_GAMEPAD_BUTTON_Y
+#define PLFW_GAMEPAD_BUTTON_CROSS       PLFW_GAMEPAD_BUTTON_A
+#define PLFW_GAMEPAD_BUTTON_CIRCLE      PLFW_GAMEPAD_BUTTON_B
+#define PLFW_GAMEPAD_BUTTON_SQUARE      PLFW_GAMEPAD_BUTTON_X
+#define PLFW_GAMEPAD_BUTTON_TRIANGLE    PLFW_GAMEPAD_BUTTON_Y
 /*! @} */
 
 /*! @defgroup gamepad_axes Gamepad axes
@@ -471,13 +471,13 @@ extern "C" {
  *
  *  @ingroup input
  *  @{ */
-#define GLFW_GAMEPAD_AXIS_LEFT_X        0
-#define GLFW_GAMEPAD_AXIS_LEFT_Y        1
-#define GLFW_GAMEPAD_AXIS_RIGHT_X       2
-#define GLFW_GAMEPAD_AXIS_RIGHT_Y       3
-#define GLFW_GAMEPAD_AXIS_LEFT_TRIGGER  4
-#define GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER 5
-#define GLFW_GAMEPAD_AXIS_LAST          GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER
+#define PLFW_GAMEPAD_AXIS_LEFT_X        0
+#define PLFW_GAMEPAD_AXIS_LEFT_Y        1
+#define PLFW_GAMEPAD_AXIS_RIGHT_X       2
+#define PLFW_GAMEPAD_AXIS_RIGHT_Y       3
+#define PLFW_GAMEPAD_AXIS_LEFT_TRIGGER  4
+#define PLFW_GAMEPAD_AXIS_RIGHT_TRIGGER 5
+#define PLFW_GAMEPAD_AXIS_LAST          PLFW_GAMEPAD_AXIS_RIGHT_TRIGGER
 /*! @} */
 
 /*! @defgroup errors Error codes
@@ -493,34 +493,34 @@ extern "C" {
  *
  *  @analysis Yay.
  */
-#define GLFW_NO_ERROR               0
-/*! @brief GLFW has not been initialized.
+#define PLFW_NO_ERROR               0
+/*! @brief PLFW has not been initialized.
  *
- *  This occurs if a GLFW function was called that must not be called unless the
+ *  This occurs if a PLFW function was called that must not be called unless the
  *  library is [initialized](@ref intro_init).
  *
- *  @analysis Application programmer error.  Initialize GLFW before calling any
+ *  @analysis Application programmer error.  Initialize PLFW before calling any
  *  function that requires initialization.
  */
-#define GLFW_NOT_INITIALIZED        0x00010001
+#define PLFW_NOT_INITIALIZED        0x00010001
 /*! @brief No context is current for this thread.
  *
  *  This error is retained for source and ABI compatibility with upstream GLFW,
  *  where it was produced by functions that operate on the current OpenGL or
- *  OpenGL ES context.  This build of GLFW has no context support at all, so no
+ *  OpenGL ES context.  This build of PLFW has no context support at all, so no
  *  function reports this code.
  *
  *  @analysis Category is no longer used by this build.
  */
-#define GLFW_NO_CURRENT_CONTEXT     0x00010002
+#define PLFW_NO_CURRENT_CONTEXT     0x00010002
 /*! @brief One of the arguments to the function was an invalid enum value.
  *
  *  One of the arguments to the function was an invalid enum value, for example
- *  asking @ref glfwGetWindowAttrib for an attribute this build does not have.
+ *  asking @ref plfwGetWindowAttrib for an attribute this build does not have.
  *
  *  @analysis Application programmer error.  Fix the offending call.
  */
-#define GLFW_INVALID_ENUM           0x00010003
+#define PLFW_INVALID_ENUM           0x00010003
 /*! @brief One of the arguments to the function was an invalid value.
  *
  *  One of the arguments to the function was an invalid value, for example
@@ -528,16 +528,16 @@ extern "C" {
  *
  *  @analysis Application programmer error.  Fix the offending call.
  */
-#define GLFW_INVALID_VALUE          0x00010004
+#define PLFW_INVALID_VALUE          0x00010004
 /*! @brief A memory allocation failed.
  *
  *  A memory allocation failed.
  *
- *  @analysis A bug in GLFW or the underlying operating system.  Report the bug
- *  to our [issue tracker](https://github.com/glfw/glfw/issues).
+ *  @analysis A bug in PLFW or the underlying operating system.  Report the bug
+ *  to the upstream GLFW [issue tracker](https://github.com/glfw/glfw/issues).
  */
-#define GLFW_OUT_OF_MEMORY          0x00010005
-/*! @brief GLFW could not find support for the requested API on the system.
+#define PLFW_OUT_OF_MEMORY          0x00010005
+/*! @brief PLFW could not find support for the requested API on the system.
  *
  *  Retained for source and ABI compatibility with upstream GLFW, where it was
  *  reported when a requested client API was unsupported.  This build creates no
@@ -545,7 +545,7 @@ extern "C" {
  *
  *  @analysis No action required; the category is unused by this build.
  */
-#define GLFW_API_UNAVAILABLE        0x00010006
+#define PLFW_API_UNAVAILABLE        0x00010006
 /*! @brief The requested OpenGL or OpenGL ES version is not available.
  *
  *  Retained for source and ABI compatibility with upstream GLFW, where it was
@@ -554,18 +554,18 @@ extern "C" {
  *
  *  @analysis No action required; the category is unused by this build.
  */
-#define GLFW_VERSION_UNAVAILABLE    0x00010007
+#define PLFW_VERSION_UNAVAILABLE    0x00010007
 /*! @brief A platform-specific error occurred that does not match any of the
  *  more specific categories.
  *
  *  A platform-specific error occurred that does not match any of the more
  *  specific categories.
  *
- *  @analysis A bug or configuration error in GLFW, the underlying operating
+ *  @analysis A bug or configuration error in PLFW, the underlying operating
  *  system or its drivers, or a lack of required resources.  Report the issue to
- *  our [issue tracker](https://github.com/glfw/glfw/issues).
+ *  the upstream GLFW [issue tracker](https://github.com/glfw/glfw/issues).
  */
-#define GLFW_PLATFORM_ERROR         0x00010008
+#define PLFW_PLATFORM_ERROR         0x00010008
 /*! @brief The requested format is not supported or available.
  *
  *  If emitted during window creation, the requested pixel format is not
@@ -584,7 +584,7 @@ extern "C" {
  *  If emitted when querying the clipboard, ignore the error or report it to
  *  the user, as appropriate.
  */
-#define GLFW_FORMAT_UNAVAILABLE     0x00010009
+#define PLFW_FORMAT_UNAVAILABLE     0x00010009
 /*! @brief The specified window does not have an OpenGL or OpenGL ES context.
  *
  *  A window that does not have an OpenGL or OpenGL ES context was passed to
@@ -592,7 +592,7 @@ extern "C" {
  *
  *  @analysis Application programmer error.  Fix the offending call.
  */
-#define GLFW_NO_WINDOW_CONTEXT      0x0001000A
+#define PLFW_NO_WINDOW_CONTEXT      0x0001000A
 /*! @brief The specified cursor shape is not available.
  *
  *  The specified standard cursor shape is not available, either because the
@@ -603,10 +603,10 @@ extern "C" {
  *  [standard cursor shape](@ref shapes) or create a
  *  [custom cursor](@ref cursor_custom).
  */
-#define GLFW_CURSOR_UNAVAILABLE     0x0001000B
+#define PLFW_CURSOR_UNAVAILABLE     0x0001000B
 /*! @brief The requested feature is not provided by the platform.
  *
- *  The requested feature is not provided by the platform, so GLFW is unable to
+ *  The requested feature is not provided by the platform, so PLFW is unable to
  *  implement it.  The documentation for each function notes if it could emit
  *  this error.
  *
@@ -617,12 +617,12 @@ extern "C" {
  *  A function call that emits this error has no effect other than the error and
  *  updating any existing out parameters.
  */
-#define GLFW_FEATURE_UNAVAILABLE    0x0001000C
+#define PLFW_FEATURE_UNAVAILABLE    0x0001000C
 /*! @brief The requested feature is not implemented for the platform.
  *
- *  The requested feature has not yet been implemented in GLFW for this platform.
+ *  The requested feature has not yet been implemented in PLFW for this platform.
  *
- *  @analysis An incomplete implementation of GLFW for this platform, hopefully
+ *  @analysis An incomplete implementation of PLFW for this platform, hopefully
  *  fixed in a future release.  The error can be ignored unless the feature is
  *  critical to the application.
  *
@@ -630,16 +630,16 @@ extern "C" {
  *  A function call that emits this error has no effect other than the error and
  *  updating any existing out parameters.
  */
-#define GLFW_FEATURE_UNIMPLEMENTED  0x0001000D
+#define PLFW_FEATURE_UNIMPLEMENTED  0x0001000D
 /*! @brief Platform unavailable or no matching platform was found.
  *
  *  If emitted during initialization, no matching platform was found.  If the @ref
- *  GLFW_PLATFORM init hint was set to `GLFW_ANY_PLATFORM`, GLFW could not detect any of
+ *  PLFW_PLATFORM init hint was set to `PLFW_ANY_PLATFORM`, PLFW could not detect any of
  *  the platforms supported by this library binary, except for the Null platform.  If the
  *  init hint was set to a specific platform, it is either not supported by this library
- *  binary or GLFW was not able to detect it.
+ *  binary or PLFW was not able to detect it.
  *
- *  If emitted by a native access function, GLFW was initialized for a different platform
+ *  If emitted by a native access function, PLFW was initialized for a different platform
  *  than the function is for.
  *
  *  @analysis Failure to detect any platform usually only happens on non-macOS Unix
@@ -649,148 +649,148 @@ extern "C" {
  *  detected.
  *
  *  Failure to detect a specific platform may have the same cause as above or be because
- *  support for that platform was not compiled in.  Call @ref glfwPlatformSupported to
+ *  support for that platform was not compiled in.  Call @ref plfwPlatformSupported to
  *  check whether a specific platform is supported by a library binary.
  */
-#define GLFW_PLATFORM_UNAVAILABLE   0x0001000E
+#define PLFW_PLATFORM_UNAVAILABLE   0x0001000E
 /*! @} */
 
 /*! @addtogroup window
  *  @{ */
 /*! @brief Input focus window hint and attribute
  *
- *  Input focus [window hint](@ref GLFW_FOCUSED_hint) or
- *  [window attribute](@ref GLFW_FOCUSED_attrib).
+ *  Input focus [window hint](@ref PLFW_FOCUSED_hint) or
+ *  [window attribute](@ref PLFW_FOCUSED_attrib).
  */
-#define GLFW_FOCUSED                0x00020001
+#define PLFW_FOCUSED                0x00020001
 /*! @brief Window iconification window attribute
  *
- *  Window iconification [window attribute](@ref GLFW_ICONIFIED_attrib).
+ *  Window iconification [window attribute](@ref PLFW_ICONIFIED_attrib).
  */
-#define GLFW_ICONIFIED              0x00020002
+#define PLFW_ICONIFIED              0x00020002
 /*! @brief Window resize-ability window hint and attribute
  *
- *  Window resize-ability [window hint](@ref GLFW_RESIZABLE_hint) and
- *  [window attribute](@ref GLFW_RESIZABLE_attrib).
+ *  Window resize-ability [window hint](@ref PLFW_RESIZABLE_hint) and
+ *  [window attribute](@ref PLFW_RESIZABLE_attrib).
  */
-#define GLFW_RESIZABLE              0x00020003
+#define PLFW_RESIZABLE              0x00020003
 /*! @brief Window visibility window hint and attribute
  *
- *  Window visibility [window hint](@ref GLFW_VISIBLE_hint) and
- *  [window attribute](@ref GLFW_VISIBLE_attrib).
+ *  Window visibility [window hint](@ref PLFW_VISIBLE_hint) and
+ *  [window attribute](@ref PLFW_VISIBLE_attrib).
  */
-#define GLFW_VISIBLE                0x00020004
+#define PLFW_VISIBLE                0x00020004
 /*! @brief Window decoration window hint and attribute
  *
- *  Window decoration [window hint](@ref GLFW_DECORATED_hint) and
- *  [window attribute](@ref GLFW_DECORATED_attrib).
+ *  Window decoration [window hint](@ref PLFW_DECORATED_hint) and
+ *  [window attribute](@ref PLFW_DECORATED_attrib).
  */
-#define GLFW_DECORATED              0x00020005
+#define PLFW_DECORATED              0x00020005
 /*! @brief Window auto-iconification window hint and attribute
  *
- *  Window auto-iconification [window hint](@ref GLFW_AUTO_ICONIFY_hint) and
- *  [window attribute](@ref GLFW_AUTO_ICONIFY_attrib).
+ *  Window auto-iconification [window hint](@ref PLFW_AUTO_ICONIFY_hint) and
+ *  [window attribute](@ref PLFW_AUTO_ICONIFY_attrib).
  */
-#define GLFW_AUTO_ICONIFY           0x00020006
+#define PLFW_AUTO_ICONIFY           0x00020006
 /*! @brief Window decoration window hint and attribute
  *
- *  Window decoration [window hint](@ref GLFW_FLOATING_hint) and
- *  [window attribute](@ref GLFW_FLOATING_attrib).
+ *  Window decoration [window hint](@ref PLFW_FLOATING_hint) and
+ *  [window attribute](@ref PLFW_FLOATING_attrib).
  */
-#define GLFW_FLOATING               0x00020007
+#define PLFW_FLOATING               0x00020007
 /*! @brief Window maximization window hint and attribute
  *
- *  Window maximization [window hint](@ref GLFW_MAXIMIZED_hint) and
- *  [window attribute](@ref GLFW_MAXIMIZED_attrib).
+ *  Window maximization [window hint](@ref PLFW_MAXIMIZED_hint) and
+ *  [window attribute](@ref PLFW_MAXIMIZED_attrib).
  */
-#define GLFW_MAXIMIZED              0x00020008
+#define PLFW_MAXIMIZED              0x00020008
 /*! @brief Cursor centering window hint
  *
- *  Cursor centering [window hint](@ref GLFW_CENTER_CURSOR_hint).
+ *  Cursor centering [window hint](@ref PLFW_CENTER_CURSOR_hint).
  */
-#define GLFW_CENTER_CURSOR          0x00020009
+#define PLFW_CENTER_CURSOR          0x00020009
 /*! @brief Window framebuffer transparency hint and attribute
  *
  *  Window framebuffer transparency
- *  [window hint](@ref GLFW_TRANSPARENT_FRAMEBUFFER_hint) and
- *  [window attribute](@ref GLFW_TRANSPARENT_FRAMEBUFFER_attrib).
+ *  [window hint](@ref PLFW_TRANSPARENT_FRAMEBUFFER_hint) and
+ *  [window attribute](@ref PLFW_TRANSPARENT_FRAMEBUFFER_attrib).
  */
-#define GLFW_TRANSPARENT_FRAMEBUFFER 0x0002000A
+#define PLFW_TRANSPARENT_FRAMEBUFFER 0x0002000A
 /*! @brief Mouse cursor hover window attribute.
  *
- *  Mouse cursor hover [window attribute](@ref GLFW_HOVERED_attrib).
+ *  Mouse cursor hover [window attribute](@ref PLFW_HOVERED_attrib).
  */
-#define GLFW_HOVERED                0x0002000B
+#define PLFW_HOVERED                0x0002000B
 /*! @brief Input focus on calling show window hint and attribute
  *
- *  Input focus [window hint](@ref GLFW_FOCUS_ON_SHOW_hint) or
- *  [window attribute](@ref GLFW_FOCUS_ON_SHOW_attrib).
+ *  Input focus [window hint](@ref PLFW_FOCUS_ON_SHOW_hint) or
+ *  [window attribute](@ref PLFW_FOCUS_ON_SHOW_attrib).
  */
-#define GLFW_FOCUS_ON_SHOW          0x0002000C
+#define PLFW_FOCUS_ON_SHOW          0x0002000C
 
 /*! @brief Mouse input transparency window hint and attribute
  *
- *  Mouse input transparency [window hint](@ref GLFW_MOUSE_PASSTHROUGH_hint) or
- *  [window attribute](@ref GLFW_MOUSE_PASSTHROUGH_attrib).
+ *  Mouse input transparency [window hint](@ref PLFW_MOUSE_PASSTHROUGH_hint) or
+ *  [window attribute](@ref PLFW_MOUSE_PASSTHROUGH_attrib).
  */
-#define GLFW_MOUSE_PASSTHROUGH      0x0002000D
+#define PLFW_MOUSE_PASSTHROUGH      0x0002000D
 
 /*! @brief Initial position x-coordinate window hint.
  *
- *  Initial position x-coordinate [window hint](@ref GLFW_POSITION_X).
+ *  Initial position x-coordinate [window hint](@ref PLFW_POSITION_X).
  */
-#define GLFW_POSITION_X             0x0002000E
+#define PLFW_POSITION_X             0x0002000E
 
 /*! @brief Initial position y-coordinate window hint.
  *
- *  Initial position y-coordinate [window hint](@ref GLFW_POSITION_Y).
+ *  Initial position y-coordinate [window hint](@ref PLFW_POSITION_Y).
  */
-#define GLFW_POSITION_Y             0x0002000F
+#define PLFW_POSITION_Y             0x0002000F
 
 /*! @brief Full screen monitor refresh rate window hint.
  *
- *  Monitor refresh rate [window hint](@ref GLFW_REFRESH_RATE).
+ *  Monitor refresh rate [window hint](@ref PLFW_REFRESH_RATE).
  */
-#define GLFW_REFRESH_RATE           0x0002100F
+#define PLFW_REFRESH_RATE           0x0002100F
 
 /*! @brief Window content area scaling window
- *  [window hint](@ref GLFW_SCALE_TO_MONITOR).
+ *  [window hint](@ref PLFW_SCALE_TO_MONITOR).
  */
-#define GLFW_SCALE_TO_MONITOR       0x0002200C
+#define PLFW_SCALE_TO_MONITOR       0x0002200C
 /*! @brief Window framebuffer scaling
- *  [window hint](@ref GLFW_SCALE_FRAMEBUFFER_hint).
+ *  [window hint](@ref PLFW_SCALE_FRAMEBUFFER_hint).
  */
-#define GLFW_SCALE_FRAMEBUFFER      0x0002200D
-#define GLFW_WIN32_KEYBOARD_MENU    0x00025001
-/*! @brief Win32 specific [window hint](@ref GLFW_WIN32_SHOWDEFAULT_hint).
+#define PLFW_SCALE_FRAMEBUFFER      0x0002200D
+#define PLFW_WIN32_KEYBOARD_MENU    0x00025001
+/*! @brief Win32 specific [window hint](@ref PLFW_WIN32_SHOWDEFAULT_hint).
  */
-#define GLFW_WIN32_SHOWDEFAULT      0x00025002
+#define PLFW_WIN32_SHOWDEFAULT      0x00025002
 /*! @brief Wayland specific
- *  [window hint](@ref GLFW_WAYLAND_APP_ID_hint).
+ *  [window hint](@ref PLFW_WAYLAND_APP_ID_hint).
  *  
  *  Allows specification of the Wayland app_id.
  */
-#define GLFW_WAYLAND_APP_ID         0x00026001
+#define PLFW_WAYLAND_APP_ID         0x00026001
 /*! @} */
 
 
-#define GLFW_CURSOR                  0x00033001
-#define GLFW_STICKY_KEYS             0x00033002
-#define GLFW_STICKY_MOUSE_BUTTONS    0x00033003
-#define GLFW_LOCK_KEY_MODS           0x00033004
-#define GLFW_RAW_MOUSE_MOTION        0x00033005
-#define GLFW_UNLIMITED_MOUSE_BUTTONS 0x00033006
+#define PLFW_CURSOR                  0x00033001
+#define PLFW_STICKY_KEYS             0x00033002
+#define PLFW_STICKY_MOUSE_BUTTONS    0x00033003
+#define PLFW_LOCK_KEY_MODS           0x00033004
+#define PLFW_RAW_MOUSE_MOTION        0x00033005
+#define PLFW_UNLIMITED_MOUSE_BUTTONS 0x00033006
 
-#define GLFW_CURSOR_NORMAL          0x00034001
-#define GLFW_CURSOR_HIDDEN          0x00034002
-#define GLFW_CURSOR_DISABLED        0x00034003
-#define GLFW_CURSOR_CAPTURED        0x00034004
+#define PLFW_CURSOR_NORMAL          0x00034001
+#define PLFW_CURSOR_HIDDEN          0x00034002
+#define PLFW_CURSOR_DISABLED        0x00034003
+#define PLFW_CURSOR_CAPTURED        0x00034004
 
 
-#define GLFW_WAYLAND_PREFER_LIBDECOR    0x00038001
-#define GLFW_WAYLAND_DISABLE_LIBDECOR   0x00038002
+#define PLFW_WAYLAND_PREFER_LIBDECOR    0x00038001
+#define PLFW_WAYLAND_DISABLE_LIBDECOR   0x00038002
 
-#define GLFW_ANY_POSITION           0x80000000
+#define PLFW_ANY_POSITION           0x80000000
 
 /*! @defgroup shapes Standard cursor shapes
  *  @brief Standard system cursor shapes.
@@ -805,34 +805,34 @@ extern "C" {
  *
  *  The regular arrow cursor shape.
  */
-#define GLFW_ARROW_CURSOR           0x00036001
+#define PLFW_ARROW_CURSOR           0x00036001
 /*! @brief The text input I-beam cursor shape.
  *
  *  The text input I-beam cursor shape.
  */
-#define GLFW_IBEAM_CURSOR           0x00036002
+#define PLFW_IBEAM_CURSOR           0x00036002
 /*! @brief The crosshair cursor shape.
  *
  *  The crosshair cursor shape.
  */
-#define GLFW_CROSSHAIR_CURSOR       0x00036003
+#define PLFW_CROSSHAIR_CURSOR       0x00036003
 /*! @brief The pointing hand cursor shape.
  *
  *  The pointing hand cursor shape.
  */
-#define GLFW_POINTING_HAND_CURSOR   0x00036004
+#define PLFW_POINTING_HAND_CURSOR   0x00036004
 /*! @brief The horizontal resize/move arrow shape.
  *
  *  The horizontal resize/move arrow shape.  This is usually a horizontal
  *  double-headed arrow.
  */
-#define GLFW_RESIZE_EW_CURSOR       0x00036005
+#define PLFW_RESIZE_EW_CURSOR       0x00036005
 /*! @brief The vertical resize/move arrow shape.
  *
  *  The vertical resize/move shape.  This is usually a vertical double-headed
  *  arrow.
  */
-#define GLFW_RESIZE_NS_CURSOR       0x00036006
+#define PLFW_RESIZE_NS_CURSOR       0x00036006
 /*! @brief The top-left to bottom-right diagonal resize/move arrow shape.
  *
  *  The top-left to bottom-right diagonal resize/move shape.  This is usually
@@ -841,7 +841,7 @@ extern "C" {
  *  @note __Wayland:__ This shape is provided by a newer standard not supported by
  *  all cursor themes.
  */
-#define GLFW_RESIZE_NWSE_CURSOR     0x00036007
+#define PLFW_RESIZE_NWSE_CURSOR     0x00036007
 /*! @brief The top-right to bottom-left diagonal resize/move arrow shape.
  *
  *  The top-right to bottom-left diagonal resize/move shape.  This is usually
@@ -850,13 +850,13 @@ extern "C" {
  *  @note __Wayland:__ This shape is provided by a newer standard not supported by
  *  all cursor themes.
  */
-#define GLFW_RESIZE_NESW_CURSOR     0x00036008
+#define PLFW_RESIZE_NESW_CURSOR     0x00036008
 /*! @brief The omni-directional resize/move cursor shape.
  *
  *  The omni-directional resize cursor/move shape.  This is usually either
  *  a combined horizontal and vertical double-headed arrow or a grabbing hand.
  */
-#define GLFW_RESIZE_ALL_CURSOR      0x00036009
+#define PLFW_RESIZE_ALL_CURSOR      0x00036009
 /*! @brief The operation-not-allowed shape.
  *
  *  The operation-not-allowed shape.  This is usually a circle with a diagonal
@@ -865,69 +865,69 @@ extern "C" {
  *  @note __Wayland:__ This shape is provided by a newer standard not supported by
  *  all cursor themes.
  */
-#define GLFW_NOT_ALLOWED_CURSOR     0x0003600A
+#define PLFW_NOT_ALLOWED_CURSOR     0x0003600A
 /*! @brief Legacy name for compatibility.
  *
  *  This is an alias for compatibility with earlier versions.
  */
-#define GLFW_HRESIZE_CURSOR         GLFW_RESIZE_EW_CURSOR
+#define PLFW_HRESIZE_CURSOR         PLFW_RESIZE_EW_CURSOR
 /*! @brief Legacy name for compatibility.
  *
  *  This is an alias for compatibility with earlier versions.
  */
-#define GLFW_VRESIZE_CURSOR         GLFW_RESIZE_NS_CURSOR
+#define PLFW_VRESIZE_CURSOR         PLFW_RESIZE_NS_CURSOR
 /*! @brief Legacy name for compatibility.
  *
  *  This is an alias for compatibility with earlier versions.
  */
-#define GLFW_HAND_CURSOR            GLFW_POINTING_HAND_CURSOR
+#define PLFW_HAND_CURSOR            PLFW_POINTING_HAND_CURSOR
 /*! @} */
 
-#define GLFW_CONNECTED              0x00040001
-#define GLFW_DISCONNECTED           0x00040002
+#define PLFW_CONNECTED              0x00040001
+#define PLFW_DISCONNECTED           0x00040002
 
 /*! @addtogroup init
  *  @{ */
 /*! @brief Joystick hat buttons init hint.
  *
- *  Joystick hat buttons [init hint](@ref GLFW_JOYSTICK_HAT_BUTTONS).
+ *  Joystick hat buttons [init hint](@ref PLFW_JOYSTICK_HAT_BUTTONS).
  */
-#define GLFW_JOYSTICK_HAT_BUTTONS   0x00050001
+#define PLFW_JOYSTICK_HAT_BUTTONS   0x00050001
 /*! @brief Platform selection init hint.
  *
- *  Platform selection [init hint](@ref GLFW_PLATFORM).
+ *  Platform selection [init hint](@ref PLFW_PLATFORM).
  */
-#define GLFW_PLATFORM               0x00050003
+#define PLFW_PLATFORM               0x00050003
 /*! @brief Wayland specific init hint.
  *
- *  Wayland specific [init hint](@ref GLFW_WAYLAND_LIBDECOR_hint).
+ *  Wayland specific [init hint](@ref PLFW_WAYLAND_LIBDECOR_hint).
  */
-#define GLFW_WAYLAND_LIBDECOR       0x00053001
+#define PLFW_WAYLAND_LIBDECOR       0x00053001
 /*! @} */
 
 /*! @addtogroup init
  *  @{ */
 /*! @brief Hint value that enables automatic platform selection.
  *
- *  Hint value for @ref GLFW_PLATFORM that enables automatic platform selection.
+ *  Hint value for @ref PLFW_PLATFORM that enables automatic platform selection.
  */
-#define GLFW_ANY_PLATFORM           0x00060000
-#define GLFW_PLATFORM_WIN32         0x00060001
-#define GLFW_PLATFORM_COCOA         0x00060002
-#define GLFW_PLATFORM_WAYLAND       0x00060003
-#define GLFW_PLATFORM_X11           0x00060004
-#define GLFW_PLATFORM_NULL          0x00060005
+#define PLFW_ANY_PLATFORM           0x00060000
+#define PLFW_PLATFORM_WIN32         0x00060001
+#define PLFW_PLATFORM_COCOA         0x00060002
+#define PLFW_PLATFORM_WAYLAND       0x00060003
+#define PLFW_PLATFORM_X11           0x00060004
+#define PLFW_PLATFORM_NULL          0x00060005
 /*! @} */
 
 /* Reserved platform define for external Emscripten ports: 0x00060006
- * See https://github.com/pongasoft/emscripten-glfw
+ * See https://github.com/pongasoft/emscripten-plfw
  */
 
-#define GLFW_DONT_CARE              -1
+#define PLFW_DONT_CARE              -1
 
 
 /*************************************************************************
- * GLFW API types
+ * PLFW API types
  *************************************************************************/
 
 /*! @brief Opaque monitor object.
@@ -940,7 +940,7 @@ extern "C" {
  *
  *  @ingroup monitor
  */
-typedef struct GLFWmonitor GLFWmonitor;
+typedef struct PLFWmonitor PLFWmonitor;
 
 /*! @brief Opaque window object.
  *
@@ -952,7 +952,7 @@ typedef struct GLFWmonitor GLFWmonitor;
  *
  *  @ingroup window
  */
-typedef struct GLFWwindow GLFWwindow;
+typedef struct PLFWwindow PLFWwindow;
 
 /*! @brief Opaque cursor object.
  *
@@ -964,7 +964,7 @@ typedef struct GLFWwindow GLFWwindow;
  *
  *  @ingroup input
  */
-typedef struct GLFWcursor GLFWcursor;
+typedef struct PLFWcursor PLFWcursor;
 
 /*! @brief The function pointer type for memory allocation callbacks.
  *
@@ -975,11 +975,11 @@ typedef struct GLFWcursor GLFWcursor;
  *  @endcode
  *
  *  This function must return either a memory block at least `size` bytes long,
- *  or `NULL` if allocation failed.  Note that not all parts of GLFW handle allocation
+ *  or `NULL` if allocation failed.  Note that not all parts of PLFW handle allocation
  *  failures gracefully yet.
  *
- *  This function must support being called during @ref glfwInit but before the library is
- *  flagged as initialized, as well as during @ref glfwTerminate after the library is no
+ *  This function must support being called during @ref plfwInit but before the library is
+ *  flagged as initialized, as well as during @ref plfwTerminate after the library is no
  *  longer flagged as initialized.
  *
  *  Any memory allocated via this function will be deallocated via the same allocator
@@ -993,9 +993,9 @@ typedef struct GLFWcursor GLFWcursor;
  *  The size will always be greater than zero.  Allocations of size zero are filtered out
  *  before reaching the custom allocator.
  *
- *  If this function returns `NULL`, GLFW will emit @ref GLFW_OUT_OF_MEMORY.
+ *  If this function returns `NULL`, PLFW will emit @ref PLFW_OUT_OF_MEMORY.
  *
- *  This function must not call any GLFW function.
+ *  This function must not call any PLFW function.
  *
  *  @param[in] size The minimum size, in bytes, of the memory block.
  *  @param[in] user The user-defined pointer from the allocator.
@@ -1005,19 +1005,19 @@ typedef struct GLFWcursor GLFWcursor;
  *  @pointer_lifetime The returned memory block must be valid at least until it
  *  is deallocated.
  *
- *  @reentrancy This function should not call any GLFW function.
+ *  @reentrancy This function should not call any PLFW function.
  *
- *  @thread_safety This function must support being called from any thread that calls GLFW
+ *  @thread_safety This function must support being called from any thread that calls PLFW
  *  functions.
  *
  *  @sa @ref init_allocator
- *  @sa @ref GLFWallocator
+ *  @sa @ref PLFWallocator
  *
  *  @since Added in version 3.4.
  *
  *  @ingroup init
  */
-typedef void* (* GLFWallocatefun)(size_t size, void* user);
+typedef void* (* PLFWallocatefun)(size_t size, void* user);
 
 /*! @brief The function pointer type for memory reallocation callbacks.
  *
@@ -1028,11 +1028,11 @@ typedef void* (* GLFWallocatefun)(size_t size, void* user);
  *  @endcode
  *
  *  This function must return a memory block at least `size` bytes long, or
- *  `NULL` if allocation failed.  Note that not all parts of GLFW handle allocation
+ *  `NULL` if allocation failed.  Note that not all parts of PLFW handle allocation
  *  failures gracefully yet.
  *
- *  This function must support being called during @ref glfwInit but before the library is
- *  flagged as initialized, as well as during @ref glfwTerminate after the library is no
+ *  This function must support being called during @ref plfwInit but before the library is
+ *  flagged as initialized, as well as during @ref plfwTerminate after the library is no
  *  longer flagged as initialized.
  *
  *  Any memory allocated via this function will be deallocated via the same allocator
@@ -1048,9 +1048,9 @@ typedef void* (* GLFWallocatefun)(size_t size, void* user);
  *  the custom allocator.  Reallocations of `NULL` to a non-zero size are converted into
  *  regular allocations before reaching the custom allocator.
  *
- *  If this function returns `NULL`, GLFW will emit @ref GLFW_OUT_OF_MEMORY.
+ *  If this function returns `NULL`, PLFW will emit @ref PLFW_OUT_OF_MEMORY.
  *
- *  This function must not call any GLFW function.
+ *  This function must not call any PLFW function.
  *
  *  @param[in] block The address of the memory block to reallocate.
  *  @param[in] size The new minimum size, in bytes, of the memory block.
@@ -1061,19 +1061,19 @@ typedef void* (* GLFWallocatefun)(size_t size, void* user);
  *  @pointer_lifetime The returned memory block must be valid at least until it
  *  is deallocated.
  *
- *  @reentrancy This function should not call any GLFW function.
+ *  @reentrancy This function should not call any PLFW function.
  *
- *  @thread_safety This function must support being called from any thread that calls GLFW
+ *  @thread_safety This function must support being called from any thread that calls PLFW
  *  functions.
  *
  *  @sa @ref init_allocator
- *  @sa @ref GLFWallocator
+ *  @sa @ref PLFWallocator
  *
  *  @since Added in version 3.4.
  *
  *  @ingroup init
  */
-typedef void* (* GLFWreallocatefun)(void* block, size_t size, void* user);
+typedef void* (* PLFWreallocatefun)(void* block, size_t size, void* user);
 
 /*! @brief The function pointer type for memory deallocation callbacks.
  *
@@ -1086,36 +1086,36 @@ typedef void* (* GLFWreallocatefun)(void* block, size_t size, void* user);
  *  This function may deallocate the specified memory block.  This memory block
  *  will have been allocated with the same allocator.
  *
- *  This function must support being called during @ref glfwInit but before the library is
- *  flagged as initialized, as well as during @ref glfwTerminate after the library is no
+ *  This function must support being called during @ref plfwInit but before the library is
+ *  flagged as initialized, as well as during @ref plfwTerminate after the library is no
  *  longer flagged as initialized.
  *
  *  The block address will never be `NULL`.  Deallocations of `NULL` are filtered out
  *  before reaching the custom allocator.
  *
- *  If this function returns `NULL`, GLFW will emit @ref GLFW_OUT_OF_MEMORY.
+ *  If this function returns `NULL`, PLFW will emit @ref PLFW_OUT_OF_MEMORY.
  *
- *  This function must not call any GLFW function.
+ *  This function must not call any PLFW function.
  *
  *  @param[in] block The address of the memory block to deallocate.
  *  @param[in] user The user-defined pointer from the allocator.
  *
- *  @pointer_lifetime The specified memory block will not be accessed by GLFW
+ *  @pointer_lifetime The specified memory block will not be accessed by PLFW
  *  after this function is called.
  *
- *  @reentrancy This function should not call any GLFW function.
+ *  @reentrancy This function should not call any PLFW function.
  *
- *  @thread_safety This function must support being called from any thread that calls GLFW
+ *  @thread_safety This function must support being called from any thread that calls PLFW
  *  functions.
  *
  *  @sa @ref init_allocator
- *  @sa @ref GLFWallocator
+ *  @sa @ref PLFWallocator
  *
  *  @since Added in version 3.4.
  *
  *  @ingroup init
  */
-typedef void (* GLFWdeallocatefun)(void* block, void* user);
+typedef void (* PLFWdeallocatefun)(void* block, void* user);
 
 /*! @brief The function pointer type for error callbacks.
  *
@@ -1133,20 +1133,20 @@ typedef void (* GLFWdeallocatefun)(void* block, void* user);
  *  function returns.
  *
  *  @sa @ref error_handling
- *  @sa @ref glfwSetErrorCallback
+ *  @sa @ref plfwSetErrorCallback
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup init
  */
-typedef void (* GLFWerrorfun)(int error_code, const char* description);
+typedef void (* PLFWerrorfun)(int error_code, const char* description);
 
 /*! @brief The function pointer type for window position callbacks.
  *
  *  This is the function pointer type for window position callbacks.  A window
  *  position callback function has the following signature:
  *  @code
- *  void callback_name(GLFWwindow* window, int xpos, int ypos)
+ *  void callback_name(PLFWwindow* window, int xpos, int ypos)
  *  @endcode
  *
  *  @param[in] window The window that was moved.
@@ -1156,20 +1156,20 @@ typedef void (* GLFWerrorfun)(int error_code, const char* description);
  *  upper-left corner of the content area of the window.
  *
  *  @sa @ref window_pos
- *  @sa @ref glfwSetWindowPosCallback
+ *  @sa @ref plfwSetWindowPosCallback
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup window
  */
-typedef void (* GLFWwindowposfun)(GLFWwindow* window, int xpos, int ypos);
+typedef void (* PLFWwindowposfun)(PLFWwindow* window, int xpos, int ypos);
 
 /*! @brief The function pointer type for window size callbacks.
  *
  *  This is the function pointer type for window size callbacks.  A window size
  *  callback function has the following signature:
  *  @code
- *  void callback_name(GLFWwindow* window, int width, int height)
+ *  void callback_name(PLFWwindow* window, int width, int height)
  *  @endcode
  *
  *  @param[in] window The window that was resized.
@@ -1177,124 +1177,124 @@ typedef void (* GLFWwindowposfun)(GLFWwindow* window, int xpos, int ypos);
  *  @param[in] height The new height, in screen coordinates, of the window.
  *
  *  @sa @ref window_size
- *  @sa @ref glfwSetWindowSizeCallback
+ *  @sa @ref plfwSetWindowSizeCallback
  *
  *  @since Added in version 1.0.
- *  __GLFW 3:__ Added window handle parameter.
+ *  __PLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
-typedef void (* GLFWwindowsizefun)(GLFWwindow* window, int width, int height);
+typedef void (* PLFWwindowsizefun)(PLFWwindow* window, int width, int height);
 
 /*! @brief The function pointer type for window close callbacks.
  *
  *  This is the function pointer type for window close callbacks.  A window
  *  close callback function has the following signature:
  *  @code
- *  void function_name(GLFWwindow* window)
+ *  void function_name(PLFWwindow* window)
  *  @endcode
  *
  *  @param[in] window The window that the user attempted to close.
  *
  *  @sa @ref window_close
- *  @sa @ref glfwSetWindowCloseCallback
+ *  @sa @ref plfwSetWindowCloseCallback
  *
  *  @since Added in version 2.5.
- *  __GLFW 3:__ Added window handle parameter.
+ *  __PLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
-typedef void (* GLFWwindowclosefun)(GLFWwindow* window);
+typedef void (* PLFWwindowclosefun)(PLFWwindow* window);
 
 /*! @brief The function pointer type for window content refresh callbacks.
  *
  *  This is the function pointer type for window content refresh callbacks.
  *  A window content refresh callback function has the following signature:
  *  @code
- *  void function_name(GLFWwindow* window);
+ *  void function_name(PLFWwindow* window);
  *  @endcode
  *
  *  @param[in] window The window whose content needs to be refreshed.
  *
  *  @sa @ref window_refresh
- *  @sa @ref glfwSetWindowRefreshCallback
+ *  @sa @ref plfwSetWindowRefreshCallback
  *
  *  @since Added in version 2.5.
- *  __GLFW 3:__ Added window handle parameter.
+ *  __PLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
-typedef void (* GLFWwindowrefreshfun)(GLFWwindow* window);
+typedef void (* PLFWwindowrefreshfun)(PLFWwindow* window);
 
 /*! @brief The function pointer type for window focus callbacks.
  *
  *  This is the function pointer type for window focus callbacks.  A window
  *  focus callback function has the following signature:
  *  @code
- *  void function_name(GLFWwindow* window, int focused)
+ *  void function_name(PLFWwindow* window, int focused)
  *  @endcode
  *
  *  @param[in] window The window that gained or lost input focus.
- *  @param[in] focused `GLFW_TRUE` if the window was given input focus, or
- *  `GLFW_FALSE` if it lost it.
+ *  @param[in] focused `PLFW_TRUE` if the window was given input focus, or
+ *  `PLFW_FALSE` if it lost it.
  *
  *  @sa @ref window_focus
- *  @sa @ref glfwSetWindowFocusCallback
+ *  @sa @ref plfwSetWindowFocusCallback
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup window
  */
-typedef void (* GLFWwindowfocusfun)(GLFWwindow* window, int focused);
+typedef void (* PLFWwindowfocusfun)(PLFWwindow* window, int focused);
 
 /*! @brief The function pointer type for window iconify callbacks.
  *
  *  This is the function pointer type for window iconify callbacks.  A window
  *  iconify callback function has the following signature:
  *  @code
- *  void function_name(GLFWwindow* window, int iconified)
+ *  void function_name(PLFWwindow* window, int iconified)
  *  @endcode
  *
  *  @param[in] window The window that was iconified or restored.
- *  @param[in] iconified `GLFW_TRUE` if the window was iconified, or
- *  `GLFW_FALSE` if it was restored.
+ *  @param[in] iconified `PLFW_TRUE` if the window was iconified, or
+ *  `PLFW_FALSE` if it was restored.
  *
  *  @sa @ref window_iconify
- *  @sa @ref glfwSetWindowIconifyCallback
+ *  @sa @ref plfwSetWindowIconifyCallback
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup window
  */
-typedef void (* GLFWwindowiconifyfun)(GLFWwindow* window, int iconified);
+typedef void (* PLFWwindowiconifyfun)(PLFWwindow* window, int iconified);
 
 /*! @brief The function pointer type for window maximize callbacks.
  *
  *  This is the function pointer type for window maximize callbacks.  A window
  *  maximize callback function has the following signature:
  *  @code
- *  void function_name(GLFWwindow* window, int maximized)
+ *  void function_name(PLFWwindow* window, int maximized)
  *  @endcode
  *
  *  @param[in] window The window that was maximized or restored.
- *  @param[in] maximized `GLFW_TRUE` if the window was maximized, or
- *  `GLFW_FALSE` if it was restored.
+ *  @param[in] maximized `PLFW_TRUE` if the window was maximized, or
+ *  `PLFW_FALSE` if it was restored.
  *
  *  @sa @ref window_maximize
- *  @sa glfwSetWindowMaximizeCallback
+ *  @sa plfwSetWindowMaximizeCallback
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup window
  */
-typedef void (* GLFWwindowmaximizefun)(GLFWwindow* window, int maximized);
+typedef void (* PLFWwindowmaximizefun)(PLFWwindow* window, int maximized);
 
 /*! @brief The function pointer type for framebuffer size callbacks.
  *
  *  This is the function pointer type for framebuffer size callbacks.
  *  A framebuffer size callback function has the following signature:
  *  @code
- *  void function_name(GLFWwindow* window, int width, int height)
+ *  void function_name(PLFWwindow* window, int width, int height)
  *  @endcode
  *
  *  @param[in] window The window whose framebuffer was resized.
@@ -1302,20 +1302,20 @@ typedef void (* GLFWwindowmaximizefun)(GLFWwindow* window, int maximized);
  *  @param[in] height The new height, in pixels, of the framebuffer.
  *
  *  @sa @ref window_fbsize
- *  @sa @ref glfwSetFramebufferSizeCallback
+ *  @sa @ref plfwSetFramebufferSizeCallback
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup window
  */
-typedef void (* GLFWframebuffersizefun)(GLFWwindow* window, int width, int height);
+typedef void (* PLFWframebuffersizefun)(PLFWwindow* window, int width, int height);
 
 /*! @brief The function pointer type for window content scale callbacks.
  *
  *  This is the function pointer type for window content scale callbacks.
  *  A window content scale callback function has the following signature:
  *  @code
- *  void function_name(GLFWwindow* window, float xscale, float yscale)
+ *  void function_name(PLFWwindow* window, float xscale, float yscale)
  *  @endcode
  *
  *  @param[in] window The window whose content scale changed.
@@ -1323,46 +1323,46 @@ typedef void (* GLFWframebuffersizefun)(GLFWwindow* window, int width, int heigh
  *  @param[in] yscale The new y-axis content scale of the window.
  *
  *  @sa @ref window_scale
- *  @sa @ref glfwSetWindowContentScaleCallback
+ *  @sa @ref plfwSetWindowContentScaleCallback
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup window
  */
-typedef void (* GLFWwindowcontentscalefun)(GLFWwindow* window, float xscale, float yscale);
+typedef void (* PLFWwindowcontentscalefun)(PLFWwindow* window, float xscale, float yscale);
 
 /*! @brief The function pointer type for mouse button callbacks.
  *
  *  This is the function pointer type for mouse button callback functions.
  *  A mouse button callback function has the following signature:
  *  @code
- *  void function_name(GLFWwindow* window, int button, int action, int mods)
+ *  void function_name(PLFWwindow* window, int button, int action, int mods)
  *  @endcode
  *
  *  @param[in] window The window that received the event.
  *  @param[in] button The [mouse button](@ref buttons) that was pressed or
  *  released.
- *  @param[in] action One of `GLFW_PRESS` or `GLFW_RELEASE`.  Future releases
+ *  @param[in] action One of `PLFW_PRESS` or `PLFW_RELEASE`.  Future releases
  *  may add more actions.
  *  @param[in] mods Bit field describing which [modifier keys](@ref mods) were
  *  held down.
  *
  *  @sa @ref input_mouse_button
- *  @sa @ref glfwSetMouseButtonCallback
+ *  @sa @ref plfwSetMouseButtonCallback
  *
  *  @since Added in version 1.0.
- *  __GLFW 3:__ Added window handle and modifier mask parameters.
+ *  __PLFW 3:__ Added window handle and modifier mask parameters.
  *
  *  @ingroup input
  */
-typedef void (* GLFWmousebuttonfun)(GLFWwindow* window, int button, int action, int mods);
+typedef void (* PLFWmousebuttonfun)(PLFWwindow* window, int button, int action, int mods);
 
 /*! @brief The function pointer type for cursor position callbacks.
  *
  *  This is the function pointer type for cursor position callbacks.  A cursor
  *  position callback function has the following signature:
  *  @code
- *  void function_name(GLFWwindow* window, double xpos, double ypos);
+ *  void function_name(PLFWwindow* window, double xpos, double ypos);
  *  @endcode
  *
  *  @param[in] window The window that received the event.
@@ -1372,41 +1372,41 @@ typedef void (* GLFWmousebuttonfun)(GLFWwindow* window, int button, int action, 
  *  content area.
  *
  *  @sa @ref cursor_pos
- *  @sa @ref glfwSetCursorPosCallback
+ *  @sa @ref plfwSetCursorPosCallback
  *
- *  @since Added in version 3.0.  Replaces `GLFWmouseposfun`.
+ *  @since Added in version 3.0.  Replaces `PLFWmouseposfun`.
  *
  *  @ingroup input
  */
-typedef void (* GLFWcursorposfun)(GLFWwindow* window, double xpos, double ypos);
+typedef void (* PLFWcursorposfun)(PLFWwindow* window, double xpos, double ypos);
 
 /*! @brief The function pointer type for cursor enter/leave callbacks.
  *
  *  This is the function pointer type for cursor enter/leave callbacks.
  *  A cursor enter/leave callback function has the following signature:
  *  @code
- *  void function_name(GLFWwindow* window, int entered)
+ *  void function_name(PLFWwindow* window, int entered)
  *  @endcode
  *
  *  @param[in] window The window that received the event.
- *  @param[in] entered `GLFW_TRUE` if the cursor entered the window's content
- *  area, or `GLFW_FALSE` if it left it.
+ *  @param[in] entered `PLFW_TRUE` if the cursor entered the window's content
+ *  area, or `PLFW_FALSE` if it left it.
  *
  *  @sa @ref cursor_enter
- *  @sa @ref glfwSetCursorEnterCallback
+ *  @sa @ref plfwSetCursorEnterCallback
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup input
  */
-typedef void (* GLFWcursorenterfun)(GLFWwindow* window, int entered);
+typedef void (* PLFWcursorenterfun)(PLFWwindow* window, int entered);
 
 /*! @brief The function pointer type for scroll callbacks.
  *
  *  This is the function pointer type for scroll callbacks.  A scroll callback
  *  function has the following signature:
  *  @code
- *  void function_name(GLFWwindow* window, double xoffset, double yoffset)
+ *  void function_name(PLFWwindow* window, double xoffset, double yoffset)
  *  @endcode
  *
  *  @param[in] window The window that received the event.
@@ -1414,60 +1414,60 @@ typedef void (* GLFWcursorenterfun)(GLFWwindow* window, int entered);
  *  @param[in] yoffset The scroll offset along the y-axis.
  *
  *  @sa @ref scrolling
- *  @sa @ref glfwSetScrollCallback
+ *  @sa @ref plfwSetScrollCallback
  *
- *  @since Added in version 3.0.  Replaces `GLFWmousewheelfun`.
+ *  @since Added in version 3.0.  Replaces `PLFWmousewheelfun`.
  *
  *  @ingroup input
  */
-typedef void (* GLFWscrollfun)(GLFWwindow* window, double xoffset, double yoffset);
+typedef void (* PLFWscrollfun)(PLFWwindow* window, double xoffset, double yoffset);
 
 /*! @brief The function pointer type for keyboard key callbacks.
  *
  *  This is the function pointer type for keyboard key callbacks.  A keyboard
  *  key callback function has the following signature:
  *  @code
- *  void function_name(GLFWwindow* window, int key, int scancode, int action, int mods)
+ *  void function_name(PLFWwindow* window, int key, int scancode, int action, int mods)
  *  @endcode
  *
  *  @param[in] window The window that received the event.
  *  @param[in] key The [keyboard key](@ref keys) that was pressed or released.
  *  @param[in] scancode The platform-specific scancode of the key.
- *  @param[in] action `GLFW_PRESS`, `GLFW_RELEASE` or `GLFW_REPEAT`.  Future
+ *  @param[in] action `PLFW_PRESS`, `PLFW_RELEASE` or `PLFW_REPEAT`.  Future
  *  releases may add more actions.
  *  @param[in] mods Bit field describing which [modifier keys](@ref mods) were
  *  held down.
  *
  *  @sa @ref input_key
- *  @sa @ref glfwSetKeyCallback
+ *  @sa @ref plfwSetKeyCallback
  *
  *  @since Added in version 1.0.
- *  __GLFW 3:__ Added window handle, scancode and modifier mask parameters.
+ *  __PLFW 3:__ Added window handle, scancode and modifier mask parameters.
  *
  *  @ingroup input
  */
-typedef void (* GLFWkeyfun)(GLFWwindow* window, int key, int scancode, int action, int mods);
+typedef void (* PLFWkeyfun)(PLFWwindow* window, int key, int scancode, int action, int mods);
 
 /*! @brief The function pointer type for Unicode character callbacks.
  *
  *  This is the function pointer type for Unicode character callbacks.
  *  A Unicode character callback function has the following signature:
  *  @code
- *  void function_name(GLFWwindow* window, unsigned int codepoint)
+ *  void function_name(PLFWwindow* window, unsigned int codepoint)
  *  @endcode
  *
  *  @param[in] window The window that received the event.
  *  @param[in] codepoint The Unicode code point of the character.
  *
  *  @sa @ref input_char
- *  @sa @ref glfwSetCharCallback
+ *  @sa @ref plfwSetCharCallback
  *
  *  @since Added in version 2.4.
- *  __GLFW 3:__ Added window handle parameter.
+ *  __PLFW 3:__ Added window handle parameter.
  *
  *  @ingroup input
  */
-typedef void (* GLFWcharfun)(GLFWwindow* window, unsigned int codepoint);
+typedef void (* PLFWcharfun)(PLFWwindow* window, unsigned int codepoint);
 
 /*! @brief The function pointer type for Unicode character with modifiers
  *  callbacks.
@@ -1477,7 +1477,7 @@ typedef void (* GLFWcharfun)(GLFWwindow* window, unsigned int codepoint);
  *  modifier keys are held down.  A Unicode character with modifiers callback
  *  function has the following signature:
  *  @code
- *  void function_name(GLFWwindow* window, unsigned int codepoint, int mods)
+ *  void function_name(PLFWwindow* window, unsigned int codepoint, int mods)
  *  @endcode
  *
  *  @param[in] window The window that received the event.
@@ -1486,7 +1486,7 @@ typedef void (* GLFWcharfun)(GLFWwindow* window, unsigned int codepoint);
  *  held down.
  *
  *  @sa @ref input_char
- *  @sa @ref glfwSetCharModsCallback
+ *  @sa @ref plfwSetCharModsCallback
  *
  *  @deprecated Scheduled for removal in version 4.0.
  *
@@ -1494,14 +1494,14 @@ typedef void (* GLFWcharfun)(GLFWwindow* window, unsigned int codepoint);
  *
  *  @ingroup input
  */
-typedef void (* GLFWcharmodsfun)(GLFWwindow* window, unsigned int codepoint, int mods);
+typedef void (* PLFWcharmodsfun)(PLFWwindow* window, unsigned int codepoint, int mods);
 
 /*! @brief The function pointer type for path drop callbacks.
  *
  *  This is the function pointer type for path drop callbacks.  A path drop
  *  callback function has the following signature:
  *  @code
- *  void function_name(GLFWwindow* window, int path_count, const char* paths[])
+ *  void function_name(PLFWwindow* window, int path_count, const char* paths[])
  *  @endcode
  *
  *  @param[in] window The window that received the event.
@@ -1512,34 +1512,34 @@ typedef void (* GLFWcharmodsfun)(GLFWwindow* window, unsigned int codepoint, int
  *  callback function returns.
  *
  *  @sa @ref path_drop
- *  @sa @ref glfwSetDropCallback
+ *  @sa @ref plfwSetDropCallback
  *
  *  @since Added in version 3.1.
  *
  *  @ingroup input
  */
-typedef void (* GLFWdropfun)(GLFWwindow* window, int path_count, const char* paths[]);
+typedef void (* PLFWdropfun)(PLFWwindow* window, int path_count, const char* paths[]);
 
 /*! @brief The function pointer type for monitor configuration callbacks.
  *
  *  This is the function pointer type for monitor configuration callbacks.
  *  A monitor callback function has the following signature:
  *  @code
- *  void function_name(GLFWmonitor* monitor, int event)
+ *  void function_name(PLFWmonitor* monitor, int event)
  *  @endcode
  *
  *  @param[in] monitor The monitor that was connected or disconnected.
- *  @param[in] event One of `GLFW_CONNECTED` or `GLFW_DISCONNECTED`.  Future
+ *  @param[in] event One of `PLFW_CONNECTED` or `PLFW_DISCONNECTED`.  Future
  *  releases may add more events.
  *
  *  @sa @ref monitor_event
- *  @sa @ref glfwSetMonitorCallback
+ *  @sa @ref plfwSetMonitorCallback
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup monitor
  */
-typedef void (* GLFWmonitorfun)(GLFWmonitor* monitor, int event);
+typedef void (* PLFWmonitorfun)(PLFWmonitor* monitor, int event);
 
 /*! @brief The function pointer type for joystick configuration callbacks.
  *
@@ -1550,32 +1550,32 @@ typedef void (* GLFWmonitorfun)(GLFWmonitor* monitor, int event);
  *  @endcode
  *
  *  @param[in] jid The joystick that was connected or disconnected.
- *  @param[in] event One of `GLFW_CONNECTED` or `GLFW_DISCONNECTED`.  Future
+ *  @param[in] event One of `PLFW_CONNECTED` or `PLFW_DISCONNECTED`.  Future
  *  releases may add more events.
  *
  *  @sa @ref joystick_event
- *  @sa @ref glfwSetJoystickCallback
+ *  @sa @ref plfwSetJoystickCallback
  *
  *  @since Added in version 3.2.
  *
  *  @ingroup input
  */
-typedef void (* GLFWjoystickfun)(int jid, int event);
+typedef void (* PLFWjoystickfun)(int jid, int event);
 
 /*! @brief Video mode type.
  *
  *  This describes a single video mode.
  *
  *  @sa @ref monitor_modes
- *  @sa @ref glfwGetVideoMode
- *  @sa @ref glfwGetVideoModes
+ *  @sa @ref plfwGetVideoMode
+ *  @sa @ref plfwGetVideoModes
  *
  *  @since Added in version 1.0.
- *  __GLFW 3:__ Added refresh rate member.
+ *  __PLFW 3:__ Added refresh rate member.
  *
  *  @ingroup monitor
  */
-typedef struct GLFWvidmode
+typedef struct PLFWvidmode
 {
     /*! The width, in screen coordinates, of the video mode.
      */
@@ -1595,21 +1595,21 @@ typedef struct GLFWvidmode
     /*! The refresh rate, in Hz, of the video mode.
      */
     int refreshRate;
-} GLFWvidmode;
+} PLFWvidmode;
 
 /*! @brief Gamma ramp.
  *
  *  This describes the gamma ramp for a monitor.
  *
  *  @sa @ref monitor_gamma
- *  @sa @ref glfwGetGammaRamp
- *  @sa @ref glfwSetGammaRamp
+ *  @sa @ref plfwGetGammaRamp
+ *  @sa @ref plfwSetGammaRamp
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup monitor
  */
-typedef struct GLFWgammaramp
+typedef struct PLFWgammaramp
 {
     /*! An array of value describing the response of the red channel.
      */
@@ -1623,7 +1623,7 @@ typedef struct GLFWgammaramp
     /*! The number of elements in each array.
      */
     unsigned int size;
-} GLFWgammaramp;
+} PLFWgammaramp;
 
 /*! @brief Image data.
  *
@@ -1634,11 +1634,11 @@ typedef struct GLFWgammaramp
  *  @sa @ref window_icon
  *
  *  @since Added in version 2.1.
- *  __GLFW 3:__ Removed format and bytes-per-pixel members.
+ *  __PLFW 3:__ Removed format and bytes-per-pixel members.
  *
  *  @ingroup window
  */
-typedef struct GLFWimage
+typedef struct PLFWimage
 {
     /*! The width, in pixels, of this image.
      */
@@ -1649,121 +1649,121 @@ typedef struct GLFWimage
     /*! The pixel data of this image, arranged left-to-right, top-to-bottom.
      */
     unsigned char* pixels;
-} GLFWimage;
+} PLFWimage;
 
 /*! @brief Gamepad input state
  *
  *  This describes the input state of a gamepad.
  *
  *  @sa @ref gamepad
- *  @sa @ref glfwGetGamepadState
+ *  @sa @ref plfwGetGamepadState
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup input
  */
-typedef struct GLFWgamepadstate
+typedef struct PLFWgamepadstate
 {
-    /*! The states of each [gamepad button](@ref gamepad_buttons), `GLFW_PRESS`
-     *  or `GLFW_RELEASE`.
+    /*! The states of each [gamepad button](@ref gamepad_buttons), `PLFW_PRESS`
+     *  or `PLFW_RELEASE`.
      */
     unsigned char buttons[15];
     /*! The states of each [gamepad axis](@ref gamepad_axes), in the range -1.0
      *  to 1.0 inclusive.
      */
     float axes[6];
-} GLFWgamepadstate;
+} PLFWgamepadstate;
 
 /*! @brief Custom heap memory allocator.
  *
- *  This describes a custom heap memory allocator for GLFW.  To set an allocator, pass it
- *  to @ref glfwInitAllocator before initializing the library.
+ *  This describes a custom heap memory allocator for PLFW.  To set an allocator, pass it
+ *  to @ref plfwInitAllocator before initializing the library.
  *
  *  @sa @ref init_allocator
- *  @sa @ref glfwInitAllocator
+ *  @sa @ref plfwInitAllocator
  *
  *  @since Added in version 3.4.
  *
  *  @ingroup init
  */
-typedef struct GLFWallocator
+typedef struct PLFWallocator
 {
-    /*! The memory allocation function.  See @ref GLFWallocatefun for details about
+    /*! The memory allocation function.  See @ref PLFWallocatefun for details about
      *  allocation function.
      */
-    GLFWallocatefun allocate;
-    /*! The memory reallocation function.  See @ref GLFWreallocatefun for details about
+    PLFWallocatefun allocate;
+    /*! The memory reallocation function.  See @ref PLFWreallocatefun for details about
      *  reallocation function.
      */
-    GLFWreallocatefun reallocate;
-    /*! The memory deallocation function.  See @ref GLFWdeallocatefun for details about
+    PLFWreallocatefun reallocate;
+    /*! The memory deallocation function.  See @ref PLFWdeallocatefun for details about
      *  deallocation function.
      */
-    GLFWdeallocatefun deallocate;
+    PLFWdeallocatefun deallocate;
     /*! The user pointer for this custom allocator.  This value will be passed to the
      *  allocator functions.
      */
     void* user;
-} GLFWallocator;
+} PLFWallocator;
 
 
 /*************************************************************************
- * GLFW API functions
+ * PLFW API functions
  *************************************************************************/
 
-/*! @brief Initializes the GLFW library.
+/*! @brief Initializes the PLFW library.
  *
- *  This function initializes the GLFW library.  Before most GLFW functions can
- *  be used, GLFW must be initialized, and before an application terminates GLFW
+ *  This function initializes the PLFW library.  Before most PLFW functions can
+ *  be used, PLFW must be initialized, and before an application terminates PLFW
  *  should be terminated in order to free any resources allocated during or
  *  after initialization.
  *
- *  If this function fails, it calls @ref glfwTerminate before returning.  If it
- *  succeeds, you should call @ref glfwTerminate before the application exits.
+ *  If this function fails, it calls @ref plfwTerminate before returning.  If it
+ *  succeeds, you should call @ref plfwTerminate before the application exits.
  *
  *  Additional calls to this function after successful initialization but before
- *  termination will return `GLFW_TRUE` immediately.
+ *  termination will return `PLFW_TRUE` immediately.
  *
- *  The @ref GLFW_PLATFORM init hint controls which platforms are considered during
+ *  The @ref PLFW_PLATFORM init hint controls which platforms are considered during
  *  initialization.  This also depends on which platforms the library was compiled to
  *  support.
  *
- *  @return `GLFW_TRUE` if successful, or `GLFW_FALSE` if an
+ *  @return `PLFW_TRUE` if successful, or `PLFW_FALSE` if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_PLATFORM_UNAVAILABLE and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_PLATFORM_UNAVAILABLE and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref intro_init
- *  @sa @ref glfwInitHint
- *  @sa @ref glfwInitAllocator
- *  @sa @ref glfwTerminate
+ *  @sa @ref plfwInitHint
+ *  @sa @ref plfwInitAllocator
+ *  @sa @ref plfwTerminate
  *
  *  @since Added in version 1.0.
  *
  *  @ingroup init
  */
-GLFWAPI int glfwInit(void);
+PLFWAPI int plfwInit(void);
 
-/*! @brief Terminates the GLFW library.
+/*! @brief Terminates the PLFW library.
  *
  *  This function destroys all remaining windows and cursors, restores any
  *  modified gamma ramps and frees any other allocated resources.  Once this
- *  function is called, you must again call @ref glfwInit successfully before
- *  you will be able to use most GLFW functions.
+ *  function is called, you must again call @ref plfwInit successfully before
+ *  you will be able to use most PLFW functions.
  *
- *  If GLFW has been successfully initialized, this function should be called
+ *  If PLFW has been successfully initialized, this function should be called
  *  before the application exits.  If initialization fails, there is no need to
- *  call this function, as it is called by @ref glfwInit before it returns
+ *  call this function, as it is called by @ref plfwInit before it returns
  *  failure.
  *
- *  This function has no effect if GLFW is not initialized.
+ *  This function has no effect if PLFW is not initialized.
  *
- *  @errors Possible errors include @ref GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_PLATFORM_ERROR.
  *
- *  @remark This function may be called before @ref glfwInit.
+ *  @remark This function may be called before @ref plfwInit.
  *
  *  @warning The contexts of any remaining windows must not be current on any
  *  other thread when this function is called.
@@ -1773,20 +1773,20 @@ GLFWAPI int glfwInit(void);
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref intro_init
- *  @sa @ref glfwInit
+ *  @sa @ref plfwInit
  *
  *  @since Added in version 1.0.
  *
  *  @ingroup init
  */
-GLFWAPI void glfwTerminate(void);
+PLFWAPI void plfwTerminate(void);
 
 /*! @brief Sets the specified init hint to the desired value.
  *
- *  This function sets hints for the next initialization of GLFW.
+ *  This function sets hints for the next initialization of PLFW.
  *
- *  The values you set hints to are never reset by GLFW, but they only take
- *  effect during initialization.  Once GLFW has been initialized, any values
+ *  The values you set hints to are never reset by PLFW, but they only take
+ *  effect during initialization.  Once PLFW has been initialized, any values
  *  you set will be ignored until the library is terminated and initialized
  *  again.
  *
@@ -1797,21 +1797,21 @@ GLFWAPI void glfwTerminate(void);
  *  @param[in] hint The [init hint](@ref init_hints) to set.
  *  @param[in] value The new value of the init hint.
  *
- *  @errors Possible errors include @ref GLFW_INVALID_ENUM and @ref
- *  GLFW_INVALID_VALUE.
+ *  @errors Possible errors include @ref PLFW_INVALID_ENUM and @ref
+ *  PLFW_INVALID_VALUE.
  *
- *  @remarks This function may be called before @ref glfwInit.
+ *  @remarks This function may be called before @ref plfwInit.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa init_hints
- *  @sa glfwInit
+ *  @sa plfwInit
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup init
  */
-GLFWAPI void glfwInitHint(int hint, int value);
+PLFWAPI void plfwInitHint(int hint, int value);
 
 /*! @brief Sets the init allocator to the desired value.
  *
@@ -1819,16 +1819,16 @@ GLFWAPI void glfwInitHint(int hint, int value);
  *
  *  If you specify an allocator struct, every member must be a valid function
  *  pointer.  If any member is `NULL`, this function will emit @ref
- *  GLFW_INVALID_VALUE and the init allocator will be unchanged.
+ *  PLFW_INVALID_VALUE and the init allocator will be unchanged.
  *
  *  The functions in the allocator must fulfil a number of requirements.  See the
- *  documentation for @ref GLFWallocatefun, @ref GLFWreallocatefun and @ref
- *  GLFWdeallocatefun for details.
+ *  documentation for @ref PLFWallocatefun, @ref PLFWreallocatefun and @ref
+ *  PLFWdeallocatefun for details.
  *
  *  @param[in] allocator The allocator to use at the next initialization, or
  *  `NULL` to use the default one.
  *
- *  @errors Possible errors include @ref GLFW_INVALID_VALUE.
+ *  @errors Possible errors include @ref PLFW_INVALID_VALUE.
  *
  *  @pointer_lifetime The specified allocator is copied before this function
  *  returns.
@@ -1836,56 +1836,56 @@ GLFWAPI void glfwInitHint(int hint, int value);
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref init_allocator
- *  @sa @ref glfwInit
+ *  @sa @ref plfwInit
  *
  *  @since Added in version 3.4.
  *
  *  @ingroup init
  */
-GLFWAPI void glfwInitAllocator(const GLFWallocator* allocator);
+PLFWAPI void plfwInitAllocator(const PLFWallocator* allocator);
 
 /*! @brief Returns and clears the last error for the calling thread.
  *
  *  This function returns and clears the [error code](@ref errors) of the last
  *  error that occurred on the calling thread, and optionally a UTF-8 encoded
  *  human-readable description of it.  If no error has occurred since the last
- *  call, it returns @ref GLFW_NO_ERROR (zero) and the description pointer is
+ *  call, it returns @ref PLFW_NO_ERROR (zero) and the description pointer is
  *  set to `NULL`.
  *
  *  @param[in] description Where to store the error description pointer, or `NULL`.
- *  @return The last error code for the calling thread, or @ref GLFW_NO_ERROR
+ *  @return The last error code for the calling thread, or @ref PLFW_NO_ERROR
  *  (zero).
  *
  *  @errors None.
  *
- *  @pointer_lifetime The returned string is allocated and freed by GLFW.  You
+ *  @pointer_lifetime The returned string is allocated and freed by PLFW.  You
  *  should not free it yourself.  It is guaranteed to be valid only until the
  *  next error occurs or the library is terminated.
  *
- *  @remark This function may be called before @ref glfwInit.
+ *  @remark This function may be called before @ref plfwInit.
  *
  *  @thread_safety This function may be called from any thread.
  *
  *  @sa @ref error_handling
- *  @sa @ref glfwSetErrorCallback
+ *  @sa @ref plfwSetErrorCallback
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup init
  */
-GLFWAPI int glfwGetError(const char** description);
+PLFWAPI int plfwGetError(const char** description);
 
 /*! @brief Sets the error callback.
  *
  *  This function sets the error callback, which is called with an error code
- *  and a human-readable description each time a GLFW error occurs.
+ *  and a human-readable description each time a PLFW error occurs.
  *
  *  The error code is set before the callback is called.  Calling @ref
- *  glfwGetError from the error callback will return the same value as the error
+ *  plfwGetError from the error callback will return the same value as the error
  *  code argument.
  *
  *  The error callback is called on the thread where the error occurred.  If you
- *  are using GLFW from multiple threads, your error callback needs to be
+ *  are using PLFW from multiple threads, your error callback needs to be
  *  written accordingly.
  *
  *  Because the description string may have been generated specifically for that
@@ -1904,71 +1904,71 @@ GLFWAPI int glfwGetError(const char** description);
  *  void callback_name(int error_code, const char* description)
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [callback pointer type](@ref GLFWerrorfun).
+ *  [callback pointer type](@ref PLFWerrorfun).
  *
  *  @errors None.
  *
- *  @remark This function may be called before @ref glfwInit.
+ *  @remark This function may be called before @ref plfwInit.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref error_handling
- *  @sa @ref glfwGetError
+ *  @sa @ref plfwGetError
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup init
  */
-GLFWAPI GLFWerrorfun glfwSetErrorCallback(GLFWerrorfun callback);
+PLFWAPI PLFWerrorfun plfwSetErrorCallback(PLFWerrorfun callback);
 
 /*! @brief Returns the currently selected platform.
  *
  *  This function returns the platform that was selected during initialization.  The
- *  returned value will be one of `GLFW_PLATFORM_WIN32`, `GLFW_PLATFORM_WAYLAND` or
- *  `GLFW_PLATFORM_NULL`.  This build carries no X11 or Cocoa backend, so
- *  `GLFW_PLATFORM_X11` and `GLFW_PLATFORM_COCOA` remain declared identifiers that
+ *  returned value will be one of `PLFW_PLATFORM_WIN32`, `PLFW_PLATFORM_WAYLAND` or
+ *  `PLFW_PLATFORM_NULL`.  This build carries no X11 or Cocoa backend, so
+ *  `PLFW_PLATFORM_X11` and `PLFW_PLATFORM_COCOA` remain declared identifiers that
  *  are never returned.
  *
  *  @return The currently selected platform, or zero if an error occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function may be called from any thread.
  *
  *  @sa @ref platform
- *  @sa @ref glfwPlatformSupported
+ *  @sa @ref plfwPlatformSupported
  *
  *  @since Added in version 3.4.
  *
  *  @ingroup init
  */
-GLFWAPI int glfwGetPlatform(void);
+PLFWAPI int plfwGetPlatform(void);
 
 /*! @brief Returns whether the library includes support for the specified platform.
  *
  *  This function returns whether the library was compiled with support for the specified
- *  platform.  The platform must be one of `GLFW_PLATFORM_WIN32`,
- *  `GLFW_PLATFORM_WAYLAND` or `GLFW_PLATFORM_NULL`.  `GLFW_PLATFORM_X11` and
- *  `GLFW_PLATFORM_COCOA` are accepted as known identifiers but always report
- *  `GLFW_FALSE`, as neither backend is part of this build.
+ *  platform.  The platform must be one of `PLFW_PLATFORM_WIN32`,
+ *  `PLFW_PLATFORM_WAYLAND` or `PLFW_PLATFORM_NULL`.  `PLFW_PLATFORM_X11` and
+ *  `PLFW_PLATFORM_COCOA` are accepted as known identifiers but always report
+ *  `PLFW_FALSE`, as neither backend is part of this build.
  *
  *  @param[in] platform The platform to query.
- *  @return `GLFW_TRUE` if the platform is supported, or `GLFW_FALSE` otherwise.
+ *  @return `PLFW_TRUE` if the platform is supported, or `PLFW_FALSE` otherwise.
  *
- *  @errors Possible errors include @ref GLFW_INVALID_ENUM.
+ *  @errors Possible errors include @ref PLFW_INVALID_ENUM.
  *
- *  @remark This function may be called before @ref glfwInit.
+ *  @remark This function may be called before @ref plfwInit.
  *
  *  @thread_safety This function may be called from any thread.
  *
  *  @sa @ref platform
- *  @sa @ref glfwGetPlatform
+ *  @sa @ref plfwGetPlatform
  *
  *  @since Added in version 3.4.
  *
  *  @ingroup init
  */
-GLFWAPI int glfwPlatformSupported(int platform);
+PLFWAPI int plfwPlatformSupported(int platform);
 
 /*! @brief Returns the currently connected monitors.
  *
@@ -1981,9 +1981,9 @@ GLFWAPI int glfwPlatformSupported(int platform);
  *  @return An array of monitor handles, or `NULL` if no monitors were found or
  *  if an [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
- *  @pointer_lifetime The returned array is allocated and freed by GLFW.  You
+ *  @pointer_lifetime The returned array is allocated and freed by PLFW.  You
  *  should not free it yourself.  It is guaranteed to be valid only until the
  *  monitor configuration changes or the library is terminated.
  *
@@ -1991,13 +1991,13 @@ GLFWAPI int glfwPlatformSupported(int platform);
  *
  *  @sa @ref monitor_monitors
  *  @sa @ref monitor_event
- *  @sa @ref glfwGetPrimaryMonitor
+ *  @sa @ref plfwGetPrimaryMonitor
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup monitor
  */
-GLFWAPI GLFWmonitor** glfwGetMonitors(int* count);
+PLFWAPI PLFWmonitor** plfwGetMonitors(int* count);
 
 /*! @brief Returns the primary monitor.
  *
@@ -2007,21 +2007,21 @@ GLFWAPI GLFWmonitor** glfwGetMonitors(int* count);
  *  @return The primary monitor, or `NULL` if no monitors were found or if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @remark The primary monitor is always first in the array returned by @ref
- *  glfwGetMonitors.
+ *  plfwGetMonitors.
  *
  *  @sa @ref monitor_monitors
- *  @sa @ref glfwGetMonitors
+ *  @sa @ref plfwGetMonitors
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup monitor
  */
-GLFWAPI GLFWmonitor* glfwGetPrimaryMonitor(void);
+PLFWAPI PLFWmonitor* plfwGetPrimaryMonitor(void);
 
 /*! @brief Returns the position of the monitor's viewport on the virtual screen.
  *
@@ -2035,8 +2035,8 @@ GLFWAPI GLFWmonitor* glfwGetPrimaryMonitor(void);
  *  @param[out] xpos Where to store the monitor x-coordinate, or `NULL`.
  *  @param[out] ypos Where to store the monitor y-coordinate, or `NULL`.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -2046,7 +2046,7 @@ GLFWAPI GLFWmonitor* glfwGetPrimaryMonitor(void);
  *
  *  @ingroup monitor
  */
-GLFWAPI void glfwGetMonitorPos(GLFWmonitor* monitor, int* xpos, int* ypos);
+PLFWAPI void plfwGetMonitorPos(PLFWmonitor* monitor, int* xpos, int* ypos);
 
 /*! @brief Retrieves the work area of the monitor.
  *
@@ -2066,8 +2066,8 @@ GLFWAPI void glfwGetMonitorPos(GLFWmonitor* monitor, int* xpos, int* ypos);
  *  @param[out] width Where to store the monitor width, or `NULL`.
  *  @param[out] height Where to store the monitor height, or `NULL`.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -2077,7 +2077,7 @@ GLFWAPI void glfwGetMonitorPos(GLFWmonitor* monitor, int* xpos, int* ypos);
  *
  *  @ingroup monitor
  */
-GLFWAPI void glfwGetMonitorWorkarea(GLFWmonitor* monitor, int* xpos, int* ypos, int* width, int* height);
+PLFWAPI void plfwGetMonitorWorkarea(PLFWmonitor* monitor, int* xpos, int* ypos, int* width, int* height);
 
 /*! @brief Returns the physical size of the monitor.
  *
@@ -2099,7 +2099,7 @@ GLFWAPI void glfwGetMonitorWorkarea(GLFWmonitor* monitor, int* xpos, int* ypos, 
  *  @param[out] heightMM Where to store the height, in millimetres, of the
  *  monitor's display area, or `NULL`.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @remark __Win32:__ On Windows 8 and earlier the physical size is calculated from
  *  the current resolution and system DPI instead of querying the monitor EDID data.
@@ -2112,7 +2112,7 @@ GLFWAPI void glfwGetMonitorWorkarea(GLFWmonitor* monitor, int* xpos, int* ypos, 
  *
  *  @ingroup monitor
  */
-GLFWAPI void glfwGetMonitorPhysicalSize(GLFWmonitor* monitor, int* widthMM, int* heightMM);
+PLFWAPI void plfwGetMonitorPhysicalSize(PLFWmonitor* monitor, int* widthMM, int* heightMM);
 
 /*! @brief Retrieves the content scale for the specified monitor.
  *
@@ -2132,8 +2132,8 @@ GLFWAPI void glfwGetMonitorPhysicalSize(GLFWmonitor* monitor, int* widthMM, int*
  *  @param[out] xscale Where to store the x-axis content scale, or `NULL`.
  *  @param[out] yscale Where to store the y-axis content scale, or `NULL`.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @remark __Wayland:__ Fractional scaling information is not yet available for
  *  monitors, so this function only returns integer content scales.
@@ -2141,13 +2141,13 @@ GLFWAPI void glfwGetMonitorPhysicalSize(GLFWmonitor* monitor, int* widthMM, int*
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref monitor_scale
- *  @sa @ref glfwGetWindowContentScale
+ *  @sa @ref plfwGetWindowContentScale
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup monitor
  */
-GLFWAPI void glfwGetMonitorContentScale(GLFWmonitor* monitor, float* xscale, float* yscale);
+PLFWAPI void plfwGetMonitorContentScale(PLFWmonitor* monitor, float* xscale, float* yscale);
 
 /*! @brief Returns the name of the specified monitor.
  *
@@ -2159,9 +2159,9 @@ GLFWAPI void glfwGetMonitorContentScale(GLFWmonitor* monitor, float* xscale, flo
  *  @return The UTF-8 encoded name of the monitor, or `NULL` if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
- *  @pointer_lifetime The returned string is allocated and freed by GLFW.  You
+ *  @pointer_lifetime The returned string is allocated and freed by PLFW.  You
  *  should not free it yourself.  It is valid until the specified monitor is
  *  disconnected or the library is terminated.
  *
@@ -2173,7 +2173,7 @@ GLFWAPI void glfwGetMonitorContentScale(GLFWmonitor* monitor, float* xscale, flo
  *
  *  @ingroup monitor
  */
-GLFWAPI const char* glfwGetMonitorName(GLFWmonitor* monitor);
+PLFWAPI const char* plfwGetMonitorName(PLFWmonitor* monitor);
 
 /*! @brief Sets the user pointer of the specified monitor.
  *
@@ -2187,19 +2187,19 @@ GLFWAPI const char* glfwGetMonitorName(GLFWmonitor* monitor);
  *  @param[in] monitor The monitor whose pointer to set.
  *  @param[in] pointer The new value.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function may be called from any thread.  Access is not
  *  synchronized.
  *
  *  @sa @ref monitor_userptr
- *  @sa @ref glfwGetMonitorUserPointer
+ *  @sa @ref plfwGetMonitorUserPointer
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup monitor
  */
-GLFWAPI void glfwSetMonitorUserPointer(GLFWmonitor* monitor, void* pointer);
+PLFWAPI void plfwSetMonitorUserPointer(PLFWmonitor* monitor, void* pointer);
 
 /*! @brief Returns the user pointer of the specified monitor.
  *
@@ -2211,19 +2211,19 @@ GLFWAPI void glfwSetMonitorUserPointer(GLFWmonitor* monitor, void* pointer);
  *
  *  @param[in] monitor The monitor whose pointer to return.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function may be called from any thread.  Access is not
  *  synchronized.
  *
  *  @sa @ref monitor_userptr
- *  @sa @ref glfwSetMonitorUserPointer
+ *  @sa @ref plfwSetMonitorUserPointer
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup monitor
  */
-GLFWAPI void* glfwGetMonitorUserPointer(GLFWmonitor* monitor);
+PLFWAPI void* plfwGetMonitorUserPointer(PLFWmonitor* monitor);
 
 /*! @brief Sets the monitor configuration callback.
  *
@@ -2238,12 +2238,12 @@ GLFWAPI void* glfwGetMonitorUserPointer(GLFWmonitor* monitor);
  *
  *  @callback_signature
  *  @code
- *  void function_name(GLFWmonitor* monitor, int event)
+ *  void function_name(PLFWmonitor* monitor, int event)
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWmonitorfun).
+ *  [function pointer type](@ref PLFWmonitorfun).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -2253,7 +2253,7 @@ GLFWAPI void* glfwGetMonitorUserPointer(GLFWmonitor* monitor);
  *
  *  @ingroup monitor
  */
-GLFWAPI GLFWmonitorfun glfwSetMonitorCallback(GLFWmonitorfun callback);
+PLFWAPI PLFWmonitorfun plfwSetMonitorCallback(PLFWmonitorfun callback);
 
 /*! @brief Returns the available video modes for the specified monitor.
  *
@@ -2269,10 +2269,10 @@ GLFWAPI GLFWmonitorfun glfwSetMonitorCallback(GLFWmonitorfun callback);
  *  @return An array of video modes, or `NULL` if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
- *  @pointer_lifetime The returned array is allocated and freed by GLFW.  You
+ *  @pointer_lifetime The returned array is allocated and freed by PLFW.  You
  *  should not free it yourself.  It is valid until the specified monitor is
  *  disconnected, this function is called again for that monitor or the library
  *  is terminated.
@@ -2280,14 +2280,14 @@ GLFWAPI GLFWmonitorfun glfwSetMonitorCallback(GLFWmonitorfun callback);
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref monitor_modes
- *  @sa @ref glfwGetVideoMode
+ *  @sa @ref plfwGetVideoMode
  *
  *  @since Added in version 1.0.
- *  __GLFW 3:__ Changed to return an array of modes for a specific monitor.
+ *  __PLFW 3:__ Changed to return an array of modes for a specific monitor.
  *
  *  @ingroup monitor
  */
-GLFWAPI const GLFWvidmode* glfwGetVideoModes(GLFWmonitor* monitor, int* count);
+PLFWAPI const PLFWvidmode* plfwGetVideoModes(PLFWmonitor* monitor, int* count);
 
 /*! @brief Returns the current mode of the specified monitor.
  *
@@ -2299,28 +2299,28 @@ GLFWAPI const GLFWvidmode* glfwGetVideoModes(GLFWmonitor* monitor, int* count);
  *  @return The current mode of the monitor, or `NULL` if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
- *  @pointer_lifetime The returned array is allocated and freed by GLFW.  You
+ *  @pointer_lifetime The returned array is allocated and freed by PLFW.  You
  *  should not free it yourself.  It is valid until the specified monitor is
  *  disconnected or the library is terminated.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref monitor_modes
- *  @sa @ref glfwGetVideoModes
+ *  @sa @ref plfwGetVideoModes
  *
- *  @since Added in version 3.0.  Replaces `glfwGetDesktopMode`.
+ *  @since Added in version 3.0.  Replaces `plfwGetDesktopMode`.
  *
  *  @ingroup monitor
  */
-GLFWAPI const GLFWvidmode* glfwGetVideoMode(GLFWmonitor* monitor);
+PLFWAPI const PLFWvidmode* plfwGetVideoMode(PLFWmonitor* monitor);
 
 /*! @brief Generates a gamma ramp and sets it for the specified monitor.
  *
  *  This function generates an appropriately sized gamma ramp from the specified
- *  exponent and then calls @ref glfwSetGammaRamp with it.  The value must be
+ *  exponent and then calls @ref plfwSetGammaRamp with it.  The value must be
  *  a finite number greater than zero.
  *
  *  The software controlled gamma ramp is applied _in addition_ to the hardware
@@ -2331,11 +2331,11 @@ GLFWAPI const GLFWvidmode* glfwGetVideoMode(GLFWmonitor* monitor);
  *  @param[in] monitor The monitor whose gamma ramp to set.
  *  @param[in] gamma The desired exponent.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref GLFW_INVALID_VALUE,
- *  @ref GLFW_PLATFORM_ERROR and @ref GLFW_FEATURE_UNAVAILABLE (see remarks).
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref PLFW_INVALID_VALUE,
+ *  @ref PLFW_PLATFORM_ERROR and @ref PLFW_FEATURE_UNAVAILABLE (see remarks).
  *
  *  @remark __Wayland:__ Monitor gamma is a privileged protocol, so this function
- *  cannot be implemented and emits @ref GLFW_FEATURE_UNAVAILABLE.
+ *  cannot be implemented and emits @ref PLFW_FEATURE_UNAVAILABLE.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -2345,7 +2345,7 @@ GLFWAPI const GLFWvidmode* glfwGetVideoMode(GLFWmonitor* monitor);
  *
  *  @ingroup monitor
  */
-GLFWAPI void glfwSetGamma(GLFWmonitor* monitor, float gamma);
+PLFWAPI void plfwSetGamma(PLFWmonitor* monitor, float gamma);
 
 /*! @brief Returns the current gamma ramp for the specified monitor.
  *
@@ -2355,15 +2355,15 @@ GLFWAPI void glfwSetGamma(GLFWmonitor* monitor, float gamma);
  *  @return The current gamma ramp, or `NULL` if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref GLFW_PLATFORM_ERROR
- *  and @ref GLFW_FEATURE_UNAVAILABLE (see remarks).
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref PLFW_PLATFORM_ERROR
+ *  and @ref PLFW_FEATURE_UNAVAILABLE (see remarks).
  *
  *  @remark __Wayland:__ Monitor gamma is a privileged protocol, so this function
- *  cannot be implemented and emits @ref GLFW_FEATURE_UNAVAILABLE while
+ *  cannot be implemented and emits @ref PLFW_FEATURE_UNAVAILABLE while
  *  returning `NULL`.
  *
  *  @pointer_lifetime The returned structure and its arrays are allocated and
- *  freed by GLFW.  You should not free them yourself.  They are valid until the
+ *  freed by PLFW.  You should not free them yourself.  They are valid until the
  *  specified monitor is disconnected, this function is called again for that
  *  monitor or the library is terminated.
  *
@@ -2375,13 +2375,13 @@ GLFWAPI void glfwSetGamma(GLFWmonitor* monitor, float gamma);
  *
  *  @ingroup monitor
  */
-GLFWAPI const GLFWgammaramp* glfwGetGammaRamp(GLFWmonitor* monitor);
+PLFWAPI const PLFWgammaramp* plfwGetGammaRamp(PLFWmonitor* monitor);
 
 /*! @brief Sets the current gamma ramp for the specified monitor.
  *
  *  This function sets the current gamma ramp for the specified monitor.  The
- *  original gamma ramp for that monitor is saved by GLFW the first time this
- *  function is called and is restored by @ref glfwTerminate.
+ *  original gamma ramp for that monitor is saved by PLFW the first time this
+ *  function is called and is restored by @ref plfwTerminate.
  *
  *  The software controlled gamma ramp is applied _in addition_ to the hardware
  *  gamma correction, which today is usually an approximation of sRGB gamma.
@@ -2391,8 +2391,8 @@ GLFWAPI const GLFWgammaramp* glfwGetGammaRamp(GLFWmonitor* monitor);
  *  @param[in] monitor The monitor whose gamma ramp to set.
  *  @param[in] ramp The gamma ramp to use.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref GLFW_PLATFORM_ERROR
- *  and @ref GLFW_FEATURE_UNAVAILABLE (see remarks).
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref PLFW_PLATFORM_ERROR
+ *  and @ref PLFW_FEATURE_UNAVAILABLE (see remarks).
  *
  *  @remark The size of the specified gamma ramp should match the size of the
  *  current ramp for that monitor.
@@ -2400,7 +2400,7 @@ GLFWAPI const GLFWgammaramp* glfwGetGammaRamp(GLFWmonitor* monitor);
  *  @remark __Win32:__ The gamma ramp size must be 256.
  *
  *  @remark __Wayland:__ Monitor gamma is a privileged protocol, so this function
- *  cannot be implemented and emits @ref GLFW_FEATURE_UNAVAILABLE.
+ *  cannot be implemented and emits @ref PLFW_FEATURE_UNAVAILABLE.
  *
  *  @pointer_lifetime The specified gamma ramp is copied before this function
  *  returns.
@@ -2413,39 +2413,39 @@ GLFWAPI const GLFWgammaramp* glfwGetGammaRamp(GLFWmonitor* monitor);
  *
  *  @ingroup monitor
  */
-GLFWAPI void glfwSetGammaRamp(GLFWmonitor* monitor, const GLFWgammaramp* ramp);
+PLFWAPI void plfwSetGammaRamp(PLFWmonitor* monitor, const PLFWgammaramp* ramp);
 
 /*! @brief Resets all window hints to their default values.
  *
  *  This function resets all window hints to their
  *  [default values](@ref window_hints_values).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_hints
- *  @sa @ref glfwWindowHint
- *  @sa @ref glfwWindowHintString
+ *  @sa @ref plfwWindowHint
+ *  @sa @ref plfwWindowHintString
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwDefaultWindowHints(void);
+PLFWAPI void plfwDefaultWindowHints(void);
 
 /*! @brief Sets the specified window hint to the desired value.
  *
- *  This function sets hints for the next call to @ref glfwCreateWindow.  The
+ *  This function sets hints for the next call to @ref plfwCreateWindow.  The
  *  hints, once set, retain their values until changed by a call to this
- *  function or @ref glfwDefaultWindowHints, or until the library is terminated.
+ *  function or @ref plfwDefaultWindowHints, or until the library is terminated.
  *
  *  Only integer value hints can be set with this function.  String value hints
- *  are set with @ref glfwWindowHintString.
+ *  are set with @ref plfwWindowHintString.
  *
  *  This function does not check whether the specified hint values are valid.
  *  If you set hints to invalid values this will instead be reported by the next
- *  call to @ref glfwCreateWindow.
+ *  call to @ref plfwCreateWindow.
  *
  *  Some hints are platform specific.  These may be set on any platform but they
  *  will only affect their specific platform.  Other platforms will ignore them.
@@ -2454,33 +2454,33 @@ GLFWAPI void glfwDefaultWindowHints(void);
  *  @param[in] hint The [window hint](@ref window_hints) to set.
  *  @param[in] value The new value of the window hint.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_INVALID_ENUM.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_INVALID_ENUM.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_hints
- *  @sa @ref glfwWindowHintString
- *  @sa @ref glfwDefaultWindowHints
+ *  @sa @ref plfwWindowHintString
+ *  @sa @ref plfwDefaultWindowHints
  *
- *  @since Added in version 3.0.  Replaces `glfwOpenWindowHint`.
+ *  @since Added in version 3.0.  Replaces `plfwOpenWindowHint`.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwWindowHint(int hint, int value);
+PLFWAPI void plfwWindowHint(int hint, int value);
 
 /*! @brief Sets the specified window hint to the desired value.
  *
- *  This function sets hints for the next call to @ref glfwCreateWindow.  The
+ *  This function sets hints for the next call to @ref plfwCreateWindow.  The
  *  hints, once set, retain their values until changed by a call to this
- *  function or @ref glfwDefaultWindowHints, or until the library is terminated.
+ *  function or @ref plfwDefaultWindowHints, or until the library is terminated.
  *
  *  Only string type hints can be set with this function.  Integer value hints
- *  are set with @ref glfwWindowHint.
+ *  are set with @ref plfwWindowHint.
  *
  *  This function does not check whether the specified hint values are valid.
  *  If you set hints to invalid values this will instead be reported by the next
- *  call to @ref glfwCreateWindow.
+ *  call to @ref plfwCreateWindow.
  *
  *  Some hints are platform specific.  These may be set on any platform but they
  *  will only affect their specific platform.  Other platforms will ignore them.
@@ -2489,8 +2489,8 @@ GLFWAPI void glfwWindowHint(int hint, int value);
  *  @param[in] hint The [window hint](@ref window_hints) to set.
  *  @param[in] value The new value of the window hint.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_INVALID_ENUM.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_INVALID_ENUM.
  *
  *  @pointer_lifetime The specified string is copied before this function
  *  returns.
@@ -2498,18 +2498,18 @@ GLFWAPI void glfwWindowHint(int hint, int value);
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_hints
- *  @sa @ref glfwWindowHint
- *  @sa @ref glfwDefaultWindowHints
+ *  @sa @ref plfwWindowHint
+ *  @sa @ref plfwDefaultWindowHints
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwWindowHintString(int hint, const char* value);
+PLFWAPI void plfwWindowHintString(int hint, const char* value);
 
 /*! @brief Creates a window.
  *
- *  This function creates a window and nothing else: this build of GLFW carries
+ *  This function creates a window and nothing else: this build of PLFW carries
  *  no OpenGL, OpenGL ES, EGL or Vulkan support, so no context or surface is
  *  created alongside it.  Paint into the window with whatever API you prefer
  *  (D3D11/12, Vulkan, GDI, a child control, ...).  Most of the options
@@ -2517,14 +2517,14 @@ GLFWAPI void glfwWindowHintString(int hint, const char* value);
  *  [window hints](@ref window_hints).
  *
  *  The `share` parameter is accepted for source compatibility with upstream
- *  GLFW and is ignored.
+ *  PLFW and is ignored.
  *
  *  The created window and framebuffer may differ from what you requested, as
  *  not all parameters and hints are
  *  [hard constraints](@ref window_hints_hard).  This includes the size of the
  *  window, especially for full screen windows.  To query the actual attributes
- *  of the created window and framebuffer, see @ref glfwGetWindowAttrib, @ref
- *  glfwGetWindowSize and @ref glfwGetFramebufferSize.
+ *  of the created window and framebuffer, see @ref plfwGetWindowAttrib, @ref
+ *  plfwGetWindowSize and @ref plfwGetFramebufferSize.
  *
  *  To create a full screen window, you need to specify the monitor the window
  *  will cover.  If no monitor is specified, the window will be windowed mode.
@@ -2540,13 +2540,13 @@ GLFWAPI void glfwWindowHintString(int hint, const char* value);
  *  or _borderless full screen_ windows, see @ref window_windowed_full_screen.
  *
  *  Once you have created the window, you can switch it between windowed and
- *  full screen mode with @ref glfwSetWindowMonitor.
+ *  full screen mode with @ref plfwSetWindowMonitor.
  *
  *  By default, newly created windows use the placement recommended by the
  *  window system.  To create the window at a specific position, set the @ref
- *  GLFW_POSITION_X and @ref GLFW_POSITION_Y window hints before creation.  To
+ *  PLFW_POSITION_X and @ref PLFW_POSITION_Y window hints before creation.  To
  *  restore the default behavior, set either or both hints back to
- *  `GLFW_ANY_POSITION`.
+ *  `PLFW_ANY_POSITION`.
  *
  *  As long as at least one full screen window is not iconified, the screensaver
  *  is prohibited from starting.
@@ -2562,22 +2562,22 @@ GLFWAPI void glfwWindowHintString(int hint, const char* value);
  *  @param[in] title The initial, UTF-8 encoded window title.
  *  @param[in] monitor The monitor to use for full screen mode, or `NULL` for
  *  windowed mode.
- *  @param[in] share Unused.  Kept for source compatibility with the GLFW call
+ *  @param[in] share Unused.  Kept for source compatibility with the PLFW call
  *  signature; this library creates windows without any rasterizer context to
  *  share.  Pass `NULL`.
  *  @return The handle of the created window, or `NULL` if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_INVALID_ENUM, @ref GLFW_INVALID_VALUE, @ref GLFW_FORMAT_UNAVAILABLE
- *  and @ref GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_INVALID_ENUM, @ref PLFW_INVALID_VALUE, @ref PLFW_FORMAT_UNAVAILABLE
+ *  and @ref PLFW_PLATFORM_ERROR.
  *
- *  @remark __Win32:__ If the executable has an icon resource named `GLFW_ICON,` it
+ *  @remark __Win32:__ If the executable has an icon resource named `PLFW_ICON,` it
  *  will be set as the initial icon for the window.  If no such icon is present,
  *  the `IDI_APPLICATION` icon will be used instead.  To set a different icon,
- *  see @ref glfwSetWindowIcon.
+ *  see @ref plfwSetWindowIcon.
  *
- *  @remark __macOS:__ The GLFW window has no icon, as it is not a document
+ *  @remark __macOS:__ The PLFW window has no icon, as it is not a document
  *  window, but the dock icon will be the same as the application bundle's icon.
  *  For more information on bundles, see the
  *  [Bundle Programming Guide][bundle-guide] in the Mac Developer Library.
@@ -2586,20 +2586,20 @@ GLFWAPI void glfwWindowHintString(int hint, const char* value);
  *
  *  @remark __macOS:__  The window frame will not be rendered at full resolution
  *  on Retina displays unless the
- *  [GLFW_SCALE_FRAMEBUFFER](@ref GLFW_SCALE_FRAMEBUFFER_hint)
- *  hint is `GLFW_TRUE` and the `NSHighResolutionCapable` key is enabled in the
+ *  [PLFW_SCALE_FRAMEBUFFER](@ref PLFW_SCALE_FRAMEBUFFER_hint)
+ *  hint is `PLFW_TRUE` and the `NSHighResolutionCapable` key is enabled in the
  *  application bundle's `Info.plist`.  For more information, see
  *  [High Resolution Guidelines for OS X][hidpi-guide] in the Mac Developer
- *  Library.  The GLFW test and example programs use a custom `Info.plist`
+ *  Library.  The PLFW test and example programs use a custom `Info.plist`
  *  template for this, which can be found as `CMake/Info.plist.in` in the source
  *  tree.
  *
  *  [hidpi-guide]: https://developer.apple.com/library/mac/documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/Explained/Explained.html
  *
- *  @remark __Wayland:__ GLFW uses [libdecor][] where available to create its window
+ *  @remark __Wayland:__ PLFW uses [libdecor][] where available to create its window
  *  decorations.  This in turn uses server-side XDG decorations where available
  *  and provides high quality client-side decorations on compositors like GNOME.
- *  If both XDG decorations and libdecor are unavailable, GLFW falls back to
+ *  If both XDG decorations and libdecor are unavailable, PLFW falls back to
  *  a very simple set of window decorations that only support moving, resizing
  *  and the window manager's right-click menu.
  *
@@ -2608,13 +2608,13 @@ GLFWAPI void glfwWindowHintString(int hint, const char* value);
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_creation
- *  @sa @ref glfwDestroyWindow
+ *  @sa @ref plfwDestroyWindow
  *
- *  @since Added in version 3.0.  Replaces `glfwOpenWindow`.
+ *  @since Added in version 3.0.  Replaces `plfwOpenWindow`.
  *
  *  @ingroup window
  */
-GLFWAPI GLFWwindow* glfwCreateWindow(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share);
+PLFWAPI PLFWwindow* plfwCreateWindow(int width, int height, const char* title, PLFWmonitor* monitor, PLFWwindow* share);
 
 /*! @brief Destroys the specified window and its context.
  *
@@ -2626,8 +2626,8 @@ GLFWAPI GLFWwindow* glfwCreateWindow(int width, int height, const char* title, G
  *
  *  @param[in] window The window to destroy.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @note The context of the specified window must not be current on any other
  *  thread when this function is called.
@@ -2637,13 +2637,13 @@ GLFWAPI GLFWwindow* glfwCreateWindow(int width, int height, const char* title, G
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_creation
- *  @sa @ref glfwCreateWindow
+ *  @sa @ref plfwCreateWindow
  *
- *  @since Added in version 3.0.  Replaces `glfwCloseWindow`.
+ *  @since Added in version 3.0.  Replaces `plfwCloseWindow`.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwDestroyWindow(GLFWwindow* window);
+PLFWAPI void plfwDestroyWindow(PLFWwindow* window);
 
 /*! @brief Checks the close flag of the specified window.
  *
@@ -2652,7 +2652,7 @@ GLFWAPI void glfwDestroyWindow(GLFWwindow* window);
  *  @param[in] window The window to query.
  *  @return The value of the close flag.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function may be called from any thread.  Access is not
  *  synchronized.
@@ -2663,7 +2663,7 @@ GLFWAPI void glfwDestroyWindow(GLFWwindow* window);
  *
  *  @ingroup window
  */
-GLFWAPI int glfwWindowShouldClose(GLFWwindow* window);
+PLFWAPI int plfwWindowShouldClose(PLFWwindow* window);
 
 /*! @brief Sets the close flag of the specified window.
  *
@@ -2674,7 +2674,7 @@ GLFWAPI int glfwWindowShouldClose(GLFWwindow* window);
  *  @param[in] window The window whose flag to change.
  *  @param[in] value The new value.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function may be called from any thread.  Access is not
  *  synchronized.
@@ -2685,39 +2685,39 @@ GLFWAPI int glfwWindowShouldClose(GLFWwindow* window);
  *
  *  @ingroup window
  */
-GLFWAPI void glfwSetWindowShouldClose(GLFWwindow* window, int value);
+PLFWAPI void plfwSetWindowShouldClose(PLFWwindow* window, int value);
 
 /*! @brief Returns the title of the specified window.
  *
  *  This function returns the window title, encoded as UTF-8, of the specified
- *  window.  This is the title set previously by @ref glfwCreateWindow
- *  or @ref glfwSetWindowTitle.
+ *  window.  This is the title set previously by @ref plfwCreateWindow
+ *  or @ref plfwSetWindowTitle.
  *
  *  @param[in] window The window to query.
  *  @return The UTF-8 encoded window title, or `NULL` if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @remark The returned title is currently a copy of the title last set by @ref
- *  glfwCreateWindow or @ref glfwSetWindowTitle.  It does not include any
+ *  plfwCreateWindow or @ref plfwSetWindowTitle.  It does not include any
  *  additional text which may be appended by the platform or another program.
  *
- *  @pointer_lifetime The returned string is allocated and freed by GLFW.  You
+ *  @pointer_lifetime The returned string is allocated and freed by PLFW.  You
  *  should not free it yourself.  It is valid until the next call to @ref
- *  glfwGetWindowTitle or @ref glfwSetWindowTitle, or until the library is
+ *  plfwGetWindowTitle or @ref plfwSetWindowTitle, or until the library is
  *  terminated.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_title
- *  @sa @ref glfwSetWindowTitle
+ *  @sa @ref plfwSetWindowTitle
  *
  *  @since Added in version 3.4.
  *
  *  @ingroup window
  */
-GLFWAPI const char* glfwGetWindowTitle(GLFWwindow* window);
+PLFWAPI const char* plfwGetWindowTitle(PLFWwindow* window);
 
 /*! @brief Sets the title of the specified window.
  *
@@ -2727,8 +2727,8 @@ GLFWAPI const char* glfwGetWindowTitle(GLFWwindow* window);
  *  @param[in] window The window whose title to change.
  *  @param[in] title The UTF-8 encoded window title.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @remark __macOS:__ The window title will not be updated until the next time you
  *  process events.
@@ -2736,14 +2736,14 @@ GLFWAPI const char* glfwGetWindowTitle(GLFWwindow* window);
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_title
- *  @sa @ref glfwGetWindowTitle
+ *  @sa @ref plfwGetWindowTitle
  *
  *  @since Added in version 1.0.
- *  __GLFW 3:__ Added window handle parameter.
+ *  __PLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwSetWindowTitle(GLFWwindow* window, const char* title);
+PLFWAPI void plfwSetWindowTitle(PLFWwindow* window, const char* title);
 
 /*! @brief Sets the icon for the specified window.
  *
@@ -2766,15 +2766,15 @@ GLFWAPI void glfwSetWindowTitle(GLFWwindow* window, const char* title);
  *  @param[in] images The images to create the icon from.  This is ignored if
  *  count is zero.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_INVALID_VALUE, @ref GLFW_PLATFORM_ERROR and @ref
- *  GLFW_FEATURE_UNAVAILABLE (see remarks).
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_INVALID_VALUE, @ref PLFW_PLATFORM_ERROR and @ref
+ *  PLFW_FEATURE_UNAVAILABLE (see remarks).
  *
  *  @pointer_lifetime The specified image data is copied before this function
  *  returns.
  *
  *  @remark __macOS:__ Regular windows do not have icons on macOS.  This function
- *  will emit @ref GLFW_FEATURE_UNAVAILABLE.  The dock icon will be the same as
+ *  will emit @ref PLFW_FEATURE_UNAVAILABLE.  The dock icon will be the same as
  *  the application bundle's icon.  For more information on bundles, see the
  *  [Bundle Programming Guide][bundle-guide] in the Mac Developer Library.
  *
@@ -2782,7 +2782,7 @@ GLFWAPI void glfwSetWindowTitle(GLFWwindow* window, const char* title);
  *
  *  @remark __Wayland:__ There is no existing protocol to change an icon, the
  *  window will thus inherit the one defined in the application's desktop file.
- *  This function will emit @ref GLFW_FEATURE_UNAVAILABLE.
+ *  This function will emit @ref PLFW_FEATURE_UNAVAILABLE.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -2792,7 +2792,7 @@ GLFWAPI void glfwSetWindowTitle(GLFWwindow* window, const char* title);
  *
  *  @ingroup window
  */
-GLFWAPI void glfwSetWindowIcon(GLFWwindow* window, int count, const GLFWimage* images);
+PLFWAPI void plfwSetWindowIcon(PLFWwindow* window, int count, const PLFWimage* images);
 
 /*! @brief Retrieves the position of the content area of the specified window.
  *
@@ -2808,23 +2808,23 @@ GLFWAPI void glfwSetWindowIcon(GLFWwindow* window, int count, const GLFWimage* i
  *  @param[out] ypos Where to store the y-coordinate of the upper-left corner of
  *  the content area, or `NULL`.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_PLATFORM_ERROR and @ref GLFW_FEATURE_UNAVAILABLE (see remarks).
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_PLATFORM_ERROR and @ref PLFW_FEATURE_UNAVAILABLE (see remarks).
  *
  *  @remark __Wayland:__ Window positions are not currently part of any common
  *  Wayland protocol, so this function cannot be implemented and will emit @ref
- *  GLFW_FEATURE_UNAVAILABLE.
+ *  PLFW_FEATURE_UNAVAILABLE.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_pos
- *  @sa @ref glfwSetWindowPos
+ *  @sa @ref plfwSetWindowPos
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwGetWindowPos(GLFWwindow* window, int* xpos, int* ypos);
+PLFWAPI void plfwGetWindowPos(PLFWwindow* window, int* xpos, int* ypos);
 
 /*! @brief Sets the position of the content area of the specified window.
  *
@@ -2835,37 +2835,37 @@ GLFWAPI void glfwGetWindowPos(GLFWwindow* window, int* xpos, int* ypos);
  *  __Do not use this function__ to move an already visible window unless you
  *  have very good reasons for doing so, as it will confuse and annoy the user.
  *
- *  The window manager may put limits on what positions are allowed.  GLFW
+ *  The window manager may put limits on what positions are allowed.  PLFW
  *  cannot and should not override these limits.
  *
  *  @param[in] window The window to query.
  *  @param[in] xpos The x-coordinate of the upper-left corner of the content area.
  *  @param[in] ypos The y-coordinate of the upper-left corner of the content area.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_PLATFORM_ERROR and @ref GLFW_FEATURE_UNAVAILABLE (see remarks).
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_PLATFORM_ERROR and @ref PLFW_FEATURE_UNAVAILABLE (see remarks).
  *
  *  @remark __Wayland:__ Window positions are not currently part of any common
  *  Wayland protocol, so this function cannot be implemented and will emit @ref
- *  GLFW_FEATURE_UNAVAILABLE.
+ *  PLFW_FEATURE_UNAVAILABLE.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_pos
- *  @sa @ref glfwGetWindowPos
+ *  @sa @ref plfwGetWindowPos
  *
  *  @since Added in version 1.0.
- *  __GLFW 3:__ Added window handle parameter.
+ *  __PLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwSetWindowPos(GLFWwindow* window, int xpos, int ypos);
+PLFWAPI void plfwSetWindowPos(PLFWwindow* window, int xpos, int ypos);
 
 /*! @brief Retrieves the size of the content area of the specified window.
  *
  *  This function retrieves the size, in screen coordinates, of the content area
  *  of the specified window.  If you wish to retrieve the size of the
- *  framebuffer of the window in pixels, see @ref glfwGetFramebufferSize.
+ *  framebuffer of the window in pixels, see @ref plfwGetFramebufferSize.
  *
  *  Any or all of the size arguments may be `NULL`.  If an error occurs, all
  *  non-`NULL` size arguments will be set to zero.
@@ -2876,20 +2876,20 @@ GLFWAPI void glfwSetWindowPos(GLFWwindow* window, int xpos, int ypos);
  *  @param[out] height Where to store the height, in screen coordinates, of the
  *  content area, or `NULL`.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_size
- *  @sa @ref glfwSetWindowSize
+ *  @sa @ref plfwSetWindowSize
  *
  *  @since Added in version 1.0.
- *  __GLFW 3:__ Added window handle parameter.
+ *  __PLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwGetWindowSize(GLFWwindow* window, int* width, int* height);
+PLFWAPI void plfwGetWindowSize(PLFWwindow* window, int* width, int* height);
 
 /*! @brief Sets the size limits of the specified window.
  *
@@ -2906,16 +2906,16 @@ GLFWAPI void glfwGetWindowSize(GLFWwindow* window, int* width, int* height);
  *
  *  @param[in] window The window to set limits for.
  *  @param[in] minwidth The minimum width, in screen coordinates, of the content
- *  area, or `GLFW_DONT_CARE`.
+ *  area, or `PLFW_DONT_CARE`.
  *  @param[in] minheight The minimum height, in screen coordinates, of the
- *  content area, or `GLFW_DONT_CARE`.
+ *  content area, or `PLFW_DONT_CARE`.
  *  @param[in] maxwidth The maximum width, in screen coordinates, of the content
- *  area, or `GLFW_DONT_CARE`.
+ *  area, or `PLFW_DONT_CARE`.
  *  @param[in] maxheight The maximum height, in screen coordinates, of the
- *  content area, or `GLFW_DONT_CARE`.
+ *  content area, or `PLFW_DONT_CARE`.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_INVALID_VALUE and @ref GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_INVALID_VALUE and @ref PLFW_PLATFORM_ERROR.
  *
  *  @remark If you set size limits and an aspect ratio that conflict, the
  *  results are undefined.
@@ -2926,13 +2926,13 @@ GLFWAPI void glfwGetWindowSize(GLFWwindow* window, int* width, int* height);
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_sizelimits
- *  @sa @ref glfwSetWindowAspectRatio
+ *  @sa @ref plfwSetWindowAspectRatio
  *
  *  @since Added in version 3.2.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwSetWindowSizeLimits(GLFWwindow* window, int minwidth, int minheight, int maxwidth, int maxheight);
+PLFWAPI void plfwSetWindowSizeLimits(PLFWwindow* window, int minwidth, int minheight, int maxwidth, int maxheight);
 
 /*! @brief Sets the aspect ratio of the specified window.
  *
@@ -2945,7 +2945,7 @@ GLFWAPI void glfwSetWindowSizeLimits(GLFWwindow* window, int minwidth, int minhe
  *  values must be greater than zero.  For example, the common 16:9 aspect ratio
  *  is specified as 16 and 9, respectively.
  *
- *  If the numerator and denominator is set to `GLFW_DONT_CARE` then the aspect
+ *  If the numerator and denominator is set to `PLFW_DONT_CARE` then the aspect
  *  ratio limit is disabled.
  *
  *  The aspect ratio is applied immediately to a windowed mode window and may
@@ -2953,12 +2953,12 @@ GLFWAPI void glfwSetWindowSizeLimits(GLFWwindow* window, int minwidth, int minhe
  *
  *  @param[in] window The window to set limits for.
  *  @param[in] numer The numerator of the desired aspect ratio, or
- *  `GLFW_DONT_CARE`.
+ *  `PLFW_DONT_CARE`.
  *  @param[in] denom The denominator of the desired aspect ratio, or
- *  `GLFW_DONT_CARE`.
+ *  `PLFW_DONT_CARE`.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_INVALID_VALUE and @ref GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_INVALID_VALUE and @ref PLFW_PLATFORM_ERROR.
  *
  *  @remark If you set size limits and an aspect ratio that conflict, the
  *  results are undefined.
@@ -2969,13 +2969,13 @@ GLFWAPI void glfwSetWindowSizeLimits(GLFWwindow* window, int minwidth, int minhe
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_sizelimits
- *  @sa @ref glfwSetWindowSizeLimits
+ *  @sa @ref plfwSetWindowSizeLimits
  *
  *  @since Added in version 3.2.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwSetWindowAspectRatio(GLFWwindow* window, int numer, int denom);
+PLFWAPI void plfwSetWindowAspectRatio(PLFWwindow* window, int numer, int denom);
 
 /*! @brief Sets the size of the content area of the specified window.
  *
@@ -2988,9 +2988,9 @@ GLFWAPI void glfwSetWindowAspectRatio(GLFWwindow* window, int numer, int denom);
  *  framebuffer remain unchanged.
  *
  *  If you wish to update the refresh rate of the desired video mode in addition
- *  to its resolution, see @ref glfwSetWindowMonitor.
+ *  to its resolution, see @ref plfwSetWindowMonitor.
  *
- *  The window manager may put limits on what sizes are allowed.  GLFW cannot
+ *  The window manager may put limits on what sizes are allowed.  PLFW cannot
  *  and should not override these limits.
  *
  *  @param[in] window The window to resize.
@@ -2999,27 +2999,27 @@ GLFWAPI void glfwSetWindowAspectRatio(GLFWwindow* window, int numer, int denom);
  *  @param[in] height The desired height, in screen coordinates, of the window
  *  content area.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_size
- *  @sa @ref glfwGetWindowSize
- *  @sa @ref glfwSetWindowMonitor
+ *  @sa @ref plfwGetWindowSize
+ *  @sa @ref plfwSetWindowMonitor
  *
  *  @since Added in version 1.0.
- *  __GLFW 3:__ Added window handle parameter.
+ *  __PLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwSetWindowSize(GLFWwindow* window, int width, int height);
+PLFWAPI void plfwSetWindowSize(PLFWwindow* window, int width, int height);
 
 /*! @brief Retrieves the size of the framebuffer of the specified window.
  *
  *  This function retrieves the size, in pixels, of the framebuffer of the
  *  specified window.  If you wish to retrieve the size of the window in screen
- *  coordinates, see @ref glfwGetWindowSize.
+ *  coordinates, see @ref plfwGetWindowSize.
  *
  *  Any or all of the size arguments may be `NULL`.  If an error occurs, all
  *  non-`NULL` size arguments will be set to zero.
@@ -3030,19 +3030,19 @@ GLFWAPI void glfwSetWindowSize(GLFWwindow* window, int width, int height);
  *  @param[out] height Where to store the height, in pixels, of the framebuffer,
  *  or `NULL`.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_fbsize
- *  @sa @ref glfwSetFramebufferSizeCallback
+ *  @sa @ref plfwSetFramebufferSizeCallback
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwGetFramebufferSize(GLFWwindow* window, int* width, int* height);
+PLFWAPI void plfwGetFramebufferSize(PLFWwindow* window, int* width, int* height);
 
 /*! @brief Retrieves the size of the frame of the window.
  *
@@ -3068,8 +3068,8 @@ GLFWAPI void glfwGetFramebufferSize(GLFWwindow* window, int* width, int* height)
  *  @param[out] bottom Where to store the size, in screen coordinates, of the
  *  bottom edge of the window frame, or `NULL`.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -3079,7 +3079,7 @@ GLFWAPI void glfwGetFramebufferSize(GLFWwindow* window, int* width, int* height)
  *
  *  @ingroup window
  */
-GLFWAPI void glfwGetWindowFrameSize(GLFWwindow* window, int* left, int* top, int* right, int* bottom);
+PLFWAPI void plfwGetWindowFrameSize(PLFWwindow* window, int* left, int* top, int* right, int* bottom);
 
 /*! @brief Retrieves the content scale for the specified window.
  *
@@ -3099,20 +3099,20 @@ GLFWAPI void glfwGetWindowFrameSize(GLFWwindow* window, int* left, int* top, int
  *  @param[out] xscale Where to store the x-axis content scale, or `NULL`.
  *  @param[out] yscale Where to store the y-axis content scale, or `NULL`.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_scale
- *  @sa @ref glfwSetWindowContentScaleCallback
- *  @sa @ref glfwGetMonitorContentScale
+ *  @sa @ref plfwSetWindowContentScaleCallback
+ *  @sa @ref plfwGetMonitorContentScale
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwGetWindowContentScale(GLFWwindow* window, float* xscale, float* yscale);
+PLFWAPI void plfwGetWindowContentScale(PLFWwindow* window, float* xscale, float* yscale);
 
 /*! @brief Returns the opacity of the whole window.
  *
@@ -3127,19 +3127,19 @@ GLFWAPI void glfwGetWindowContentScale(GLFWwindow* window, float* xscale, float*
  *  @param[in] window The window to query.
  *  @return The opacity value of the specified window.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_transparency
- *  @sa @ref glfwSetWindowOpacity
+ *  @sa @ref plfwSetWindowOpacity
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup window
  */
-GLFWAPI float glfwGetWindowOpacity(GLFWwindow* window);
+PLFWAPI float plfwGetWindowOpacity(PLFWwindow* window);
 
 /*! @brief Sets the opacity of the whole window.
  *
@@ -3156,22 +3156,22 @@ GLFWAPI float glfwGetWindowOpacity(GLFWwindow* window);
  *  @param[in] window The window to set the opacity for.
  *  @param[in] opacity The desired opacity of the specified window.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_PLATFORM_ERROR and @ref GLFW_FEATURE_UNAVAILABLE (see remarks).
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_PLATFORM_ERROR and @ref PLFW_FEATURE_UNAVAILABLE (see remarks).
  *
  *  @remark __Wayland:__ There is no way to set an opacity factor for a window.
- *  This function will emit @ref GLFW_FEATURE_UNAVAILABLE.
+ *  This function will emit @ref PLFW_FEATURE_UNAVAILABLE.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_transparency
- *  @sa @ref glfwGetWindowOpacity
+ *  @sa @ref plfwGetWindowOpacity
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwSetWindowOpacity(GLFWwindow* window, float opacity);
+PLFWAPI void plfwSetWindowOpacity(PLFWwindow* window, float opacity);
 
 /*! @brief Iconifies the specified window.
  *
@@ -3179,27 +3179,27 @@ GLFWAPI void glfwSetWindowOpacity(GLFWwindow* window, float opacity);
  *  previously restored.  If the window is already iconified, this function does
  *  nothing.
  *
- *  If the specified window is a full screen window, GLFW restores the original
+ *  If the specified window is a full screen window, PLFW restores the original
  *  video mode of the monitor.  The window's desired video mode is set again
  *  when the window is restored.
  *
  *  @param[in] window The window to iconify.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_iconify
- *  @sa @ref glfwRestoreWindow
- *  @sa @ref glfwMaximizeWindow
+ *  @sa @ref plfwRestoreWindow
+ *  @sa @ref plfwMaximizeWindow
  *
  *  @since Added in version 2.1.
- *  __GLFW 3:__ Added window handle parameter.
+ *  __PLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwIconifyWindow(GLFWwindow* window);
+PLFWAPI void plfwIconifyWindow(PLFWwindow* window);
 
 /*! @brief Restores the specified window.
  *
@@ -3212,8 +3212,8 @@ GLFWAPI void glfwIconifyWindow(GLFWwindow* window);
  *
  *  @param[in] window The window to restore.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @remark __Wayland:__ Restoring a window from maximization is not currently
  *  part of any common Wayland protocol, so this function can only restore
@@ -3222,15 +3222,15 @@ GLFWAPI void glfwIconifyWindow(GLFWwindow* window);
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_iconify
- *  @sa @ref glfwIconifyWindow
- *  @sa @ref glfwMaximizeWindow
+ *  @sa @ref plfwIconifyWindow
+ *  @sa @ref plfwMaximizeWindow
  *
  *  @since Added in version 2.1.
- *  __GLFW 3:__ Added window handle parameter.
+ *  __PLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwRestoreWindow(GLFWwindow* window);
+PLFWAPI void plfwRestoreWindow(PLFWwindow* window);
 
 /*! @brief Maximizes the specified window.
  *
@@ -3241,21 +3241,21 @@ GLFWAPI void glfwRestoreWindow(GLFWwindow* window);
  *
  *  @param[in] window The window to maximize.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @par Thread Safety
  *  This function may only be called from the main thread.
  *
  *  @sa @ref window_iconify
- *  @sa @ref glfwIconifyWindow
- *  @sa @ref glfwRestoreWindow
+ *  @sa @ref plfwIconifyWindow
+ *  @sa @ref plfwRestoreWindow
  *
- *  @since Added in GLFW 3.2.
+ *  @since Added in PLFW 3.2.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwMaximizeWindow(GLFWwindow* window);
+PLFWAPI void plfwMaximizeWindow(PLFWwindow* window);
 
 /*! @brief Makes the specified window visible.
  *
@@ -3264,14 +3264,14 @@ GLFWAPI void glfwMaximizeWindow(GLFWwindow* window);
  *  function does nothing.
  *
  *  By default, windowed mode windows are focused when shown
- *  Set the [GLFW_FOCUS_ON_SHOW](@ref GLFW_FOCUS_ON_SHOW_hint) window hint
+ *  Set the [PLFW_FOCUS_ON_SHOW](@ref PLFW_FOCUS_ON_SHOW_hint) window hint
  *  to change this behavior for all newly created windows, or change the
- *  behavior for an existing window with @ref glfwSetWindowAttrib.
+ *  behavior for an existing window with @ref plfwSetWindowAttrib.
  *
  *  @param[in] window The window to make visible.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @remark __Wayland:__ Because Wayland wants every frame of the desktop to be
  *  complete, this function does not immediately make the window visible.
@@ -3281,13 +3281,13 @@ GLFWAPI void glfwMaximizeWindow(GLFWwindow* window);
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_hide
- *  @sa @ref glfwHideWindow
+ *  @sa @ref plfwHideWindow
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwShowWindow(GLFWwindow* window);
+PLFWAPI void plfwShowWindow(PLFWwindow* window);
 
 /*! @brief Hides the specified window.
  *
@@ -3297,19 +3297,19 @@ GLFWAPI void glfwShowWindow(GLFWwindow* window);
  *
  *  @param[in] window The window to hide.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_hide
- *  @sa @ref glfwShowWindow
+ *  @sa @ref plfwShowWindow
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwHideWindow(GLFWwindow* window);
+PLFWAPI void plfwHideWindow(PLFWwindow* window);
 
 /*! @brief Brings the specified window to front and sets input focus.
  *
@@ -3317,12 +3317,12 @@ GLFWAPI void glfwHideWindow(GLFWwindow* window);
  *  The window should already be visible and not iconified.
  *
  *  By default, both windowed and full screen mode windows are focused when
- *  initially created.  Set the [GLFW_FOCUSED](@ref GLFW_FOCUSED_hint) to
+ *  initially created.  Set the [PLFW_FOCUSED](@ref PLFW_FOCUSED_hint) to
  *  disable this behavior.
  *
  *  Also by default, windowed mode windows are focused when shown
- *  with @ref glfwShowWindow. Set the
- *  [GLFW_FOCUS_ON_SHOW](@ref GLFW_FOCUS_ON_SHOW_hint) to disable this behavior.
+ *  with @ref plfwShowWindow. Set the
+ *  [PLFW_FOCUS_ON_SHOW](@ref PLFW_FOCUS_ON_SHOW_hint) to disable this behavior.
  *
  *  __Do not use this function__ to steal focus from other applications unless
  *  you are certain that is what the user wants.  Focus stealing can be
@@ -3333,8 +3333,8 @@ GLFWAPI void glfwHideWindow(GLFWwindow* window);
  *
  *  @param[in] window The window to give input focus.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @remark __Wayland:__ The compositor will likely ignore focus requests unless
  *  another window created by the same application already has input focus.
@@ -3348,7 +3348,7 @@ GLFWAPI void glfwHideWindow(GLFWwindow* window);
  *
  *  @ingroup window
  */
-GLFWAPI void glfwFocusWindow(GLFWwindow* window);
+PLFWAPI void plfwFocusWindow(PLFWwindow* window);
 
 /*! @brief Requests user attention to the specified window.
  *
@@ -3361,8 +3361,8 @@ GLFWAPI void glfwFocusWindow(GLFWwindow* window);
  *
  *  @param[in] window The window to request attention to.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @remark __macOS:__ Attention is requested to the application as a whole, not the
  *  specific window.
@@ -3375,7 +3375,7 @@ GLFWAPI void glfwFocusWindow(GLFWwindow* window);
  *
  *  @ingroup window
  */
-GLFWAPI void glfwRequestWindowAttention(GLFWwindow* window);
+PLFWAPI void plfwRequestWindowAttention(PLFWwindow* window);
 
 /*! @brief Returns the monitor that the window uses for full screen mode.
  *
@@ -3386,18 +3386,18 @@ GLFWAPI void glfwRequestWindowAttention(GLFWwindow* window);
  *  @return The monitor, or `NULL` if the window is in windowed mode or an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_monitor
- *  @sa @ref glfwSetWindowMonitor
+ *  @sa @ref plfwSetWindowMonitor
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup window
  */
-GLFWAPI GLFWmonitor* glfwGetWindowMonitor(GLFWwindow* window);
+PLFWAPI PLFWmonitor* plfwGetWindowMonitor(PLFWwindow* window);
 
 /*! @brief Sets the mode, monitor, video mode and placement of a window.
  *
@@ -3413,7 +3413,7 @@ GLFWAPI GLFWmonitor* glfwGetWindowMonitor(GLFWwindow* window);
  *  is specified.
  *
  *  If you only wish to update the resolution of a full screen window or the
- *  size of a windowed mode window, see @ref glfwSetWindowSize.
+ *  size of a windowed mode window, see @ref plfwSetWindowSize.
  *
  *  When a window transitions from full screen to windowed mode, this function
  *  restores any previous window settings such as whether it is decorated,
@@ -3430,10 +3430,10 @@ GLFWAPI GLFWmonitor* glfwGetWindowMonitor(GLFWwindow* window);
  *  @param[in] height The desired height, in screen coordinates, of the content
  *  area or video mode.
  *  @param[in] refreshRate The desired refresh rate, in Hz, of the video mode,
- *  or `GLFW_DONT_CARE`.
+ *  or `PLFW_DONT_CARE`.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @remark The OpenGL or OpenGL ES context will not be destroyed or otherwise
  *  affected by any resizing or mode switching, although you may need to update
@@ -3446,14 +3446,14 @@ GLFWAPI GLFWmonitor* glfwGetWindowMonitor(GLFWwindow* window);
  *
  *  @sa @ref window_monitor
  *  @sa @ref window_full_screen
- *  @sa @ref glfwGetWindowMonitor
- *  @sa @ref glfwSetWindowSize
+ *  @sa @ref plfwGetWindowMonitor
+ *  @sa @ref plfwSetWindowSize
  *
  *  @since Added in version 3.2.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwSetWindowMonitor(GLFWwindow* window, GLFWmonitor* monitor, int xpos, int ypos, int width, int height, int refreshRate);
+PLFWAPI void plfwSetWindowMonitor(PLFWwindow* window, PLFWmonitor* monitor, int xpos, int ypos, int width, int height, int refreshRate);
 
 /*! @brief Returns an attribute of the specified window.
  *
@@ -3466,8 +3466,8 @@ GLFWAPI void glfwSetWindowMonitor(GLFWwindow* window, GLFWmonitor* monitor, int 
  *  @return The value of the attribute, or zero if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_INVALID_ENUM and @ref GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_INVALID_ENUM and @ref PLFW_PLATFORM_ERROR.
  *
  *  @remark Framebuffer related hints are not window attributes.  See @ref
  *  window_attribs_fb for more information.
@@ -3478,31 +3478,31 @@ GLFWAPI void glfwSetWindowMonitor(GLFWwindow* window, GLFWmonitor* monitor, int 
  *  valid arguments and the library has been [initialized](@ref intro_init).
  *
  *  @remark __Wayland:__ Checking whether a window is iconified is not currently
- *  part of any common Wayland protocol, so the @ref GLFW_ICONIFIED attribute
- *  cannot be implemented and is always `GLFW_FALSE`.
+ *  part of any common Wayland protocol, so the @ref PLFW_ICONIFIED attribute
+ *  cannot be implemented and is always `PLFW_FALSE`.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_attribs
- *  @sa @ref glfwSetWindowAttrib
+ *  @sa @ref plfwSetWindowAttrib
  *
- *  @since Added in version 3.0.  Replaces `glfwGetWindowParam` and
- *  `glfwGetGLVersion`.
+ *  @since Added in version 3.0.  Replaces `plfwGetWindowParam` and
+ *  `plfwGetGLVersion`.
  *
  *  @ingroup window
  */
-GLFWAPI int glfwGetWindowAttrib(GLFWwindow* window, int attrib);
+PLFWAPI int plfwGetWindowAttrib(PLFWwindow* window, int attrib);
 
 /*! @brief Sets an attribute of the specified window.
  *
  *  This function sets the value of an attribute of the specified window.
  *
- *  The supported attributes are [GLFW_DECORATED](@ref GLFW_DECORATED_attrib),
- *  [GLFW_RESIZABLE](@ref GLFW_RESIZABLE_attrib),
- *  [GLFW_FLOATING](@ref GLFW_FLOATING_attrib),
- *  [GLFW_AUTO_ICONIFY](@ref GLFW_AUTO_ICONIFY_attrib) and
- *  [GLFW_FOCUS_ON_SHOW](@ref GLFW_FOCUS_ON_SHOW_attrib).
- *  [GLFW_MOUSE_PASSTHROUGH](@ref GLFW_MOUSE_PASSTHROUGH_attrib)
+ *  The supported attributes are [PLFW_DECORATED](@ref PLFW_DECORATED_attrib),
+ *  [PLFW_RESIZABLE](@ref PLFW_RESIZABLE_attrib),
+ *  [PLFW_FLOATING](@ref PLFW_FLOATING_attrib),
+ *  [PLFW_AUTO_ICONIFY](@ref PLFW_AUTO_ICONIFY_attrib) and
+ *  [PLFW_FOCUS_ON_SHOW](@ref PLFW_FOCUS_ON_SHOW_attrib).
+ *  [PLFW_MOUSE_PASSTHROUGH](@ref PLFW_MOUSE_PASSTHROUGH_attrib)
  *
  *  Some of these attributes are ignored for full screen windows.  The new
  *  value will take effect if the window is later made windowed.
@@ -3512,28 +3512,28 @@ GLFWAPI int glfwGetWindowAttrib(GLFWwindow* window, int attrib);
  *
  *  @param[in] window The window to set the attribute for.
  *  @param[in] attrib A supported window attribute.
- *  @param[in] value `GLFW_TRUE` or `GLFW_FALSE`.
+ *  @param[in] value `PLFW_TRUE` or `PLFW_FALSE`.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_INVALID_ENUM, @ref GLFW_INVALID_VALUE, @ref GLFW_PLATFORM_ERROR and @ref
- *  GLFW_FEATURE_UNAVAILABLE (see remarks).
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_INVALID_ENUM, @ref PLFW_INVALID_VALUE, @ref PLFW_PLATFORM_ERROR and @ref
+ *  PLFW_FEATURE_UNAVAILABLE (see remarks).
  *
- *  @remark Calling @ref glfwGetWindowAttrib will always return the latest
+ *  @remark Calling @ref plfwGetWindowAttrib will always return the latest
  *  value, even if that value is ignored by the current mode of the window.
  *
- *  @remark __Wayland:__ The [GLFW_FLOATING](@ref GLFW_FLOATING_attrib) window attribute is
- *  not supported.  Setting this will emit @ref GLFW_FEATURE_UNAVAILABLE.
+ *  @remark __Wayland:__ The [PLFW_FLOATING](@ref PLFW_FLOATING_attrib) window attribute is
+ *  not supported.  Setting this will emit @ref PLFW_FEATURE_UNAVAILABLE.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_attribs
- *  @sa @ref glfwGetWindowAttrib
+ *  @sa @ref plfwGetWindowAttrib
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwSetWindowAttrib(GLFWwindow* window, int attrib, int value);
+PLFWAPI void plfwSetWindowAttrib(PLFWwindow* window, int attrib, int value);
 
 /*! @brief Sets the user pointer of the specified window.
  *
@@ -3544,19 +3544,19 @@ GLFWAPI void glfwSetWindowAttrib(GLFWwindow* window, int attrib, int value);
  *  @param[in] window The window whose pointer to set.
  *  @param[in] pointer The new value.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function may be called from any thread.  Access is not
  *  synchronized.
  *
  *  @sa @ref window_userptr
- *  @sa @ref glfwGetWindowUserPointer
+ *  @sa @ref plfwGetWindowUserPointer
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwSetWindowUserPointer(GLFWwindow* window, void* pointer);
+PLFWAPI void plfwSetWindowUserPointer(PLFWwindow* window, void* pointer);
 
 /*! @brief Returns the user pointer of the specified window.
  *
@@ -3565,19 +3565,19 @@ GLFWAPI void glfwSetWindowUserPointer(GLFWwindow* window, void* pointer);
  *
  *  @param[in] window The window whose pointer to return.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function may be called from any thread.  Access is not
  *  synchronized.
  *
  *  @sa @ref window_userptr
- *  @sa @ref glfwSetWindowUserPointer
+ *  @sa @ref plfwSetWindowUserPointer
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup window
  */
-GLFWAPI void* glfwGetWindowUserPointer(GLFWwindow* window);
+PLFWAPI void* plfwGetWindowUserPointer(PLFWwindow* window);
 
 /*! @brief Sets the position callback for the specified window.
  *
@@ -3594,12 +3594,12 @@ GLFWAPI void* glfwGetWindowUserPointer(GLFWwindow* window);
  *
  *  @callback_signature
  *  @code
- *  void function_name(GLFWwindow* window, int xpos, int ypos)
+ *  void function_name(PLFWwindow* window, int xpos, int ypos)
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWwindowposfun).
+ *  [function pointer type](@ref PLFWwindowposfun).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @remark __Wayland:__ This callback will not be called.  The Wayland protocol
  *  provides no way to be notified of when a window is moved.
@@ -3612,7 +3612,7 @@ GLFWAPI void* glfwGetWindowUserPointer(GLFWwindow* window);
  *
  *  @ingroup window
  */
-GLFWAPI GLFWwindowposfun glfwSetWindowPosCallback(GLFWwindow* window, GLFWwindowposfun callback);
+PLFWAPI PLFWwindowposfun plfwSetWindowPosCallback(PLFWwindow* window, PLFWwindowposfun callback);
 
 /*! @brief Sets the size callback for the specified window.
  *
@@ -3628,23 +3628,23 @@ GLFWAPI GLFWwindowposfun glfwSetWindowPosCallback(GLFWwindow* window, GLFWwindow
  *
  *  @callback_signature
  *  @code
- *  void function_name(GLFWwindow* window, int width, int height)
+ *  void function_name(PLFWwindow* window, int width, int height)
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWwindowsizefun).
+ *  [function pointer type](@ref PLFWwindowsizefun).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_size
  *
  *  @since Added in version 1.0.
- *  __GLFW 3:__ Added window handle parameter and return value.
+ *  __PLFW 3:__ Added window handle parameter and return value.
  *
  *  @ingroup window
  */
-GLFWAPI GLFWwindowsizefun glfwSetWindowSizeCallback(GLFWwindow* window, GLFWwindowsizefun callback);
+PLFWAPI PLFWwindowsizefun plfwSetWindowSizeCallback(PLFWwindow* window, PLFWwindowsizefun callback);
 
 /*! @brief Sets the close callback for the specified window.
  *
@@ -3653,9 +3653,9 @@ GLFWAPI GLFWwindowsizefun glfwSetWindowSizeCallback(GLFWwindow* window, GLFWwind
  *  the close widget in the title bar.
  *
  *  The close flag is set before this callback is called, but you can modify it
- *  at any time with @ref glfwSetWindowShouldClose.
+ *  at any time with @ref plfwSetWindowShouldClose.
  *
- *  The close callback is not triggered by @ref glfwDestroyWindow.
+ *  The close callback is not triggered by @ref plfwDestroyWindow.
  *
  *  @param[in] window The window whose callback to set.
  *  @param[in] callback The new callback, or `NULL` to remove the currently set
@@ -3665,12 +3665,12 @@ GLFWAPI GLFWwindowsizefun glfwSetWindowSizeCallback(GLFWwindow* window, GLFWwind
  *
  *  @callback_signature
  *  @code
- *  void function_name(GLFWwindow* window)
+ *  void function_name(PLFWwindow* window)
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWwindowclosefun).
+ *  [function pointer type](@ref PLFWwindowclosefun).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @remark __macOS:__ Selecting Quit from the application menu will trigger the
  *  close callback for all windows.
@@ -3680,11 +3680,11 @@ GLFWAPI GLFWwindowsizefun glfwSetWindowSizeCallback(GLFWwindow* window, GLFWwind
  *  @sa @ref window_close
  *
  *  @since Added in version 2.5.
- *  __GLFW 3:__ Added window handle parameter and return value.
+ *  __PLFW 3:__ Added window handle parameter and return value.
  *
  *  @ingroup window
  */
-GLFWAPI GLFWwindowclosefun glfwSetWindowCloseCallback(GLFWwindow* window, GLFWwindowclosefun callback);
+PLFWAPI PLFWwindowclosefun plfwSetWindowCloseCallback(PLFWwindow* window, PLFWwindowclosefun callback);
 
 /*! @brief Sets the refresh callback for the specified window.
  *
@@ -3704,23 +3704,23 @@ GLFWAPI GLFWwindowclosefun glfwSetWindowCloseCallback(GLFWwindow* window, GLFWwi
  *
  *  @callback_signature
  *  @code
- *  void function_name(GLFWwindow* window);
+ *  void function_name(PLFWwindow* window);
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWwindowrefreshfun).
+ *  [function pointer type](@ref PLFWwindowrefreshfun).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_refresh
  *
  *  @since Added in version 2.5.
- *  __GLFW 3:__ Added window handle parameter and return value.
+ *  __PLFW 3:__ Added window handle parameter and return value.
  *
  *  @ingroup window
  */
-GLFWAPI GLFWwindowrefreshfun glfwSetWindowRefreshCallback(GLFWwindow* window, GLFWwindowrefreshfun callback);
+PLFWAPI PLFWwindowrefreshfun plfwSetWindowRefreshCallback(PLFWwindow* window, PLFWwindowrefreshfun callback);
 
 /*! @brief Sets the focus callback for the specified window.
  *
@@ -3729,8 +3729,8 @@ GLFWAPI GLFWwindowrefreshfun glfwSetWindowRefreshCallback(GLFWwindow* window, GL
  *
  *  After the focus callback is called for a window that lost input focus,
  *  synthetic key and mouse button release events will be generated for all such
- *  that had been pressed.  For more information, see @ref glfwSetKeyCallback
- *  and @ref glfwSetMouseButtonCallback.
+ *  that had been pressed.  For more information, see @ref plfwSetKeyCallback
+ *  and @ref plfwSetMouseButtonCallback.
  *
  *  @param[in] window The window whose callback to set.
  *  @param[in] callback The new callback, or `NULL` to remove the currently set
@@ -3740,12 +3740,12 @@ GLFWAPI GLFWwindowrefreshfun glfwSetWindowRefreshCallback(GLFWwindow* window, GL
  *
  *  @callback_signature
  *  @code
- *  void function_name(GLFWwindow* window, int focused)
+ *  void function_name(PLFWwindow* window, int focused)
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWwindowfocusfun).
+ *  [function pointer type](@ref PLFWwindowfocusfun).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -3755,7 +3755,7 @@ GLFWAPI GLFWwindowrefreshfun glfwSetWindowRefreshCallback(GLFWwindow* window, GL
  *
  *  @ingroup window
  */
-GLFWAPI GLFWwindowfocusfun glfwSetWindowFocusCallback(GLFWwindow* window, GLFWwindowfocusfun callback);
+PLFWAPI PLFWwindowfocusfun plfwSetWindowFocusCallback(PLFWwindow* window, PLFWwindowfocusfun callback);
 
 /*! @brief Sets the iconify callback for the specified window.
  *
@@ -3770,12 +3770,12 @@ GLFWAPI GLFWwindowfocusfun glfwSetWindowFocusCallback(GLFWwindow* window, GLFWwi
  *
  *  @callback_signature
  *  @code
- *  void function_name(GLFWwindow* window, int iconified)
+ *  void function_name(PLFWwindow* window, int iconified)
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWwindowiconifyfun).
+ *  [function pointer type](@ref PLFWwindowiconifyfun).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @remark __Wayland:__ This callback will not be called.  The Wayland protocol
  *  provides no way to be notified of when a window is iconified, and no way to
@@ -3789,7 +3789,7 @@ GLFWAPI GLFWwindowfocusfun glfwSetWindowFocusCallback(GLFWwindow* window, GLFWwi
  *
  *  @ingroup window
  */
-GLFWAPI GLFWwindowiconifyfun glfwSetWindowIconifyCallback(GLFWwindow* window, GLFWwindowiconifyfun callback);
+PLFWAPI PLFWwindowiconifyfun plfwSetWindowIconifyCallback(PLFWwindow* window, PLFWwindowiconifyfun callback);
 
 /*! @brief Sets the maximize callback for the specified window.
  *
@@ -3804,12 +3804,12 @@ GLFWAPI GLFWwindowiconifyfun glfwSetWindowIconifyCallback(GLFWwindow* window, GL
  *
  *  @callback_signature
  *  @code
- *  void function_name(GLFWwindow* window, int maximized)
+ *  void function_name(PLFWwindow* window, int maximized)
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWwindowmaximizefun).
+ *  [function pointer type](@ref PLFWwindowmaximizefun).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -3819,7 +3819,7 @@ GLFWAPI GLFWwindowiconifyfun glfwSetWindowIconifyCallback(GLFWwindow* window, GL
  *
  *  @ingroup window
  */
-GLFWAPI GLFWwindowmaximizefun glfwSetWindowMaximizeCallback(GLFWwindow* window, GLFWwindowmaximizefun callback);
+PLFWAPI PLFWwindowmaximizefun plfwSetWindowMaximizeCallback(PLFWwindow* window, PLFWwindowmaximizefun callback);
 
 /*! @brief Sets the framebuffer resize callback for the specified window.
  *
@@ -3834,12 +3834,12 @@ GLFWAPI GLFWwindowmaximizefun glfwSetWindowMaximizeCallback(GLFWwindow* window, 
  *
  *  @callback_signature
  *  @code
- *  void function_name(GLFWwindow* window, int width, int height)
+ *  void function_name(PLFWwindow* window, int width, int height)
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWframebuffersizefun).
+ *  [function pointer type](@ref PLFWframebuffersizefun).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -3849,7 +3849,7 @@ GLFWAPI GLFWwindowmaximizefun glfwSetWindowMaximizeCallback(GLFWwindow* window, 
  *
  *  @ingroup window
  */
-GLFWAPI GLFWframebuffersizefun glfwSetFramebufferSizeCallback(GLFWwindow* window, GLFWframebuffersizefun callback);
+PLFWAPI PLFWframebuffersizefun plfwSetFramebufferSizeCallback(PLFWwindow* window, PLFWframebuffersizefun callback);
 
 /*! @brief Sets the window content scale callback for the specified window.
  *
@@ -3864,23 +3864,23 @@ GLFWAPI GLFWframebuffersizefun glfwSetFramebufferSizeCallback(GLFWwindow* window
  *
  *  @callback_signature
  *  @code
- *  void function_name(GLFWwindow* window, float xscale, float yscale)
+ *  void function_name(PLFWwindow* window, float xscale, float yscale)
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWwindowcontentscalefun).
+ *  [function pointer type](@ref PLFWwindowcontentscalefun).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_scale
- *  @sa @ref glfwGetWindowContentScale
+ *  @sa @ref plfwGetWindowContentScale
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup window
  */
-GLFWAPI GLFWwindowcontentscalefun glfwSetWindowContentScaleCallback(GLFWwindow* window, GLFWwindowcontentscalefun callback);
+PLFWAPI PLFWwindowcontentscalefun plfwSetWindowContentScaleCallback(PLFWwindow* window, PLFWwindowcontentscalefun callback);
 
 /*! @brief Processes all pending events.
  *
@@ -3896,36 +3896,36 @@ GLFWAPI GLFWwindowcontentscalefun glfwSetWindowContentScaleCallback(GLFWwindow* 
  *
  *  Do not assume that callbacks you set will _only_ be called in response to
  *  event processing functions like this one.  While it is necessary to poll for
- *  events, window systems that require GLFW to register callbacks of its own
- *  can pass events to GLFW in response to many window system function calls.
- *  GLFW will pass those events on to the application callbacks before
+ *  events, window systems that require PLFW to register callbacks of its own
+ *  can pass events to PLFW in response to many window system function calls.
+ *  PLFW will pass those events on to the application callbacks before
  *  returning.
  *
  *  Event processing is not required to receive joystick input.  Joystick state
  *  is polled when a joystick input or gamepad input function is called.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @reentrancy This function must not be called from a callback.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref events
- *  @sa @ref glfwWaitEvents
- *  @sa @ref glfwWaitEventsTimeout
+ *  @sa @ref plfwWaitEvents
+ *  @sa @ref plfwWaitEventsTimeout
  *
  *  @since Added in version 1.0.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwPollEvents(void);
+PLFWAPI void plfwPollEvents(void);
 
 /*! @brief Waits until events are queued and processes them.
  *
  *  This function puts the calling thread to sleep until at least one event is
  *  available in the event queue.  Once one or more events are available,
- *  it behaves exactly like @ref glfwPollEvents, i.e. the events in the queue
+ *  it behaves exactly like @ref plfwPollEvents, i.e. the events in the queue
  *  are processed and the function then returns immediately.  Processing events
  *  will cause the window and input callbacks associated with those events to be
  *  called.
@@ -3942,37 +3942,37 @@ GLFWAPI void glfwPollEvents(void);
  *
  *  Do not assume that callbacks you set will _only_ be called in response to
  *  event processing functions like this one.  While it is necessary to poll for
- *  events, window systems that require GLFW to register callbacks of its own
- *  can pass events to GLFW in response to many window system function calls.
- *  GLFW will pass those events on to the application callbacks before
+ *  events, window systems that require PLFW to register callbacks of its own
+ *  can pass events to PLFW in response to many window system function calls.
+ *  PLFW will pass those events on to the application callbacks before
  *  returning.
  *
  *  Event processing is not required to receive joystick input.  Joystick state
  *  is polled when a joystick input or gamepad input function is called.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @reentrancy This function must not be called from a callback.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref events
- *  @sa @ref glfwPollEvents
- *  @sa @ref glfwWaitEventsTimeout
+ *  @sa @ref plfwPollEvents
+ *  @sa @ref plfwWaitEventsTimeout
  *
  *  @since Added in version 2.5.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwWaitEvents(void);
+PLFWAPI void plfwWaitEvents(void);
 
 /*! @brief Waits with timeout until events are queued and processes them.
  *
  *  This function puts the calling thread to sleep until at least one event is
  *  available in the event queue, or until the specified timeout is reached.  If
  *  one or more events are available, it behaves exactly like @ref
- *  glfwPollEvents, i.e. the events in the queue are processed and the function
+ *  plfwPollEvents, i.e. the events in the queue are processed and the function
  *  then returns immediately.  Processing events will cause the window and input
  *  callbacks associated with those events to be called.
  *
@@ -3990,9 +3990,9 @@ GLFWAPI void glfwWaitEvents(void);
  *
  *  Do not assume that callbacks you set will _only_ be called in response to
  *  event processing functions like this one.  While it is necessary to poll for
- *  events, window systems that require GLFW to register callbacks of its own
- *  can pass events to GLFW in response to many window system function calls.
- *  GLFW will pass those events on to the application callbacks before
+ *  events, window systems that require PLFW to register callbacks of its own
+ *  can pass events to PLFW in response to many window system function calls.
+ *  PLFW will pass those events on to the application callbacks before
  *  returning.
  *
  *  Event processing is not required to receive joystick input.  Joystick state
@@ -4000,144 +4000,144 @@ GLFWAPI void glfwWaitEvents(void);
  *
  *  @param[in] timeout The maximum amount of time, in seconds, to wait.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_INVALID_VALUE and @ref GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_INVALID_VALUE and @ref PLFW_PLATFORM_ERROR.
  *
  *  @reentrancy This function must not be called from a callback.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref events
- *  @sa @ref glfwPollEvents
- *  @sa @ref glfwWaitEvents
+ *  @sa @ref plfwPollEvents
+ *  @sa @ref plfwWaitEvents
  *
  *  @since Added in version 3.2.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwWaitEventsTimeout(double timeout);
+PLFWAPI void plfwWaitEventsTimeout(double timeout);
 
 /*! @brief Posts an empty event to the event queue.
  *
  *  This function posts an empty event from the current thread to the event
- *  queue, causing @ref glfwWaitEvents or @ref glfwWaitEventsTimeout to return.
+ *  queue, causing @ref plfwWaitEvents or @ref plfwWaitEventsTimeout to return.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @thread_safety This function may be called from any thread.
  *
  *  @sa @ref events
- *  @sa @ref glfwWaitEvents
- *  @sa @ref glfwWaitEventsTimeout
+ *  @sa @ref plfwWaitEvents
+ *  @sa @ref plfwWaitEventsTimeout
  *
  *  @since Added in version 3.1.
  *
  *  @ingroup window
  */
-GLFWAPI void glfwPostEmptyEvent(void);
+PLFWAPI void plfwPostEmptyEvent(void);
 
 /*! @brief Returns the value of an input option for the specified window.
  *
  *  This function returns the value of an input option for the specified window.
- *  The mode must be one of @ref GLFW_CURSOR, @ref GLFW_STICKY_KEYS,
- *  @ref GLFW_STICKY_MOUSE_BUTTONS, @ref GLFW_LOCK_KEY_MODS or
- *  @ref GLFW_RAW_MOUSE_MOTION.
+ *  The mode must be one of @ref PLFW_CURSOR, @ref PLFW_STICKY_KEYS,
+ *  @ref PLFW_STICKY_MOUSE_BUTTONS, @ref PLFW_LOCK_KEY_MODS or
+ *  @ref PLFW_RAW_MOUSE_MOTION.
  *
  *  @param[in] window The window to query.
- *  @param[in] mode One of `GLFW_CURSOR`, `GLFW_STICKY_KEYS`,
- *  `GLFW_STICKY_MOUSE_BUTTONS`, `GLFW_LOCK_KEY_MODS` or
- *  `GLFW_RAW_MOUSE_MOTION`.
+ *  @param[in] mode One of `PLFW_CURSOR`, `PLFW_STICKY_KEYS`,
+ *  `PLFW_STICKY_MOUSE_BUTTONS`, `PLFW_LOCK_KEY_MODS` or
+ *  `PLFW_RAW_MOUSE_MOTION`.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_INVALID_ENUM.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_INVALID_ENUM.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
- *  @sa @ref glfwSetInputMode
+ *  @sa @ref plfwSetInputMode
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup input
  */
-GLFWAPI int glfwGetInputMode(GLFWwindow* window, int mode);
+PLFWAPI int plfwGetInputMode(PLFWwindow* window, int mode);
 
 /*! @brief Sets an input option for the specified window.
  *
  *  This function sets an input mode option for the specified window.  The mode
- *  must be one of @ref GLFW_CURSOR, @ref GLFW_STICKY_KEYS,
- *  @ref GLFW_STICKY_MOUSE_BUTTONS, @ref GLFW_LOCK_KEY_MODS
- *  @ref GLFW_RAW_MOUSE_MOTION, or @ref GLFW_UNLIMITED_MOUSE_BUTTONS.
+ *  must be one of @ref PLFW_CURSOR, @ref PLFW_STICKY_KEYS,
+ *  @ref PLFW_STICKY_MOUSE_BUTTONS, @ref PLFW_LOCK_KEY_MODS
+ *  @ref PLFW_RAW_MOUSE_MOTION, or @ref PLFW_UNLIMITED_MOUSE_BUTTONS.
  *
- *  If the mode is `GLFW_CURSOR`, the value must be one of the following cursor
+ *  If the mode is `PLFW_CURSOR`, the value must be one of the following cursor
  *  modes:
- *  - `GLFW_CURSOR_NORMAL` makes the cursor visible and behaving normally.
- *  - `GLFW_CURSOR_HIDDEN` makes the cursor invisible when it is over the
+ *  - `PLFW_CURSOR_NORMAL` makes the cursor visible and behaving normally.
+ *  - `PLFW_CURSOR_HIDDEN` makes the cursor invisible when it is over the
  *    content area of the window but does not restrict the cursor from leaving.
- *  - `GLFW_CURSOR_DISABLED` hides and grabs the cursor, providing virtual
+ *  - `PLFW_CURSOR_DISABLED` hides and grabs the cursor, providing virtual
  *    and unlimited cursor movement.  This is useful for implementing for
  *    example 3D camera controls.
- *  - `GLFW_CURSOR_CAPTURED` makes the cursor visible and confines it to the
+ *  - `PLFW_CURSOR_CAPTURED` makes the cursor visible and confines it to the
  *    content area of the window.
  *
- *  If the mode is `GLFW_STICKY_KEYS`, the value must be either `GLFW_TRUE` to
- *  enable sticky keys, or `GLFW_FALSE` to disable it.  If sticky keys are
- *  enabled, a key press will ensure that @ref glfwGetKey returns `GLFW_PRESS`
+ *  If the mode is `PLFW_STICKY_KEYS`, the value must be either `PLFW_TRUE` to
+ *  enable sticky keys, or `PLFW_FALSE` to disable it.  If sticky keys are
+ *  enabled, a key press will ensure that @ref plfwGetKey returns `PLFW_PRESS`
  *  the next time it is called even if the key had been released before the
  *  call.  This is useful when you are only interested in whether keys have been
  *  pressed but not when or in which order.
  *
- *  If the mode is `GLFW_STICKY_MOUSE_BUTTONS`, the value must be either
- *  `GLFW_TRUE` to enable sticky mouse buttons, or `GLFW_FALSE` to disable it.
+ *  If the mode is `PLFW_STICKY_MOUSE_BUTTONS`, the value must be either
+ *  `PLFW_TRUE` to enable sticky mouse buttons, or `PLFW_FALSE` to disable it.
  *  If sticky mouse buttons are enabled, a mouse button press will ensure that
- *  @ref glfwGetMouseButton returns `GLFW_PRESS` the next time it is called even
+ *  @ref plfwGetMouseButton returns `PLFW_PRESS` the next time it is called even
  *  if the mouse button had been released before the call.  This is useful when
  *  you are only interested in whether mouse buttons have been pressed but not
  *  when or in which order.
  *
- *  If the mode is `GLFW_LOCK_KEY_MODS`, the value must be either `GLFW_TRUE` to
- *  enable lock key modifier bits, or `GLFW_FALSE` to disable them.  If enabled,
+ *  If the mode is `PLFW_LOCK_KEY_MODS`, the value must be either `PLFW_TRUE` to
+ *  enable lock key modifier bits, or `PLFW_FALSE` to disable them.  If enabled,
  *  callbacks that receive modifier bits will also have the @ref
- *  GLFW_MOD_CAPS_LOCK bit set when the event was generated with Caps Lock on,
- *  and the @ref GLFW_MOD_NUM_LOCK bit when Num Lock was on.
+ *  PLFW_MOD_CAPS_LOCK bit set when the event was generated with Caps Lock on,
+ *  and the @ref PLFW_MOD_NUM_LOCK bit when Num Lock was on.
  *
- *  If the mode is `GLFW_RAW_MOUSE_MOTION`, the value must be either `GLFW_TRUE`
+ *  If the mode is `PLFW_RAW_MOUSE_MOTION`, the value must be either `PLFW_TRUE`
  *  to enable raw (unscaled and unaccelerated) mouse motion when the cursor is
- *  disabled, or `GLFW_FALSE` to disable it.  If raw motion is not supported,
- *  attempting to set this will emit @ref GLFW_FEATURE_UNAVAILABLE.  Call @ref
- *  glfwRawMouseMotionSupported to check for support.
+ *  disabled, or `PLFW_FALSE` to disable it.  If raw motion is not supported,
+ *  attempting to set this will emit @ref PLFW_FEATURE_UNAVAILABLE.  Call @ref
+ *  plfwRawMouseMotionSupported to check for support.
  *
- *  If the mode is `GLFW_UNLIMITED_MOUSE_BUTTONS`, the value must be either
- *  `GLFW_TRUE` to disable the mouse button limit when calling the mouse button
- *  callback, or `GLFW_FALSE` to limit the mouse buttons sent to the callback
- *  to the mouse button token values up to `GLFW_MOUSE_BUTTON_LAST`.
+ *  If the mode is `PLFW_UNLIMITED_MOUSE_BUTTONS`, the value must be either
+ *  `PLFW_TRUE` to disable the mouse button limit when calling the mouse button
+ *  callback, or `PLFW_FALSE` to limit the mouse buttons sent to the callback
+ *  to the mouse button token values up to `PLFW_MOUSE_BUTTON_LAST`.
  *
  *  @param[in] window The window whose input mode to set.
- *  @param[in] mode One of `GLFW_CURSOR`, `GLFW_STICKY_KEYS`,
- *  `GLFW_STICKY_MOUSE_BUTTONS`, `GLFW_LOCK_KEY_MODS` or
- *  `GLFW_RAW_MOUSE_MOTION`.
+ *  @param[in] mode One of `PLFW_CURSOR`, `PLFW_STICKY_KEYS`,
+ *  `PLFW_STICKY_MOUSE_BUTTONS`, `PLFW_LOCK_KEY_MODS` or
+ *  `PLFW_RAW_MOUSE_MOTION`.
  *  @param[in] value The new value of the specified input mode.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_INVALID_ENUM, @ref GLFW_PLATFORM_ERROR and @ref
- *  GLFW_FEATURE_UNAVAILABLE (see above).
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_INVALID_ENUM, @ref PLFW_PLATFORM_ERROR and @ref
+ *  PLFW_FEATURE_UNAVAILABLE (see above).
  *
  *  @thread_safety This function must only be called from the main thread.
  *
- *  @sa @ref glfwGetInputMode
+ *  @sa @ref plfwGetInputMode
  *
- *  @since Added in version 3.0.  Replaces `glfwEnable` and `glfwDisable`.
+ *  @since Added in version 3.0.  Replaces `plfwEnable` and `plfwDisable`.
  *
  *  @ingroup input
  */
-GLFWAPI void glfwSetInputMode(GLFWwindow* window, int mode, int value);
+PLFWAPI void plfwSetInputMode(PLFWwindow* window, int mode, int value);
 
 /*! @brief Returns whether raw mouse motion is supported.
  *
  *  This function returns whether raw mouse motion is supported on the current
- *  system.  This status does not change after GLFW has been initialized so you
+ *  system.  This status does not change after PLFW has been initialized so you
  *  only need to check this once.  If you attempt to enable raw motion on
- *  a system that does not support it, @ref GLFW_PLATFORM_ERROR will be emitted.
+ *  a system that does not support it, @ref PLFW_PLATFORM_ERROR will be emitted.
  *
  *  Raw mouse motion is closer to the actual motion of the mouse across
  *  a surface.  It is not affected by the scaling and acceleration applied to
@@ -4145,21 +4145,21 @@ GLFWAPI void glfwSetInputMode(GLFWwindow* window, int mode, int value);
  *  while raw motion is better for controlling for example a 3D camera.  Because
  *  of this, raw mouse motion is only provided when the cursor is disabled.
  *
- *  @return `GLFW_TRUE` if raw mouse motion is supported on the current machine,
- *  or `GLFW_FALSE` otherwise.
+ *  @return `PLFW_TRUE` if raw mouse motion is supported on the current machine,
+ *  or `PLFW_FALSE` otherwise.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref raw_mouse_motion
- *  @sa @ref glfwSetInputMode
+ *  @sa @ref plfwSetInputMode
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup input
  */
-GLFWAPI int glfwRawMouseMotionSupported(void);
+PLFWAPI int plfwRawMouseMotionSupported(void);
 
 /*! @brief Returns the layout-specific name of the specified printable key.
  *
@@ -4171,52 +4171,52 @@ GLFWAPI int glfwRawMouseMotionSupported(void);
  *  __Do not use this function__ for [text input](@ref input_char).  You will
  *  break text input for many languages even if it happens to work for yours.
  *
- *  If the key is `GLFW_KEY_UNKNOWN`, the scancode is used to identify the key,
+ *  If the key is `PLFW_KEY_UNKNOWN`, the scancode is used to identify the key,
  *  otherwise the scancode is ignored.  If you specify a non-printable key, or
- *  `GLFW_KEY_UNKNOWN` and a scancode that maps to a non-printable key, this
+ *  `PLFW_KEY_UNKNOWN` and a scancode that maps to a non-printable key, this
  *  function returns `NULL` but does not emit an error.
  *
  *  This behavior allows you to always pass in the arguments in the
  *  [key callback](@ref input_key) without modification.
  *
  *  The printable keys are:
- *  - `GLFW_KEY_APOSTROPHE`
- *  - `GLFW_KEY_COMMA`
- *  - `GLFW_KEY_MINUS`
- *  - `GLFW_KEY_PERIOD`
- *  - `GLFW_KEY_SLASH`
- *  - `GLFW_KEY_SEMICOLON`
- *  - `GLFW_KEY_EQUAL`
- *  - `GLFW_KEY_LEFT_BRACKET`
- *  - `GLFW_KEY_RIGHT_BRACKET`
- *  - `GLFW_KEY_BACKSLASH`
- *  - `GLFW_KEY_WORLD_1`
- *  - `GLFW_KEY_WORLD_2`
- *  - `GLFW_KEY_0` to `GLFW_KEY_9`
- *  - `GLFW_KEY_A` to `GLFW_KEY_Z`
- *  - `GLFW_KEY_KP_0` to `GLFW_KEY_KP_9`
- *  - `GLFW_KEY_KP_DECIMAL`
- *  - `GLFW_KEY_KP_DIVIDE`
- *  - `GLFW_KEY_KP_MULTIPLY`
- *  - `GLFW_KEY_KP_SUBTRACT`
- *  - `GLFW_KEY_KP_ADD`
- *  - `GLFW_KEY_KP_EQUAL`
+ *  - `PLFW_KEY_APOSTROPHE`
+ *  - `PLFW_KEY_COMMA`
+ *  - `PLFW_KEY_MINUS`
+ *  - `PLFW_KEY_PERIOD`
+ *  - `PLFW_KEY_SLASH`
+ *  - `PLFW_KEY_SEMICOLON`
+ *  - `PLFW_KEY_EQUAL`
+ *  - `PLFW_KEY_LEFT_BRACKET`
+ *  - `PLFW_KEY_RIGHT_BRACKET`
+ *  - `PLFW_KEY_BACKSLASH`
+ *  - `PLFW_KEY_WORLD_1`
+ *  - `PLFW_KEY_WORLD_2`
+ *  - `PLFW_KEY_0` to `PLFW_KEY_9`
+ *  - `PLFW_KEY_A` to `PLFW_KEY_Z`
+ *  - `PLFW_KEY_KP_0` to `PLFW_KEY_KP_9`
+ *  - `PLFW_KEY_KP_DECIMAL`
+ *  - `PLFW_KEY_KP_DIVIDE`
+ *  - `PLFW_KEY_KP_MULTIPLY`
+ *  - `PLFW_KEY_KP_SUBTRACT`
+ *  - `PLFW_KEY_KP_ADD`
+ *  - `PLFW_KEY_KP_EQUAL`
  *
  *  Names for printable keys depend on keyboard layout, while names for
  *  non-printable keys are the same across layouts but depend on the application
  *  language and should be localized along with other user interface text.
  *
- *  @param[in] key The key to query, or `GLFW_KEY_UNKNOWN`.
+ *  @param[in] key The key to query, or `PLFW_KEY_UNKNOWN`.
  *  @param[in] scancode The scancode of the key to query.
  *  @return The UTF-8 encoded, layout-specific name of the key, or `NULL`.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_INVALID_VALUE, @ref GLFW_INVALID_ENUM and @ref GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_INVALID_VALUE, @ref PLFW_INVALID_ENUM and @ref PLFW_PLATFORM_ERROR.
  *
  *  @remark The contents of the returned string may change when a keyboard
  *  layout change event is received.
  *
- *  @pointer_lifetime The returned string is allocated and freed by GLFW.  You
+ *  @pointer_lifetime The returned string is allocated and freed by PLFW.  You
  *  should not free it yourself.  It is valid until the library is terminated.
  *
  *  @thread_safety This function must only be called from the main thread.
@@ -4227,7 +4227,7 @@ GLFWAPI int glfwRawMouseMotionSupported(void);
  *
  *  @ingroup input
  */
-GLFWAPI const char* glfwGetKeyName(int key, int scancode);
+PLFWAPI const char* plfwGetKeyName(int key, int scancode);
 
 /*! @brief Returns the platform-specific scancode of the specified key.
  *
@@ -4236,15 +4236,15 @@ GLFWAPI const char* glfwGetKeyName(int key, int scancode);
  *  If the specified [key token](@ref keys) corresponds to a physical key not
  *  supported on the current platform then this method will return `-1`.
  *  Calling this function with anything other than a key token will return `-1`
- *  and generate a @ref GLFW_INVALID_ENUM error.
+ *  and generate a @ref PLFW_INVALID_ENUM error.
  *
  *  @param[in] key Any [key token](@ref keys).
  *  @return The platform-specific scancode for the key, or `-1` if the key is
  *  not supported on the current platform or an [error](@ref error_handling)
  *  occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_INVALID_ENUM.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_INVALID_ENUM.
  *
  *  @thread_safety This function may be called from any thread.
  *
@@ -4254,17 +4254,17 @@ GLFWAPI const char* glfwGetKeyName(int key, int scancode);
  *
  *  @ingroup input
  */
-GLFWAPI int glfwGetKeyScancode(int key);
+PLFWAPI int plfwGetKeyScancode(int key);
 
 /*! @brief Returns the last reported state of a keyboard key for the specified
  *  window.
  *
  *  This function returns the last state reported for the specified key to the
- *  specified window.  The returned state is one of `GLFW_PRESS` or
- *  `GLFW_RELEASE`.  The action `GLFW_REPEAT` is only reported to the key callback.
+ *  specified window.  The returned state is one of `PLFW_PRESS` or
+ *  `PLFW_RELEASE`.  The action `PLFW_REPEAT` is only reported to the key callback.
  *
- *  If the @ref GLFW_STICKY_KEYS input mode is enabled, this function returns
- *  `GLFW_PRESS` the first time you call it for a key that was pressed, even if
+ *  If the @ref PLFW_STICKY_KEYS input mode is enabled, this function returns
+ *  `PLFW_PRESS` the first time you call it for a key that was pressed, even if
  *  that key has already been released.
  *
  *  The key functions deal with physical keys, with [key tokens](@ref keys)
@@ -4277,55 +4277,55 @@ GLFWAPI int glfwGetKeyScancode(int key);
  *  __Do not use this function__ to implement [text input](@ref input_char).
  *
  *  @param[in] window The desired window.
- *  @param[in] key The desired [keyboard key](@ref keys).  `GLFW_KEY_UNKNOWN` is
+ *  @param[in] key The desired [keyboard key](@ref keys).  `PLFW_KEY_UNKNOWN` is
  *  not a valid key for this function.
- *  @return One of `GLFW_PRESS` or `GLFW_RELEASE`.
+ *  @return One of `PLFW_PRESS` or `PLFW_RELEASE`.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_INVALID_ENUM.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_INVALID_ENUM.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref input_key
  *
  *  @since Added in version 1.0.
- *  __GLFW 3:__ Added window handle parameter.
+ *  __PLFW 3:__ Added window handle parameter.
  *
  *  @ingroup input
  */
-GLFWAPI int glfwGetKey(GLFWwindow* window, int key);
+PLFWAPI int plfwGetKey(PLFWwindow* window, int key);
 
 /*! @brief Returns the last reported state of a mouse button for the specified
  *  window.
  *
  *  This function returns the last state reported for the specified mouse button
- *  to the specified window.  The returned state is one of `GLFW_PRESS` or
- *  `GLFW_RELEASE`.
+ *  to the specified window.  The returned state is one of `PLFW_PRESS` or
+ *  `PLFW_RELEASE`.
  *
- *  If the @ref GLFW_STICKY_MOUSE_BUTTONS input mode is enabled, this function
- *  returns `GLFW_PRESS` the first time you call it for a mouse button that was
+ *  If the @ref PLFW_STICKY_MOUSE_BUTTONS input mode is enabled, this function
+ *  returns `PLFW_PRESS` the first time you call it for a mouse button that was
  *  pressed, even if that mouse button has already been released.
  *
- *  The @ref GLFW_UNLIMITED_MOUSE_BUTTONS input mode does not effect the
+ *  The @ref PLFW_UNLIMITED_MOUSE_BUTTONS input mode does not effect the
  *  limit on buttons which can be polled with this function.
  *
  *  @param[in] window The desired window.
  *  @param[in] button The desired [mouse button token](@ref buttons).
- *  @return One of `GLFW_PRESS` or `GLFW_RELEASE`.
+ *  @return One of `PLFW_PRESS` or `PLFW_RELEASE`.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_INVALID_ENUM.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_INVALID_ENUM.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref input_mouse_button
  *
  *  @since Added in version 1.0.
- *  __GLFW 3:__ Added window handle parameter.
+ *  __PLFW 3:__ Added window handle parameter.
  *
  *  @ingroup input
  */
-GLFWAPI int glfwGetMouseButton(GLFWwindow* window, int button);
+PLFWAPI int plfwGetMouseButton(PLFWwindow* window, int button);
 
 /*! @brief Retrieves the position of the cursor relative to the content area of
  *  the window.
@@ -4334,7 +4334,7 @@ GLFWAPI int glfwGetMouseButton(GLFWwindow* window, int button);
  *  relative to the upper-left corner of the content area of the specified
  *  window.
  *
- *  If the cursor is disabled (with `GLFW_CURSOR_DISABLED`) then the cursor
+ *  If the cursor is disabled (with `PLFW_CURSOR_DISABLED`) then the cursor
  *  position is unbounded and limited only by the minimum and maximum values of
  *  a `double`.
  *
@@ -4351,19 +4351,19 @@ GLFWAPI int glfwGetMouseButton(GLFWwindow* window, int button);
  *  @param[out] ypos Where to store the cursor y-coordinate, relative to the to
  *  top edge of the content area, or `NULL`.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref cursor_pos
- *  @sa @ref glfwSetCursorPos
+ *  @sa @ref plfwSetCursorPos
  *
- *  @since Added in version 3.0.  Replaces `glfwGetMousePos`.
+ *  @since Added in version 3.0.  Replaces `plfwGetMousePos`.
  *
  *  @ingroup input
  */
-GLFWAPI void glfwGetCursorPos(GLFWwindow* window, double* xpos, double* ypos);
+PLFWAPI void plfwGetCursorPos(PLFWwindow* window, double* xpos, double* ypos);
 
 /*! @brief Sets the position of the cursor, relative to the content area of the
  *  window.
@@ -4373,12 +4373,12 @@ GLFWAPI void glfwGetCursorPos(GLFWwindow* window, double* xpos, double* ypos);
  *  window.  The window must have input focus.  If the window does not have
  *  input focus when this function is called, it fails silently.
  *
- *  __Do not use this function__ to implement things like camera controls.  GLFW
- *  already provides the `GLFW_CURSOR_DISABLED` cursor mode that hides the
+ *  __Do not use this function__ to implement things like camera controls.  PLFW
+ *  already provides the `PLFW_CURSOR_DISABLED` cursor mode that hides the
  *  cursor, transparently re-centers it and provides unconstrained cursor
- *  motion.  See @ref glfwSetInputMode for more information.
+ *  motion.  See @ref plfwSetInputMode for more information.
  *
- *  If the cursor mode is `GLFW_CURSOR_DISABLED` then the cursor position is
+ *  If the cursor mode is `PLFW_CURSOR_DISABLED` then the cursor position is
  *  unconstrained and limited only by the minimum and maximum values of
  *  a `double`.
  *
@@ -4388,35 +4388,35 @@ GLFWAPI void glfwGetCursorPos(GLFWwindow* window, double* xpos, double* ypos);
  *  @param[in] ypos The desired y-coordinate, relative to the top edge of the
  *  content area.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_PLATFORM_ERROR and @ref GLFW_FEATURE_UNAVAILABLE (see remarks).
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_PLATFORM_ERROR and @ref PLFW_FEATURE_UNAVAILABLE (see remarks).
  *
  *  @remark __Wayland:__ This function will only work when the cursor mode is
- *  `GLFW_CURSOR_DISABLED`, otherwise it will emit @ref GLFW_FEATURE_UNAVAILABLE.
+ *  `PLFW_CURSOR_DISABLED`, otherwise it will emit @ref PLFW_FEATURE_UNAVAILABLE.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref cursor_pos
- *  @sa @ref glfwGetCursorPos
+ *  @sa @ref plfwGetCursorPos
  *
- *  @since Added in version 3.0.  Replaces `glfwSetMousePos`.
+ *  @since Added in version 3.0.  Replaces `plfwSetMousePos`.
  *
  *  @ingroup input
  */
-GLFWAPI void glfwSetCursorPos(GLFWwindow* window, double xpos, double ypos);
+PLFWAPI void plfwSetCursorPos(PLFWwindow* window, double xpos, double ypos);
 
 /*! @brief Creates a custom cursor.
  *
  *  Creates a new custom cursor image that can be set for a window with @ref
- *  glfwSetCursor.  The cursor can be destroyed with @ref glfwDestroyCursor.
- *  Any remaining cursors are destroyed by @ref glfwTerminate.
+ *  plfwSetCursor.  The cursor can be destroyed with @ref plfwDestroyCursor.
+ *  Any remaining cursors are destroyed by @ref plfwTerminate.
  *
  *  The pixels are 32-bit, little-endian, non-premultiplied RGBA, i.e. eight
  *  bits per channel with the red channel first.  They are arranged canonically
  *  as packed sequential rows, starting from the top-left corner.
  *
  *  The cursor hotspot is specified in pixels, relative to the upper-left corner
- *  of the cursor image.  Like all other coordinate systems in GLFW, the X-axis
+ *  of the cursor image.  Like all other coordinate systems in PLFW, the X-axis
  *  points to the right and the Y-axis points down.
  *
  *  @param[in] image The desired cursor image.
@@ -4425,8 +4425,8 @@ GLFWAPI void glfwSetCursorPos(GLFWwindow* window, double xpos, double ypos);
  *  @return The handle of the created cursor, or `NULL` if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_INVALID_VALUE and @ref GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_INVALID_VALUE and @ref PLFW_PLATFORM_ERROR.
  *
  *  @pointer_lifetime The specified image data is copied before this function
  *  returns.
@@ -4434,19 +4434,19 @@ GLFWAPI void glfwSetCursorPos(GLFWwindow* window, double xpos, double ypos);
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref cursor_object
- *  @sa @ref glfwDestroyCursor
- *  @sa @ref glfwCreateStandardCursor
+ *  @sa @ref plfwDestroyCursor
+ *  @sa @ref plfwCreateStandardCursor
  *
  *  @since Added in version 3.1.
  *
  *  @ingroup input
  */
-GLFWAPI GLFWcursor* glfwCreateCursor(const GLFWimage* image, int xhot, int yhot);
+PLFWAPI PLFWcursor* plfwCreateCursor(const PLFWimage* image, int xhot, int yhot);
 
 /*! @brief Creates a cursor with a standard shape.
  *
  *  Returns a cursor with a standard shape, that can be set for a window with
- *  @ref glfwSetCursor.  The images for these cursors come from the system
+ *  @ref plfwSetCursor.  The images for these cursors come from the system
  *  cursor theme and their exact appearance will vary between platforms.
  *
  *  Most of these shapes are guaranteed to exist on every supported platform but
@@ -4454,74 +4454,74 @@ GLFWAPI GLFWcursor* glfwCreateCursor(const GLFWimage* image, int xhot, int yhot)
  *
  *  Cursor shape                   | Windows | Wayland
  *  ------------------------------ | ------- | -------
- *  @ref GLFW_ARROW_CURSOR         | Yes     | Yes
- *  @ref GLFW_IBEAM_CURSOR         | Yes     | Yes
- *  @ref GLFW_CROSSHAIR_CURSOR     | Yes     | Yes
- *  @ref GLFW_POINTING_HAND_CURSOR | Yes     | Yes
- *  @ref GLFW_RESIZE_EW_CURSOR     | Yes     | Yes
- *  @ref GLFW_RESIZE_NS_CURSOR     | Yes     | Yes
- *  @ref GLFW_RESIZE_NWSE_CURSOR   | Yes     | Maybe<sup>1</sup>
- *  @ref GLFW_RESIZE_NESW_CURSOR   | Yes     | Maybe<sup>1</sup>
- *  @ref GLFW_RESIZE_ALL_CURSOR    | Yes     | Yes
- *  @ref GLFW_NOT_ALLOWED_CURSOR   | Yes     | Maybe<sup>1</sup>
+ *  @ref PLFW_ARROW_CURSOR         | Yes     | Yes
+ *  @ref PLFW_IBEAM_CURSOR         | Yes     | Yes
+ *  @ref PLFW_CROSSHAIR_CURSOR     | Yes     | Yes
+ *  @ref PLFW_POINTING_HAND_CURSOR | Yes     | Yes
+ *  @ref PLFW_RESIZE_EW_CURSOR     | Yes     | Yes
+ *  @ref PLFW_RESIZE_NS_CURSOR     | Yes     | Yes
+ *  @ref PLFW_RESIZE_NWSE_CURSOR   | Yes     | Maybe<sup>1</sup>
+ *  @ref PLFW_RESIZE_NESW_CURSOR   | Yes     | Maybe<sup>1</sup>
+ *  @ref PLFW_RESIZE_ALL_CURSOR    | Yes     | Yes
+ *  @ref PLFW_NOT_ALLOWED_CURSOR   | Yes     | Maybe<sup>1</sup>
  *
  *  1) This uses a newer standard that not all cursor themes support.
  *
  *  If the requested shape is not available, this function emits a @ref
- *  GLFW_CURSOR_UNAVAILABLE error and returns `NULL`.
+ *  PLFW_CURSOR_UNAVAILABLE error and returns `NULL`.
  *
  *  @param[in] shape One of the [standard shapes](@ref shapes).
  *  @return A new cursor ready to use or `NULL` if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_INVALID_ENUM, @ref GLFW_CURSOR_UNAVAILABLE and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_INVALID_ENUM, @ref PLFW_CURSOR_UNAVAILABLE and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref cursor_standard
- *  @sa @ref glfwCreateCursor
+ *  @sa @ref plfwCreateCursor
  *
  *  @since Added in version 3.1.
  *
  *  @ingroup input
  */
-GLFWAPI GLFWcursor* glfwCreateStandardCursor(int shape);
+PLFWAPI PLFWcursor* plfwCreateStandardCursor(int shape);
 
 /*! @brief Destroys a cursor.
  *
  *  This function destroys a cursor previously created with @ref
- *  glfwCreateCursor.  Any remaining cursors will be destroyed by @ref
- *  glfwTerminate.
+ *  plfwCreateCursor.  Any remaining cursors will be destroyed by @ref
+ *  plfwTerminate.
  *
  *  If the specified cursor is current for any window, that window will be
  *  reverted to the default cursor.  This does not affect the cursor mode.
  *
  *  @param[in] cursor The cursor object to destroy.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @reentrancy This function must not be called from a callback.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref cursor_object
- *  @sa @ref glfwCreateCursor
+ *  @sa @ref plfwCreateCursor
  *
  *  @since Added in version 3.1.
  *
  *  @ingroup input
  */
-GLFWAPI void glfwDestroyCursor(GLFWcursor* cursor);
+PLFWAPI void plfwDestroyCursor(PLFWcursor* cursor);
 
 /*! @brief Sets the cursor for the window.
  *
  *  This function sets the cursor image to be used when the cursor is over the
  *  content area of the specified window.  The set cursor will only be visible
  *  when the [cursor mode](@ref cursor_mode) of the window is
- *  `GLFW_CURSOR_NORMAL`.
+ *  `PLFW_CURSOR_NORMAL`.
  *
  *  On some platforms, the set cursor may not be visible unless the window also
  *  has input focus.
@@ -4530,8 +4530,8 @@ GLFWAPI void glfwDestroyCursor(GLFWcursor* cursor);
  *  @param[in] cursor The cursor to set, or `NULL` to switch back to the default
  *  arrow cursor.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -4541,7 +4541,7 @@ GLFWAPI void glfwDestroyCursor(GLFWcursor* cursor);
  *
  *  @ingroup input
  */
-GLFWAPI void glfwSetCursor(GLFWwindow* window, GLFWcursor* cursor);
+PLFWAPI void plfwSetCursor(PLFWwindow* window, PLFWcursor* cursor);
 
 /*! @brief Sets the key callback.
  *
@@ -4551,20 +4551,20 @@ GLFWAPI void glfwSetCursor(GLFWwindow* window, GLFWcursor* cursor);
  *  The key functions deal with physical keys, with layout independent
  *  [key tokens](@ref keys) named after their values in the standard US keyboard
  *  layout.  If you want to input text, use the
- *  [character callback](@ref glfwSetCharCallback) instead.
+ *  [character callback](@ref plfwSetCharCallback) instead.
  *
  *  When a window loses input focus, it will generate synthetic key release
  *  events for all pressed keys with associated key tokens.  You can tell these
  *  events from user-generated events by the fact that the synthetic ones are
  *  generated after the focus loss event has been processed, i.e. after the
- *  [window focus callback](@ref glfwSetWindowFocusCallback) has been called.
+ *  [window focus callback](@ref plfwSetWindowFocusCallback) has been called.
  *
  *  The scancode of a key is specific to that platform or sometimes even to that
  *  machine.  Scancodes are intended to allow users to bind keys that don't have
- *  a GLFW key token.  Such keys have `key` set to `GLFW_KEY_UNKNOWN`, their
- *  state is not saved and so it cannot be queried with @ref glfwGetKey.
+ *  a PLFW key token.  Such keys have `key` set to `PLFW_KEY_UNKNOWN`, their
+ *  state is not saved and so it cannot be queried with @ref plfwGetKey.
  *
- *  Sometimes GLFW needs to generate synthetic key events, in which case the
+ *  Sometimes PLFW needs to generate synthetic key events, in which case the
  *  scancode may be zero.
  *
  *  @param[in] window The window whose callback to set.
@@ -4575,23 +4575,23 @@ GLFWAPI void glfwSetCursor(GLFWwindow* window, GLFWcursor* cursor);
  *
  *  @callback_signature
  *  @code
- *  void function_name(GLFWwindow* window, int key, int scancode, int action, int mods)
+ *  void function_name(PLFWwindow* window, int key, int scancode, int action, int mods)
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWkeyfun).
+ *  [function pointer type](@ref PLFWkeyfun).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref input_key
  *
  *  @since Added in version 1.0.
- *  __GLFW 3:__ Added window handle parameter and return value.
+ *  __PLFW 3:__ Added window handle parameter and return value.
  *
  *  @ingroup input
  */
-GLFWAPI GLFWkeyfun glfwSetKeyCallback(GLFWwindow* window, GLFWkeyfun callback);
+PLFWAPI PLFWkeyfun plfwSetKeyCallback(PLFWwindow* window, PLFWkeyfun callback);
 
 /*! @brief Sets the Unicode character callback.
  *
@@ -4600,7 +4600,7 @@ GLFWAPI GLFWkeyfun glfwSetKeyCallback(GLFWwindow* window, GLFWkeyfun callback);
  *
  *  The character callback is intended for Unicode text input.  As it deals with
  *  characters, it is keyboard layout dependent, whereas the
- *  [key callback](@ref glfwSetKeyCallback) is not.  Characters do not map 1:1
+ *  [key callback](@ref plfwSetKeyCallback) is not.  Characters do not map 1:1
  *  to physical keys, as a key may produce zero, one or more characters.  If you
  *  want to know whether a specific physical key was pressed or released, see
  *  the key callback instead.
@@ -4618,23 +4618,23 @@ GLFWAPI GLFWkeyfun glfwSetKeyCallback(GLFWwindow* window, GLFWkeyfun callback);
  *
  *  @callback_signature
  *  @code
- *  void function_name(GLFWwindow* window, unsigned int codepoint)
+ *  void function_name(PLFWwindow* window, unsigned int codepoint)
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWcharfun).
+ *  [function pointer type](@ref PLFWcharfun).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref input_char
  *
  *  @since Added in version 2.4.
- *  __GLFW 3:__ Added window handle parameter and return value.
+ *  __PLFW 3:__ Added window handle parameter and return value.
  *
  *  @ingroup input
  */
-GLFWAPI GLFWcharfun glfwSetCharCallback(GLFWwindow* window, GLFWcharfun callback);
+PLFWAPI PLFWcharfun plfwSetCharCallback(PLFWwindow* window, PLFWcharfun callback);
 
 /*! @brief Sets the Unicode character with modifiers callback.
  *
@@ -4644,12 +4644,12 @@ GLFWAPI GLFWcharfun glfwSetCharCallback(GLFWwindow* window, GLFWcharfun callback
  *
  *  The character with modifiers callback is intended for implementing custom
  *  Unicode character input.  For regular Unicode text input, see the
- *  [character callback](@ref glfwSetCharCallback).  Like the character
+ *  [character callback](@ref plfwSetCharCallback).  Like the character
  *  callback, the character with modifiers callback deals with characters and is
  *  keyboard layout dependent.  Characters do not map 1:1 to physical keys, as
  *  a key may produce zero, one or more characters.  If you want to know whether
  *  a specific physical key was pressed or released, see the
- *  [key callback](@ref glfwSetKeyCallback) instead.
+ *  [key callback](@ref plfwSetKeyCallback) instead.
  *
  *  @param[in] window The window whose callback to set.
  *  @param[in] callback The new callback, or `NULL` to remove the currently set
@@ -4659,14 +4659,14 @@ GLFWAPI GLFWcharfun glfwSetCharCallback(GLFWwindow* window, GLFWcharfun callback
  *
  *  @callback_signature
  *  @code
- *  void function_name(GLFWwindow* window, unsigned int codepoint, int mods)
+ *  void function_name(PLFWwindow* window, unsigned int codepoint, int mods)
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWcharmodsfun).
+ *  [function pointer type](@ref PLFWcharmodsfun).
  *
  *  @deprecated Scheduled for removal in version 4.0.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -4676,7 +4676,7 @@ GLFWAPI GLFWcharfun glfwSetCharCallback(GLFWwindow* window, GLFWcharfun callback
  *
  *  @ingroup input
  */
-GLFWAPI GLFWcharmodsfun glfwSetCharModsCallback(GLFWwindow* window, GLFWcharmodsfun callback);
+PLFWAPI PLFWcharmodsfun plfwSetCharModsCallback(PLFWwindow* window, PLFWcharmodsfun callback);
 
 /*! @brief Sets the mouse button callback.
  *
@@ -4687,12 +4687,12 @@ GLFWAPI GLFWcharmodsfun glfwSetCharModsCallback(GLFWwindow* window, GLFWcharmods
  *  release events for all pressed mouse buttons with associated button tokens.
  *  You can tell these events from user-generated events by the fact that the
  *  synthetic ones are generated after the focus loss event has been processed,
- *  i.e. after the [window focus callback](@ref glfwSetWindowFocusCallback) has
+ *  i.e. after the [window focus callback](@ref plfwSetWindowFocusCallback) has
  *  been called.
  *
- *  The reported `button` value can be higher than `GLFW_MOUSE_BUTTON_LAST` if
+ *  The reported `button` value can be higher than `PLFW_MOUSE_BUTTON_LAST` if
  *  the button does not have an associated [button token](@ref buttons) and the
- *  @ref GLFW_UNLIMITED_MOUSE_BUTTONS input mode is set.
+ *  @ref PLFW_UNLIMITED_MOUSE_BUTTONS input mode is set.
  *
  *  @param[in] window The window whose callback to set.
  *  @param[in] callback The new callback, or `NULL` to remove the currently set
@@ -4702,23 +4702,23 @@ GLFWAPI GLFWcharmodsfun glfwSetCharModsCallback(GLFWwindow* window, GLFWcharmods
  *
  *  @callback_signature
  *  @code
- *  void function_name(GLFWwindow* window, int button, int action, int mods)
+ *  void function_name(PLFWwindow* window, int button, int action, int mods)
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWmousebuttonfun).
+ *  [function pointer type](@ref PLFWmousebuttonfun).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref input_mouse_button
  *
  *  @since Added in version 1.0.
- *  __GLFW 3:__ Added window handle parameter and return value.
+ *  __PLFW 3:__ Added window handle parameter and return value.
  *
  *  @ingroup input
  */
-GLFWAPI GLFWmousebuttonfun glfwSetMouseButtonCallback(GLFWwindow* window, GLFWmousebuttonfun callback);
+PLFWAPI PLFWmousebuttonfun plfwSetMouseButtonCallback(PLFWwindow* window, PLFWmousebuttonfun callback);
 
 /*! @brief Sets the cursor position callback.
  *
@@ -4735,22 +4735,22 @@ GLFWAPI GLFWmousebuttonfun glfwSetMouseButtonCallback(GLFWwindow* window, GLFWmo
  *
  *  @callback_signature
  *  @code
- *  void function_name(GLFWwindow* window, double xpos, double ypos);
+ *  void function_name(PLFWwindow* window, double xpos, double ypos);
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWcursorposfun).
+ *  [function pointer type](@ref PLFWcursorposfun).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref cursor_pos
  *
- *  @since Added in version 3.0.  Replaces `glfwSetMousePosCallback`.
+ *  @since Added in version 3.0.  Replaces `plfwSetMousePosCallback`.
  *
  *  @ingroup input
  */
-GLFWAPI GLFWcursorposfun glfwSetCursorPosCallback(GLFWwindow* window, GLFWcursorposfun callback);
+PLFWAPI PLFWcursorposfun plfwSetCursorPosCallback(PLFWwindow* window, PLFWcursorposfun callback);
 
 /*! @brief Sets the cursor enter/leave callback.
  *
@@ -4766,12 +4766,12 @@ GLFWAPI GLFWcursorposfun glfwSetCursorPosCallback(GLFWwindow* window, GLFWcursor
  *
  *  @callback_signature
  *  @code
- *  void function_name(GLFWwindow* window, int entered)
+ *  void function_name(PLFWwindow* window, int entered)
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWcursorenterfun).
+ *  [function pointer type](@ref PLFWcursorenterfun).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -4781,7 +4781,7 @@ GLFWAPI GLFWcursorposfun glfwSetCursorPosCallback(GLFWwindow* window, GLFWcursor
  *
  *  @ingroup input
  */
-GLFWAPI GLFWcursorenterfun glfwSetCursorEnterCallback(GLFWwindow* window, GLFWcursorenterfun callback);
+PLFWAPI PLFWcursorenterfun plfwSetCursorEnterCallback(PLFWwindow* window, PLFWcursorenterfun callback);
 
 /*! @brief Sets the scroll callback.
  *
@@ -4800,22 +4800,22 @@ GLFWAPI GLFWcursorenterfun glfwSetCursorEnterCallback(GLFWwindow* window, GLFWcu
  *
  *  @callback_signature
  *  @code
- *  void function_name(GLFWwindow* window, double xoffset, double yoffset)
+ *  void function_name(PLFWwindow* window, double xoffset, double yoffset)
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWscrollfun).
+ *  [function pointer type](@ref PLFWscrollfun).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref scrolling
  *
- *  @since Added in version 3.0.  Replaces `glfwSetMouseWheelCallback`.
+ *  @since Added in version 3.0.  Replaces `plfwSetMouseWheelCallback`.
  *
  *  @ingroup input
  */
-GLFWAPI GLFWscrollfun glfwSetScrollCallback(GLFWwindow* window, GLFWscrollfun callback);
+PLFWAPI PLFWscrollfun plfwSetScrollCallback(PLFWwindow* window, PLFWscrollfun callback);
 
 /*! @brief Sets the path drop callback.
  *
@@ -4835,12 +4835,12 @@ GLFWAPI GLFWscrollfun glfwSetScrollCallback(GLFWwindow* window, GLFWscrollfun ca
  *
  *  @callback_signature
  *  @code
- *  void function_name(GLFWwindow* window, int path_count, const char* paths[])
+ *  void function_name(PLFWwindow* window, int path_count, const char* paths[])
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWdropfun).
+ *  [function pointer type](@ref PLFWdropfun).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -4850,7 +4850,7 @@ GLFWAPI GLFWscrollfun glfwSetScrollCallback(GLFWwindow* window, GLFWscrollfun ca
  *
  *  @ingroup input
  */
-GLFWAPI GLFWdropfun glfwSetDropCallback(GLFWwindow* window, GLFWdropfun callback);
+PLFWAPI PLFWdropfun plfwSetDropCallback(PLFWwindow* window, PLFWdropfun callback);
 
 /*! @brief Returns whether the specified joystick is present.
  *
@@ -4861,20 +4861,20 @@ GLFWAPI GLFWdropfun glfwSetDropCallback(GLFWwindow* window, GLFWdropfun callback
  *  work.
  *
  *  @param[in] jid The [joystick](@ref joysticks) to query.
- *  @return `GLFW_TRUE` if the joystick is present, or `GLFW_FALSE` otherwise.
+ *  @return `PLFW_TRUE` if the joystick is present, or `PLFW_FALSE` otherwise.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_INVALID_ENUM and @ref GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_INVALID_ENUM and @ref PLFW_PLATFORM_ERROR.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref joysticks
  *
- *  @since Added in version 3.0.  Replaces `glfwGetJoystickParam`.
+ *  @since Added in version 3.0.  Replaces `plfwGetJoystickParam`.
  *
  *  @ingroup input
  */
-GLFWAPI int glfwJoystickPresent(int jid);
+PLFWAPI int plfwJoystickPresent(int jid);
 
 /*! @brief Returns the values of all axes of the specified joystick.
  *
@@ -4883,7 +4883,7 @@ GLFWAPI int glfwJoystickPresent(int jid);
  *
  *  If the specified joystick is not present this function will return `NULL`
  *  but will not generate an error.  This can be used instead of first calling
- *  @ref glfwJoystickPresent.
+ *  @ref plfwJoystickPresent.
  *
  *  @param[in] jid The [joystick](@ref joysticks) to query.
  *  @param[out] count Where to store the number of axis values in the returned
@@ -4892,10 +4892,10 @@ GLFWAPI int glfwJoystickPresent(int jid);
  *  @return An array of axis values, or `NULL` if the joystick is not present or
  *  an [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_INVALID_ENUM and @ref GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_INVALID_ENUM and @ref PLFW_PLATFORM_ERROR.
  *
- *  @pointer_lifetime The returned array is allocated and freed by GLFW.  You
+ *  @pointer_lifetime The returned array is allocated and freed by PLFW.  You
  *  should not free it yourself.  It is valid until the specified joystick is
  *  disconnected or the library is terminated.
  *
@@ -4903,27 +4903,27 @@ GLFWAPI int glfwJoystickPresent(int jid);
  *
  *  @sa @ref joystick_axis
  *
- *  @since Added in version 3.0.  Replaces `glfwGetJoystickPos`.
+ *  @since Added in version 3.0.  Replaces `plfwGetJoystickPos`.
  *
  *  @ingroup input
  */
-GLFWAPI const float* glfwGetJoystickAxes(int jid, int* count);
+PLFWAPI const float* plfwGetJoystickAxes(int jid, int* count);
 
 /*! @brief Returns the state of all buttons of the specified joystick.
  *
  *  This function returns the state of all buttons of the specified joystick.
- *  Each element in the array is either `GLFW_PRESS` or `GLFW_RELEASE`.
+ *  Each element in the array is either `PLFW_PRESS` or `PLFW_RELEASE`.
  *
  *  For backward compatibility with earlier versions that did not have @ref
- *  glfwGetJoystickHats, the button array also includes all hats, each
+ *  plfwGetJoystickHats, the button array also includes all hats, each
  *  represented as four buttons.  The hats are in the same order as returned by
- *  __glfwGetJoystickHats__ and are in the order _up_, _right_, _down_ and
+ *  __plfwGetJoystickHats__ and are in the order _up_, _right_, _down_ and
  *  _left_.  To disable these extra buttons, set the @ref
- *  GLFW_JOYSTICK_HAT_BUTTONS init hint before initialization.
+ *  PLFW_JOYSTICK_HAT_BUTTONS init hint before initialization.
  *
  *  If the specified joystick is not present this function will return `NULL`
  *  but will not generate an error.  This can be used instead of first calling
- *  @ref glfwJoystickPresent.
+ *  @ref plfwJoystickPresent.
  *
  *  @param[in] jid The [joystick](@ref joysticks) to query.
  *  @param[out] count Where to store the number of button states in the returned
@@ -4932,10 +4932,10 @@ GLFWAPI const float* glfwGetJoystickAxes(int jid, int* count);
  *  @return An array of button states, or `NULL` if the joystick is not present
  *  or an [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_INVALID_ENUM and @ref GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_INVALID_ENUM and @ref PLFW_PLATFORM_ERROR.
  *
- *  @pointer_lifetime The returned array is allocated and freed by GLFW.  You
+ *  @pointer_lifetime The returned array is allocated and freed by PLFW.  You
  *  should not free it yourself.  It is valid until the specified joystick is
  *  disconnected or the library is terminated.
  *
@@ -4944,11 +4944,11 @@ GLFWAPI const float* glfwGetJoystickAxes(int jid, int* count);
  *  @sa @ref joystick_button
  *
  *  @since Added in version 2.2.
- *  __GLFW 3:__ Changed to return a dynamic array.
+ *  __PLFW 3:__ Changed to return a dynamic array.
  *
  *  @ingroup input
  */
-GLFWAPI const unsigned char* glfwGetJoystickButtons(int jid, int* count);
+PLFWAPI const unsigned char* plfwGetJoystickButtons(int jid, int* count);
 
 /*! @brief Returns the state of all hats of the specified joystick.
  *
@@ -4957,22 +4957,22 @@ GLFWAPI const unsigned char* glfwGetJoystickButtons(int jid, int* count);
  *
  *  Name                  | Value
  *  ----                  | -----
- *  `GLFW_HAT_CENTERED`   | 0
- *  `GLFW_HAT_UP`         | 1
- *  `GLFW_HAT_RIGHT`      | 2
- *  `GLFW_HAT_DOWN`       | 4
- *  `GLFW_HAT_LEFT`       | 8
- *  `GLFW_HAT_RIGHT_UP`   | `GLFW_HAT_RIGHT` \| `GLFW_HAT_UP`
- *  `GLFW_HAT_RIGHT_DOWN` | `GLFW_HAT_RIGHT` \| `GLFW_HAT_DOWN`
- *  `GLFW_HAT_LEFT_UP`    | `GLFW_HAT_LEFT` \| `GLFW_HAT_UP`
- *  `GLFW_HAT_LEFT_DOWN`  | `GLFW_HAT_LEFT` \| `GLFW_HAT_DOWN`
+ *  `PLFW_HAT_CENTERED`   | 0
+ *  `PLFW_HAT_UP`         | 1
+ *  `PLFW_HAT_RIGHT`      | 2
+ *  `PLFW_HAT_DOWN`       | 4
+ *  `PLFW_HAT_LEFT`       | 8
+ *  `PLFW_HAT_RIGHT_UP`   | `PLFW_HAT_RIGHT` \| `PLFW_HAT_UP`
+ *  `PLFW_HAT_RIGHT_DOWN` | `PLFW_HAT_RIGHT` \| `PLFW_HAT_DOWN`
+ *  `PLFW_HAT_LEFT_UP`    | `PLFW_HAT_LEFT` \| `PLFW_HAT_UP`
+ *  `PLFW_HAT_LEFT_DOWN`  | `PLFW_HAT_LEFT` \| `PLFW_HAT_DOWN`
  *
  *  The diagonal directions are bitwise combinations of the primary (up, right,
  *  down and left) directions and you can test for these individually by ANDing
  *  it with the corresponding direction.
  *
  *  @code
- *  if (hats[2] & GLFW_HAT_RIGHT)
+ *  if (hats[2] & PLFW_HAT_RIGHT)
  *  {
  *      // State of hat 2 could be right-up, right or right-down
  *  }
@@ -4980,7 +4980,7 @@ GLFWAPI const unsigned char* glfwGetJoystickButtons(int jid, int* count);
  *
  *  If the specified joystick is not present this function will return `NULL`
  *  but will not generate an error.  This can be used instead of first calling
- *  @ref glfwJoystickPresent.
+ *  @ref plfwJoystickPresent.
  *
  *  @param[in] jid The [joystick](@ref joysticks) to query.
  *  @param[out] count Where to store the number of hat states in the returned
@@ -4989,10 +4989,10 @@ GLFWAPI const unsigned char* glfwGetJoystickButtons(int jid, int* count);
  *  @return An array of hat states, or `NULL` if the joystick is not present
  *  or an [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_INVALID_ENUM and @ref GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_INVALID_ENUM and @ref PLFW_PLATFORM_ERROR.
  *
- *  @pointer_lifetime The returned array is allocated and freed by GLFW.  You
+ *  @pointer_lifetime The returned array is allocated and freed by PLFW.  You
  *  should not free it yourself.  It is valid until the specified joystick is
  *  disconnected, this function is called again for that joystick or the library
  *  is terminated.
@@ -5005,26 +5005,26 @@ GLFWAPI const unsigned char* glfwGetJoystickButtons(int jid, int* count);
  *
  *  @ingroup input
  */
-GLFWAPI const unsigned char* glfwGetJoystickHats(int jid, int* count);
+PLFWAPI const unsigned char* plfwGetJoystickHats(int jid, int* count);
 
 /*! @brief Returns the name of the specified joystick.
  *
  *  This function returns the name, encoded as UTF-8, of the specified joystick.
- *  The returned string is allocated and freed by GLFW.  You should not free it
+ *  The returned string is allocated and freed by PLFW.  You should not free it
  *  yourself.
  *
  *  If the specified joystick is not present this function will return `NULL`
  *  but will not generate an error.  This can be used instead of first calling
- *  @ref glfwJoystickPresent.
+ *  @ref plfwJoystickPresent.
  *
  *  @param[in] jid The [joystick](@ref joysticks) to query.
  *  @return The UTF-8 encoded name of the joystick, or `NULL` if the joystick
  *  is not present or an [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_INVALID_ENUM and @ref GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_INVALID_ENUM and @ref PLFW_PLATFORM_ERROR.
  *
- *  @pointer_lifetime The returned string is allocated and freed by GLFW.  You
+ *  @pointer_lifetime The returned string is allocated and freed by PLFW.  You
  *  should not free it yourself.  It is valid until the specified joystick is
  *  disconnected or the library is terminated.
  *
@@ -5036,13 +5036,13 @@ GLFWAPI const unsigned char* glfwGetJoystickHats(int jid, int* count);
  *
  *  @ingroup input
  */
-GLFWAPI const char* glfwGetJoystickName(int jid);
+PLFWAPI const char* plfwGetJoystickName(int jid);
 
 /*! @brief Returns the SDL compatible GUID of the specified joystick.
  *
  *  This function returns the SDL compatible GUID, as a UTF-8 encoded
  *  hexadecimal string, of the specified joystick.  The returned string is
- *  allocated and freed by GLFW.  You should not free it yourself.
+ *  allocated and freed by PLFW.  You should not free it yourself.
  *
  *  The GUID is what connects a joystick to a gamepad mapping.  A connected
  *  joystick will always have a GUID even if there is no gamepad mapping
@@ -5050,7 +5050,7 @@ GLFWAPI const char* glfwGetJoystickName(int jid);
  *
  *  If the specified joystick is not present this function will return `NULL`
  *  but will not generate an error.  This can be used instead of first calling
- *  @ref glfwJoystickPresent.
+ *  @ref plfwJoystickPresent.
  *
  *  The GUID uses the format introduced in SDL 2.0.5.  This GUID tries to
  *  uniquely identify the make and model of a joystick but does not identify
@@ -5062,10 +5062,10 @@ GLFWAPI const char* glfwGetJoystickName(int jid);
  *  @return The UTF-8 encoded GUID of the joystick, or `NULL` if the joystick
  *  is not present or an [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_INVALID_ENUM and @ref GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_INVALID_ENUM and @ref PLFW_PLATFORM_ERROR.
  *
- *  @pointer_lifetime The returned string is allocated and freed by GLFW.  You
+ *  @pointer_lifetime The returned string is allocated and freed by PLFW.  You
  *  should not free it yourself.  It is valid until the specified joystick is
  *  disconnected or the library is terminated.
  *
@@ -5077,7 +5077,7 @@ GLFWAPI const char* glfwGetJoystickName(int jid);
  *
  *  @ingroup input
  */
-GLFWAPI const char* glfwGetJoystickGUID(int jid);
+PLFWAPI const char* plfwGetJoystickGUID(int jid);
 
 /*! @brief Sets the user pointer of the specified joystick.
  *
@@ -5091,19 +5091,19 @@ GLFWAPI const char* glfwGetJoystickGUID(int jid);
  *  @param[in] jid The joystick whose pointer to set.
  *  @param[in] pointer The new value.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function may be called from any thread.  Access is not
  *  synchronized.
  *
  *  @sa @ref joystick_userptr
- *  @sa @ref glfwGetJoystickUserPointer
+ *  @sa @ref plfwGetJoystickUserPointer
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup input
  */
-GLFWAPI void glfwSetJoystickUserPointer(int jid, void* pointer);
+PLFWAPI void plfwSetJoystickUserPointer(int jid, void* pointer);
 
 /*! @brief Returns the user pointer of the specified joystick.
  *
@@ -5115,19 +5115,19 @@ GLFWAPI void glfwSetJoystickUserPointer(int jid, void* pointer);
  *
  *  @param[in] jid The joystick whose pointer to return.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function may be called from any thread.  Access is not
  *  synchronized.
  *
  *  @sa @ref joystick_userptr
- *  @sa @ref glfwSetJoystickUserPointer
+ *  @sa @ref plfwSetJoystickUserPointer
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup input
  */
-GLFWAPI void* glfwGetJoystickUserPointer(int jid);
+PLFWAPI void* plfwGetJoystickUserPointer(int jid);
 
 /*! @brief Returns whether the specified joystick has a gamepad mapping.
  *
@@ -5135,27 +5135,27 @@ GLFWAPI void* glfwGetJoystickUserPointer(int jid);
  *  a gamepad mapping.
  *
  *  If the specified joystick is present but does not have a gamepad mapping
- *  this function will return `GLFW_FALSE` but will not generate an error.  Call
- *  @ref glfwJoystickPresent to check if a joystick is present regardless of
+ *  this function will return `PLFW_FALSE` but will not generate an error.  Call
+ *  @ref plfwJoystickPresent to check if a joystick is present regardless of
  *  whether it has a mapping.
  *
  *  @param[in] jid The [joystick](@ref joysticks) to query.
- *  @return `GLFW_TRUE` if a joystick is both present and has a gamepad mapping,
- *  or `GLFW_FALSE` otherwise.
+ *  @return `PLFW_TRUE` if a joystick is both present and has a gamepad mapping,
+ *  or `PLFW_FALSE` otherwise.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_INVALID_ENUM.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_INVALID_ENUM.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref gamepad
- *  @sa @ref glfwGetGamepadState
+ *  @sa @ref plfwGetGamepadState
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup input
  */
-GLFWAPI int glfwJoystickIsGamepad(int jid);
+PLFWAPI int plfwJoystickIsGamepad(int jid);
 
 /*! @brief Sets the joystick configuration callback.
  *
@@ -5179,9 +5179,9 @@ GLFWAPI int glfwJoystickIsGamepad(int jid);
  *  void function_name(int jid, int event)
  *  @endcode
  *  For more information about the callback parameters, see the
- *  [function pointer type](@ref GLFWjoystickfun).
+ *  [function pointer type](@ref PLFWjoystickfun).
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -5191,7 +5191,7 @@ GLFWAPI int glfwJoystickIsGamepad(int jid);
  *
  *  @ingroup input
  */
-GLFWAPI GLFWjoystickfun glfwSetJoystickCallback(GLFWjoystickfun callback);
+PLFWAPI PLFWjoystickfun plfwSetJoystickCallback(PLFWjoystickfun callback);
 
 /*! @brief Adds the specified SDL_GameControllerDB gamepad mappings.
  *
@@ -5209,23 +5209,23 @@ GLFWAPI GLFWjoystickfun glfwSetJoystickCallback(GLFWjoystickfun callback);
  *  default.
  *
  *  @param[in] string The string containing the gamepad mappings.
- *  @return `GLFW_TRUE` if successful, or `GLFW_FALSE` if an
+ *  @return `PLFW_TRUE` if successful, or `PLFW_FALSE` if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_INVALID_VALUE.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_INVALID_VALUE.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref gamepad
- *  @sa @ref glfwJoystickIsGamepad
- *  @sa @ref glfwGetGamepadName
+ *  @sa @ref plfwJoystickIsGamepad
+ *  @sa @ref plfwGetGamepadName
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup input
  */
-GLFWAPI int glfwUpdateGamepadMappings(const char* string);
+PLFWAPI int plfwUpdateGamepadMappings(const char* string);
 
 /*! @brief Returns the human-readable gamepad name for the specified joystick.
  *
@@ -5234,7 +5234,7 @@ GLFWAPI int glfwUpdateGamepadMappings(const char* string);
  *
  *  If the specified joystick is not present or does not have a gamepad mapping
  *  this function will return `NULL` but will not generate an error.  Call
- *  @ref glfwJoystickPresent to check whether it is present regardless of
+ *  @ref plfwJoystickPresent to check whether it is present regardless of
  *  whether it has a mapping.
  *
  *  @param[in] jid The [joystick](@ref joysticks) to query.
@@ -5242,22 +5242,22 @@ GLFWAPI int glfwUpdateGamepadMappings(const char* string);
  *  joystick is not present, does not have a mapping or an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref GLFW_INVALID_ENUM.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref PLFW_INVALID_ENUM.
  *
- *  @pointer_lifetime The returned string is allocated and freed by GLFW.  You
+ *  @pointer_lifetime The returned string is allocated and freed by PLFW.  You
  *  should not free it yourself.  It is valid until the specified joystick is
  *  disconnected, the gamepad mappings are updated or the library is terminated.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref gamepad
- *  @sa @ref glfwJoystickIsGamepad
+ *  @sa @ref plfwJoystickIsGamepad
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup input
  */
-GLFWAPI const char* glfwGetGamepadName(int jid);
+PLFWAPI const char* plfwGetGamepadName(int jid);
 
 /*! @brief Retrieves the state of the specified joystick remapped as a gamepad.
  *
@@ -5265,37 +5265,37 @@ GLFWAPI const char* glfwGetGamepadName(int jid);
  *  an Xbox-like gamepad.
  *
  *  If the specified joystick is not present or does not have a gamepad mapping
- *  this function will return `GLFW_FALSE` but will not generate an error.  Call
- *  @ref glfwJoystickPresent to check whether it is present regardless of
+ *  this function will return `PLFW_FALSE` but will not generate an error.  Call
+ *  @ref plfwJoystickPresent to check whether it is present regardless of
  *  whether it has a mapping.
  *
  *  The Guide button may not be available for input as it is often hooked by the
  *  system or the Steam client.
  *
  *  Not all devices have all the buttons or axes provided by @ref
- *  GLFWgamepadstate.  Unavailable buttons and axes will always report
- *  `GLFW_RELEASE` and 0.0 respectively.
+ *  PLFWgamepadstate.  Unavailable buttons and axes will always report
+ *  `PLFW_RELEASE` and 0.0 respectively.
  *
  *  @param[in] jid The [joystick](@ref joysticks) to query.
  *  @param[out] state The gamepad input state of the joystick.
- *  @return `GLFW_TRUE` if successful, or `GLFW_FALSE` if no joystick is
+ *  @return `PLFW_TRUE` if successful, or `PLFW_FALSE` if no joystick is
  *  connected, it has no gamepad mapping or an [error](@ref error_handling)
  *  occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_INVALID_ENUM.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_INVALID_ENUM.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref gamepad
- *  @sa @ref glfwUpdateGamepadMappings
- *  @sa @ref glfwJoystickIsGamepad
+ *  @sa @ref plfwUpdateGamepadMappings
+ *  @sa @ref plfwJoystickIsGamepad
  *
  *  @since Added in version 3.3.
  *
  *  @ingroup input
  */
-GLFWAPI int glfwGetGamepadState(int jid, GLFWgamepadstate* state);
+PLFWAPI int plfwGetGamepadState(int jid, PLFWgamepadstate* state);
 
 /*! @brief Sets the clipboard to the specified string.
  *
@@ -5305,12 +5305,12 @@ GLFWAPI int glfwGetGamepadState(int jid, GLFWgamepadstate* state);
  *  @param[in] window Deprecated.  Any valid window or `NULL`.
  *  @param[in] string A UTF-8 encoded string.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_ERROR.
  *
  *  @remark __Win32:__ The clipboard on Windows has a single global lock for reading and
- *  writing.  GLFW tries to acquire it a few times, which is almost always enough.  If it
- *  cannot acquire the lock then this function emits @ref GLFW_PLATFORM_ERROR and returns.
+ *  writing.  PLFW tries to acquire it a few times, which is almost always enough.  If it
+ *  cannot acquire the lock then this function emits @ref PLFW_PLATFORM_ERROR and returns.
  *  It is safe to try this multiple times.
  *
  *  @pointer_lifetime The specified string is copied before this function
@@ -5319,57 +5319,57 @@ GLFWAPI int glfwGetGamepadState(int jid, GLFWgamepadstate* state);
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref clipboard
- *  @sa @ref glfwGetClipboardString
+ *  @sa @ref plfwGetClipboardString
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup input
  */
-GLFWAPI void glfwSetClipboardString(GLFWwindow* window, const char* string);
+PLFWAPI void plfwSetClipboardString(PLFWwindow* window, const char* string);
 
 /*! @brief Returns the contents of the clipboard as a string.
  *
  *  This function returns the contents of the system clipboard, if it contains
  *  or is convertible to a UTF-8 encoded string.  If the clipboard is empty or
  *  if its contents cannot be converted, `NULL` is returned and a @ref
- *  GLFW_FORMAT_UNAVAILABLE error is generated.
+ *  PLFW_FORMAT_UNAVAILABLE error is generated.
  *
  *  @param[in] window Deprecated.  Any valid window or `NULL`.
  *  @return The contents of the clipboard as a UTF-8 encoded string, or `NULL`
  *  if an [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
- *  GLFW_FORMAT_UNAVAILABLE and @ref GLFW_PLATFORM_ERROR.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED, @ref
+ *  PLFW_FORMAT_UNAVAILABLE and @ref PLFW_PLATFORM_ERROR.
  *
  *  @remark __Win32:__ The clipboard on Windows has a single global lock for reading and
- *  writing.  GLFW tries to acquire it a few times, which is almost always enough.  If it
- *  cannot acquire the lock then this function emits @ref GLFW_PLATFORM_ERROR and returns.
+ *  writing.  PLFW tries to acquire it a few times, which is almost always enough.  If it
+ *  cannot acquire the lock then this function emits @ref PLFW_PLATFORM_ERROR and returns.
  *  It is safe to try this multiple times.
  *
- *  @pointer_lifetime The returned string is allocated and freed by GLFW.  You
+ *  @pointer_lifetime The returned string is allocated and freed by PLFW.  You
  *  should not free it yourself.  It is valid until the next call to @ref
- *  glfwGetClipboardString or @ref glfwSetClipboardString, or until the library
+ *  plfwGetClipboardString or @ref plfwSetClipboardString, or until the library
  *  is terminated.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref clipboard
- *  @sa @ref glfwSetClipboardString
+ *  @sa @ref plfwSetClipboardString
  *
  *  @since Added in version 3.0.
  *
  *  @ingroup input
  */
-GLFWAPI const char* glfwGetClipboardString(GLFWwindow* window);
+PLFWAPI const char* plfwGetClipboardString(PLFWwindow* window);
 
-/*! @brief Returns the GLFW time.
+/*! @brief Returns the PLFW time.
  *
- *  This function returns the current GLFW time, in seconds.  Unless the time
- *  has been set using @ref glfwSetTime it measures time elapsed since GLFW was
+ *  This function returns the current PLFW time, in seconds.  Unless the time
+ *  has been set using @ref plfwSetTime it measures time elapsed since PLFW was
  *  initialized.
  *
- *  This function and @ref glfwSetTime are helper functions on top of @ref
- *  glfwGetTimerFrequency and @ref glfwGetTimerValue.
+ *  This function and @ref plfwSetTime are helper functions on top of @ref
+ *  plfwGetTimerFrequency and @ref plfwGetTimerValue.
  *
  *  The resolution of the timer is system dependent, but is usually on the order
  *  of a few micro- or nanoseconds.  It uses the highest-resolution monotonic
@@ -5378,11 +5378,11 @@ GLFWAPI const char* glfwGetClipboardString(GLFWwindow* window);
  *  @return The current time, in seconds, or zero if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function may be called from any thread.  Reading and
  *  writing of the internal base time is not atomic, so it needs to be
- *  externally synchronized with calls to @ref glfwSetTime.
+ *  externally synchronized with calls to @ref plfwSetTime.
  *
  *  @sa @ref time
  *
@@ -5390,29 +5390,29 @@ GLFWAPI const char* glfwGetClipboardString(GLFWwindow* window);
  *
  *  @ingroup input
  */
-GLFWAPI double glfwGetTime(void);
+PLFWAPI double plfwGetTime(void);
 
-/*! @brief Sets the GLFW time.
+/*! @brief Sets the PLFW time.
  *
- *  This function sets the current GLFW time, in seconds.  The value must be
+ *  This function sets the current PLFW time, in seconds.  The value must be
  *  a positive finite number less than or equal to 18446744073.0, which is
  *  approximately 584.5 years.
  *
- *  This function and @ref glfwGetTime are helper functions on top of @ref
- *  glfwGetTimerFrequency and @ref glfwGetTimerValue.
+ *  This function and @ref plfwGetTime are helper functions on top of @ref
+ *  plfwGetTimerFrequency and @ref plfwGetTimerValue.
  *
  *  @param[in] time The new value, in seconds.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_INVALID_VALUE.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_INVALID_VALUE.
  *
- *  @remark The upper limit of GLFW time is calculated as
+ *  @remark The upper limit of PLFW time is calculated as
  *  floor((2<sup>64</sup> - 1) / 10<sup>9</sup>) and is due to implementations
  *  storing nanoseconds in 64 bits.  The limit may be increased in the future.
  *
  *  @thread_safety This function may be called from any thread.  Reading and
  *  writing of the internal base time is not atomic, so it needs to be
- *  externally synchronized with calls to @ref glfwGetTime.
+ *  externally synchronized with calls to @ref plfwGetTime.
  *
  *  @sa @ref time
  *
@@ -5420,29 +5420,29 @@ GLFWAPI double glfwGetTime(void);
  *
  *  @ingroup input
  */
-GLFWAPI void glfwSetTime(double time);
+PLFWAPI void plfwSetTime(double time);
 
 /*! @brief Returns the current value of the raw timer.
  *
  *  This function returns the current value of the raw timer, measured in
  *  1&nbsp;/&nbsp;frequency seconds.  To get the frequency, call @ref
- *  glfwGetTimerFrequency.
+ *  plfwGetTimerFrequency.
  *
  *  @return The value of the timer, or zero if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function may be called from any thread.
  *
  *  @sa @ref time
- *  @sa @ref glfwGetTimerFrequency
+ *  @sa @ref plfwGetTimerFrequency
  *
  *  @since Added in version 3.2.
  *
  *  @ingroup input
  */
-GLFWAPI uint64_t glfwGetTimerValue(void);
+PLFWAPI uint64_t plfwGetTimerValue(void);
 
 /*! @brief Returns the frequency, in Hz, of the raw timer.
  *
@@ -5451,18 +5451,18 @@ GLFWAPI uint64_t glfwGetTimerValue(void);
  *  @return The frequency of the timer, in Hz, or zero if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED.
  *
  *  @thread_safety This function may be called from any thread.
  *
  *  @sa @ref time
- *  @sa @ref glfwGetTimerValue
+ *  @sa @ref plfwGetTimerValue
  *
  *  @since Added in version 3.2.
  *
  *  @ingroup input
  */
-GLFWAPI uint64_t glfwGetTimerFrequency(void);
+PLFWAPI uint64_t plfwGetTimerFrequency(void);
 
 /*************************************************************************
  * Global definition cleanup
@@ -5477,5 +5477,5 @@ GLFWAPI uint64_t glfwGetTimerFrequency(void);
 }
 #endif
 
-#endif /* _glfw3_h_ */
+#endif /* _plfw3_h_ */
 

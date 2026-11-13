@@ -1,13 +1,13 @@
 # 简介 <a name="mainpage"></a>
 
-GLFW 是一个自由、开源、跨平台的**窗口、输入与事件**库。本仓库是 GLFW 3.5.1 的
+PLFW 是一个自由、开源、跨平台的**窗口、输入与事件**库。本仓库是 GLFW 3.5.1 的
 改造分支：图形初始化部分（OpenGL、OpenGL ES、EGL、WGL、GLX、NSGL、OSMesa、
 Vulkan）已全部移除，库只负责创建窗口、接收输入、分发事件。
 
 后端只保留 Windows 的 **Win32** 与 Linux 的 **Wayland**，外加 **Null**
 （headless，用于无窗口系统的自动化测试）。X11 与 Cocoa 后端已经整体删除：
-`GLFW_PLATFORM_X11` / `GLFW_PLATFORM_COCOA` 仍作为标识符存在，但
-`glfwPlatformSupported` 对它们一律返回 `GLFW_FALSE`。
+`PLFW_PLATFORM_X11` / `PLFW_PLATFORM_COCOA` 仍作为标识符存在，但
+`plfwPlatformSupported` 对它们一律返回 `PLFW_FALSE`。
 
 [上手](quick.md#quick_guide) 带新手从零写一个能跑的程序。
 
@@ -21,7 +21,7 @@ Vulkan）已全部移除，库只负责创建窗口、接收输入、分发事�
 
 要编译这个库，看 [compile_guide](compile.md#compile_guide)；要把它链进自己的程序，看 [build_guide](build.md#build_guide)。
 
-[`glfw3.h`](../include/GLFW/glfw3.h) 是逐函数的详细文档。
+[`plfw3.h`](../include/PLFW/plfw3.h) 是逐函数的详细文档。
 
 因为库不再创建任何图形上下文，**怎么在窗口里画东西完全由应用决定**：D3D11/D3D12、
 Vulkan、GDI、Direct2D，或者干脆把窗口当成一个纯事件来源。

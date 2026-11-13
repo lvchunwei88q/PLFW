@@ -1,18 +1,19 @@
 // =========================================================================
 //  multi-window.c -- several windows, native handles and window state for the
-//  windowing-only build of GLFW.
+//  windowing-only build of PLFW.
 //
-//  This fork of GLFW has no graphics context support: glfwCreateWindow does
-//  not create an OpenGL, OpenGL ES, Vulkan or OSMesa context, and there is no
-//  glfwMakeContextCurrent / glfwSwapBuffers / glfwGetProcAddress.  What it
-//  still owns is the native window, the input state, the monitors and the
-//  event queue, which is exactly what this program exercises.
+//  This windowing-only build of PLFW has no graphics context support:
+//  plfwCreateWindow does not create an OpenGL, OpenGL ES, Vulkan or OSMesa
+//  context, and there is no glfwMakeContextCurrent / glfwSwapBuffers /
+//  glfwGetProcAddress.  What it still owns is the native window, the input
+//  state, the monitors and the event queue, which is exactly what this
+//  program exercises.
 //
 //  What this program shows:
 //    - creating several windows from one event loop
 //    - a per-window user pointer, so one callback set serves every window
 //    - window state: hide / show, focus, iconify / restore, decorations
-//    - native window handles: glfwGetWin32Window, glfwGetWaylandWindow
+//    - native window handles: plfwGetWin32Window, plfwGetWaylandWindow
 //    - monitor enumeration and which monitor a window sits on
 //
 //  Keys: 1 / 2 / 3 hide or show that window, I iconifies the first window,
@@ -24,18 +25,18 @@
 #include <string.h>
 
 #if defined(_WIN32)
- #define GLFW_EXPOSE_NATIVE_WIN32
+ #define PLFW_EXPOSE_NATIVE_WIN32
 #else
  // The library carries no X11 backend on Linux anymore, only Wayland.
  #if defined(__has_include)
   #if __has_include(<wayland-client.h>)
-   #define GLFW_EXPOSE_NATIVE_WAYLAND
+   #define PLFW_EXPOSE_NATIVE_WAYLAND
   #endif
  #endif
 #endif
 
-#include <GLFW/glfw3.h>
-#include <GLFW/glfw3native.h>
+#include <PLFW/plfw3.h>
+#include <PLFW/plfw3native.h>
 
 #define WINDOW_COUNT 3
 
@@ -45,7 +46,7 @@ typedef struct WindowState
     int         decorated;
 } WindowState;
 
-static GLFWwindow* windows[WINDOW_COUNT];
+static PLFWwindow* windows[WINDOW_COUNT];
 static WindowState states[WINDOW_COUNT] =
 {
     { "first",  1 },
@@ -55,33 +56,33 @@ static WindowState states[WINDOW_COUNT] =
 
 static void errorCallback(int code, const char* description)
 {
-    fprintf(stderr, "GLFW error 0x%08X: %s\n", (unsigned int) code, description);
+    fprintf(stderr, "PLFW error 0x%08X: %s\n", (unsigned int) code, description);
 }
 
-static int windowIndex(GLFWwindow* window)
+static int windowIndex(PLFWwindow* window)
 {
-    int index = (int) (intptr_t) glfwGetWindowUserPointer(window);
+    int index = (int) (intptr_t) plfwGetWindowUserPointer(window);
     if (index < 0 || index >= WINDOW_COUNT)
         return -1;
     return index;
 }
 
-static const char* labelOf(GLFWwindow* window)
+static const char* labelOf(PLFWwindow* window)
 {
     int index = windowIndex(window);
     return (index >= 0) ? states[index].label : "unknown";
 }
 
-static void printNativeHandle(GLFWwindow* window)
+static void printNativeHandle(PLFWwindow* window)
 {
     printf("[%s] native window handle: ", labelOf(window));
 
-    switch (glfwGetPlatform())
+    switch (plfwGetPlatform())
     {
-        case GLFW_PLATFORM_WIN32:
+        case PLFW_PLATFORM_WIN32:
         {
-#if defined(GLFW_EXPOSE_NATIVE_WIN32)
-            HWND handle = glfwGetWin32Window(window);
+#if defined(PLFW_EXPOSE_NATIVE_WIN32)
+            HWND handle = plfwGetWin32Window(window);
             printf("HWND %p\n", (void*) handle);
             return;
 #else
@@ -89,10 +90,10 @@ static void printNativeHandle(GLFWwindow* window)
 #endif
         }
 
-        case GLFW_PLATFORM_WAYLAND:
+        case PLFW_PLATFORM_WAYLAND:
         {
-#if defined(GLFW_EXPOSE_NATIVE_WAYLAND)
-            struct wl_surface* surface = glfwGetWaylandWindow(window);
+#if defined(PLFW_EXPOSE_NATIVE_WAYLAND)
+            struct wl_surface* surface = plfwGetWaylandWindow(window);
             printf("wl_surface %p\n", (void*) surface);
             return;
 #else
@@ -107,15 +108,15 @@ static void printNativeHandle(GLFWwindow* window)
     printf("not exposed by this build\n");
 }
 
-static void reportMonitor(GLFWwindow* window, int index)
+static void reportMonitor(PLFWwindow* window, int index)
 {
     int monitorCount = 0;
-    GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
+    PLFWmonitor** monitors = plfwGetMonitors(&monitorCount);
 
     int x = 0, y = 0;
-    glfwGetWindowPos(window, &x, &y);
+    plfwGetWindowPos(window, &x, &y);
 
-    if (glfwGetWindowMonitor(window))
+    if (plfwGetWindowMonitor(window))
     {
         printf("[%s] placed at %d,%d in full screen\n", states[index].label, x, y);
         return;
@@ -126,10 +127,10 @@ static void reportMonitor(GLFWwindow* window, int index)
     for (int i = 0;  i < monitorCount;  i++)
     {
         int mx = 0, my = 0, mw = 0, mh = 0;
-        glfwGetMonitorWorkarea(monitors[i], &mx, &my, &mw, &mh);
+        plfwGetMonitorWorkarea(monitors[i], &mx, &my, &mw, &mh);
         if (x >= mx && y >= my && x < mx + mw && y < my + mh)
         {
-            const char* name = glfwGetMonitorName(monitors[i]);
+            const char* name = plfwGetMonitorName(monitors[i]);
             printf("[%s] placed at %d,%d on monitor \"%s\" (%d of %d)\n",
                    states[index].label, x, y, name ? name : "unnamed",
                    i + 1, monitorCount);
@@ -146,77 +147,77 @@ static void toggleVisibility(int index)
     if (!windows[index])
         return;
 
-    if (glfwGetWindowAttrib(windows[index], GLFW_VISIBLE))
+    if (plfwGetWindowAttrib(windows[index], PLFW_VISIBLE))
     {
         printf("[%s] hiding\n", states[index].label);
-        glfwHideWindow(windows[index]);
+        plfwHideWindow(windows[index]);
     }
     else
     {
         printf("[%s] showing\n", states[index].label);
-        glfwShowWindow(windows[index]);
-        glfwFocusWindow(windows[index]);
+        plfwShowWindow(windows[index]);
+        plfwFocusWindow(windows[index]);
     }
 }
 
-static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+static void keyCallback(PLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (action != GLFW_PRESS)
+    if (action != PLFW_PRESS)
         return;
 
-    if (key == GLFW_KEY_ESCAPE)
+    if (key == PLFW_KEY_ESCAPE)
     {
         printf("Escape pressed, closing every window\n");
         for (int i = 0;  i < WINDOW_COUNT;  i++)
         {
             if (windows[i])
-                glfwSetWindowShouldClose(windows[i], GLFW_TRUE);
+                plfwSetWindowShouldClose(windows[i], PLFW_TRUE);
         }
         return;
     }
 
-    if (key >= GLFW_KEY_1 && key <= GLFW_KEY_3)
+    if (key >= PLFW_KEY_1 && key <= PLFW_KEY_3)
     {
-        toggleVisibility(key - GLFW_KEY_1);
+        toggleVisibility(key - PLFW_KEY_1);
         return;
     }
 
-    if (key == GLFW_KEY_I && windows[0])
+    if (key == PLFW_KEY_I && windows[0])
     {
-        if (glfwGetWindowAttrib(windows[0], GLFW_ICONIFIED))
+        if (plfwGetWindowAttrib(windows[0], PLFW_ICONIFIED))
         {
             printf("[%s] restoring\n", states[0].label);
-            glfwRestoreWindow(windows[0]);
+            plfwRestoreWindow(windows[0]);
         }
         else
         {
             printf("[%s] iconifying\n", states[0].label);
-            glfwIconifyWindow(windows[0]);
+            plfwIconifyWindow(windows[0]);
         }
         return;
     }
 
-    if (key == GLFW_KEY_D && windows[1])
+    if (key == PLFW_KEY_D && windows[1])
     {
         states[1].decorated = !states[1].decorated;
         printf("[%s] decorations %s\n", states[1].label,
                states[1].decorated ? "on" : "off");
-        glfwSetWindowAttrib(windows[1], GLFW_DECORATED,
-                            states[1].decorated ? GLFW_TRUE : GLFW_FALSE);
+        plfwSetWindowAttrib(windows[1], PLFW_DECORATED,
+                            states[1].decorated ? PLFW_TRUE : PLFW_FALSE);
     }
 }
 
-static void focusCallback(GLFWwindow* window, int focused)
+static void focusCallback(PLFWwindow* window, int focused)
 {
     printf("[%s] %s\n", labelOf(window), focused ? "focused" : "defocused");
 }
 
-static void sizeCallback(GLFWwindow* window, int width, int height)
+static void sizeCallback(PLFWwindow* window, int width, int height)
 {
     printf("[%s] resized to %dx%d\n", labelOf(window), width, height);
 }
 
-static void closeCallback(GLFWwindow* window)
+static void closeCallback(PLFWwindow* window)
 {
     printf("[%s] close requested\n", labelOf(window));
 }
@@ -225,12 +226,12 @@ int main(void)
 {
     setvbuf(stdout, NULL, _IONBF, 0);
 
-    glfwSetErrorCallback(errorCallback);
+    plfwSetErrorCallback(errorCallback);
 
-    if (!glfwInit())
+    if (!plfwInit())
         return -1;
 
-    printf("windowing-only build, platform %d\n", glfwGetPlatform());
+    printf("windowing-only build, platform %d\n", plfwGetPlatform());
 
     // No graphics API is involved anywhere in this build, so there is no
     // context hint to set: the window is a plain native window.
@@ -239,29 +240,29 @@ int main(void)
         char title[64];
         snprintf(title, sizeof(title), "multi-window #%d", i + 1);
 
-        windows[i] = glfwCreateWindow(320, 200, title, NULL, NULL);
+        windows[i] = plfwCreateWindow(320, 200, title, NULL, NULL);
         if (!windows[i])
         {
             fprintf(stderr, "failed to create window %d\n", i + 1);
-            glfwTerminate();
+            plfwTerminate();
             return -1;
         }
 
-        glfwSetWindowUserPointer(windows[i], (void*) (intptr_t) i);
-        glfwSetKeyCallback(windows[i], keyCallback);
-        glfwSetWindowFocusCallback(windows[i], focusCallback);
-        glfwSetWindowSizeCallback(windows[i], sizeCallback);
-        glfwSetWindowCloseCallback(windows[i], closeCallback);
+        plfwSetWindowUserPointer(windows[i], (void*) (intptr_t) i);
+        plfwSetKeyCallback(windows[i], keyCallback);
+        plfwSetWindowFocusCallback(windows[i], focusCallback);
+        plfwSetWindowSizeCallback(windows[i], sizeCallback);
+        plfwSetWindowCloseCallback(windows[i], closeCallback);
 
-        glfwSetWindowPos(windows[i], 80 + i * 360, 120 + i * 40);
+        plfwSetWindowPos(windows[i], 80 + i * 360, 120 + i * 40);
 
         printNativeHandle(windows[i]);
         reportMonitor(windows[i], i);
     }
 
     const char* text = "shared by all three windows";
-    glfwSetClipboardString(windows[0], text);
-    const char* readBack = glfwGetClipboardString(windows[1]);
+    plfwSetClipboardString(windows[0], text);
+    const char* readBack = plfwGetClipboardString(windows[1]);
     printf("clipboard through window 2: \"%s\"\n",
            readBack ? readBack : "(unavailable on this backend)");
 
@@ -270,18 +271,18 @@ int main(void)
 
     while (windows[0] || windows[1] || windows[2])
     {
-        glfwWaitEventsTimeout(0.25);
+        plfwWaitEventsTimeout(0.25);
 
         for (int i = 0;  i < WINDOW_COUNT;  i++)
         {
-            if (windows[i] && glfwWindowShouldClose(windows[i]))
+            if (windows[i] && plfwWindowShouldClose(windows[i]))
             {
-                glfwDestroyWindow(windows[i]);
+                plfwDestroyWindow(windows[i]);
                 windows[i] = NULL;
             }
         }
     }
 
-    glfwTerminate();
+    plfwTerminate();
     return 0;
 }

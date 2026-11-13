@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.5 Linux - www.glfw.org
+// PLFW 3.5 Linux - windowing-only fork of GLFW (www.glfw.org)
 //------------------------------------------------------------------------
 // Copyright (c) 2014 Jonas Ådahl <jadahl@gmail.com>
 //
@@ -28,12 +28,12 @@
 #include <linux/limits.h>
 #include <regex.h>
 
-#define GLFW_LINUX_JOYSTICK_STATE         _GLFWjoystickLinux linjs;
-#define GLFW_LINUX_LIBRARY_JOYSTICK_STATE _GLFWlibraryLinux  linjs;
+#define PLFW_LINUX_JOYSTICK_STATE         _PLFWjoystickLinux linjs;
+#define PLFW_LINUX_LIBRARY_JOYSTICK_STATE _PLFWlibraryLinux  linjs;
 
 // Linux-specific joystick data
 //
-typedef struct _GLFWjoystickLinux
+typedef struct _PLFWjoystickLinux
 {
     int                     fd;
     char                    path[PATH_MAX];
@@ -41,24 +41,24 @@ typedef struct _GLFWjoystickLinux
     int                     absMap[ABS_CNT];
     struct input_absinfo    absInfo[ABS_CNT];
     int                     hats[4][2];
-} _GLFWjoystickLinux;
+} _PLFWjoystickLinux;
 
 // Linux-specific joystick API data
 //
-typedef struct _GLFWlibraryLinux
+typedef struct _PLFWlibraryLinux
 {
     int                     inotify;
     int                     watch;
     regex_t                 regex;
-    GLFWbool                regexCompiled;
-    GLFWbool                dropped;
-} _GLFWlibraryLinux;
+    PLFWbool                regexCompiled;
+    PLFWbool                dropped;
+} _PLFWlibraryLinux;
 
-void _glfwDetectJoystickConnectionLinux(void);
+void _plfwDetectJoystickConnectionLinux(void);
 
-GLFWbool _glfwInitJoysticksLinux(void);
-void _glfwTerminateJoysticksLinux(void);
-GLFWbool _glfwPollJoystickLinux(_GLFWjoystick* js, int mode);
-const char* _glfwGetMappingNameLinux(void);
-void _glfwUpdateGamepadGUIDLinux(char* guid);
+PLFWbool _plfwInitJoysticksLinux(void);
+void _plfwTerminateJoysticksLinux(void);
+PLFWbool _plfwPollJoystickLinux(_PLFWjoystick* js, int mode);
+const char* _plfwGetMappingNameLinux(void);
+void _plfwUpdateGamepadGUIDLinux(char* guid);
 

@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.5 macOS - www.glfw.org
+// PLFW 3.5 macOS - windowing-only fork of GLFW (www.glfw.org)
 //------------------------------------------------------------------------
 // Copyright (c) 2009-2016 Camilla Löwy <elmindreda@glfw.org>
 //
@@ -26,32 +26,32 @@
 
 #include "internal.h"
 
-#if defined(GLFW_BUILD_MACOS_TIMER)
+#if defined(PLFW_BUILD_MACOS_TIMER)
 
 #include <mach/mach_time.h>
 
 
 //////////////////////////////////////////////////////////////////////////
-//////                       GLFW platform API                      //////
+//////                       PLFW platform API                      //////
 //////////////////////////////////////////////////////////////////////////
 
-void _glfwPlatformInitTimer(void)
+void _plfwPlatformInitTimer(void)
 {
     mach_timebase_info_data_t info;
     mach_timebase_info(&info);
 
-    _glfw.timer.macos.frequency = (info.denom * 1e9) / info.numer;
+    _plfw.timer.macos.frequency = (info.denom * 1e9) / info.numer;
 }
 
-uint64_t _glfwPlatformGetTimerValue(void)
+uint64_t _plfwPlatformGetTimerValue(void)
 {
     return mach_absolute_time();
 }
 
-uint64_t _glfwPlatformGetTimerFrequency(void)
+uint64_t _plfwPlatformGetTimerFrequency(void)
 {
-    return _glfw.timer.macos.frequency;
+    return _plfw.timer.macos.frequency;
 }
 
-#endif // GLFW_BUILD_MACOS_TIMER
+#endif // PLFW_BUILD_MACOS_TIMER
 

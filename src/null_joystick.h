@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.5 - www.glfw.org
+// PLFW 3.5 - windowing-only fork of GLFW (www.glfw.org)
 //------------------------------------------------------------------------
 // Copyright (c) 2006-2017 Camilla Löwy <elmindreda@glfw.org>
 //
@@ -24,9 +24,9 @@
 //
 //========================================================================
 
-GLFWbool _glfwInitJoysticksNull(void);
-void _glfwTerminateJoysticksNull(void);
-GLFWbool _glfwPollJoystickNull(_GLFWjoystick* js, int mode);
-const char* _glfwGetMappingNameNull(void);
-void _glfwUpdateGamepadGUIDNull(char* guid);
+PLFWbool _plfwInitJoysticksNull(void);
+void _plfwTerminateJoysticksNull(void);
+PLFWbool _plfwPollJoystickNull(_PLFWjoystick* js, int mode);
+const char* _plfwGetMappingNameNull(void);
+void _plfwUpdateGamepadGUIDNull(char* guid);
 

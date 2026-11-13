@@ -1,5 +1,5 @@
 /*************************************************************************
- * GLFW 3.5 - www.glfw.org
+ * PLFW 3.5 - windowing-only fork of GLFW (www.glfw.org)
  * A library for OpenGL, window and input
  *------------------------------------------------------------------------
  * Copyright (c) 2002-2006 Marcus Geelnard
@@ -26,8 +26,8 @@
  *
  *************************************************************************/
 
-#ifndef _glfw3_native_h_
-#define _glfw3_native_h_
+#ifndef _plfw3_native_h_
+#define _plfw3_native_h_
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,7 +38,7 @@ extern "C" {
  * Doxygen documentation
  *************************************************************************/
 
-/*! @file glfw3native.h
+/*! @file plfw3native.h
  *  @brief The header of the native access functions.
  *
  *  This is the header file of the native access functions.  See @ref native for
@@ -51,15 +51,15 @@ extern "C" {
  *  doing and how to fix problems caused by using them.  If you don't, you
  *  shouldn't be using them.**
  *
- *  Before the inclusion of @ref glfw3native.h, you may define zero or more
+ *  Before the inclusion of @ref plfw3native.h, you may define zero or more
  *  window system API macros.
  *
  *  The chosen backends must match those the library was compiled for.  Failure
  *  to do this will cause a link-time error.
  *
  *  The available window API macros are:
- *  * `GLFW_EXPOSE_NATIVE_WIN32`
- *  * `GLFW_EXPOSE_NATIVE_WAYLAND`
+ *  * `PLFW_EXPOSE_NATIVE_WIN32`
+ *  * `PLFW_EXPOSE_NATIVE_WAYLAND`
  *
  *  These macros select which of the native access functions that are declared
  *  and which platform-specific headers to include.  It is then up your (by
@@ -67,12 +67,12 @@ extern "C" {
  *  defined.
  *
  *  If you do not want the platform-specific headers to be included, define
- *  `GLFW_NATIVE_INCLUDE_NONE` before including the @ref glfw3native.h header.
+ *  `PLFW_NATIVE_INCLUDE_NONE` before including the @ref plfw3native.h header.
  *
  *  @code
- *  #define GLFW_EXPOSE_NATIVE_WIN32
- *  #define GLFW_NATIVE_INCLUDE_NONE
- *  #include <GLFW/glfw3native.h>
+ *  #define PLFW_EXPOSE_NATIVE_WIN32
+ *  #define PLFW_NATIVE_INCLUDE_NONE
+ *  #include <PLFW/plfw3native.h>
  *  @endcode
  */
 
@@ -81,40 +81,40 @@ extern "C" {
  * System headers and types
  *************************************************************************/
 
-#if !defined(GLFW_NATIVE_INCLUDE_NONE)
+#if !defined(PLFW_NATIVE_INCLUDE_NONE)
 
- #if defined(GLFW_EXPOSE_NATIVE_WIN32)
-  /* This is a workaround for the fact that glfw3.h needs to export APIENTRY (for
+ #if defined(PLFW_EXPOSE_NATIVE_WIN32)
+  /* This is a workaround for the fact that plfw3.h needs to export APIENTRY (for
    * example to allow applications to correctly declare a GL_KHR_debug callback)
    * but windows.h assumes no one will define APIENTRY before it does
    */
-  #if defined(GLFW_APIENTRY_DEFINED)
+  #if defined(PLFW_APIENTRY_DEFINED)
    #undef APIENTRY
-   #undef GLFW_APIENTRY_DEFINED
+   #undef PLFW_APIENTRY_DEFINED
   #endif
   #include <windows.h>
  #endif
 
- #if defined(GLFW_EXPOSE_NATIVE_WAYLAND)
+ #if defined(PLFW_EXPOSE_NATIVE_WAYLAND)
   #include <wayland-client.h>
  #endif
 
-#endif /*GLFW_NATIVE_INCLUDE_NONE*/
+#endif /*PLFW_NATIVE_INCLUDE_NONE*/
 
 
 /*************************************************************************
  * Functions
  *************************************************************************/
 
-#if defined(GLFW_EXPOSE_NATIVE_WIN32)
+#if defined(PLFW_EXPOSE_NATIVE_WIN32)
 /*! @brief Returns the adapter device name of the specified monitor.
  *
  *  @return The UTF-8 encoded adapter device name (for example `\\.\DISPLAY1`)
  *  of the specified monitor, or `NULL` if an [error](@ref error_handling)
  *  occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_UNAVAILABLE.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_UNAVAILABLE.
  *
  *  @thread_safety This function may be called from any thread.  Access is not
  *  synchronized.
@@ -123,7 +123,7 @@ extern "C" {
  *
  *  @ingroup native
  */
-GLFWAPI const char* glfwGetWin32Adapter(GLFWmonitor* monitor);
+PLFWAPI const char* plfwGetWin32Adapter(PLFWmonitor* monitor);
 
 /*! @brief Returns the display device name of the specified monitor.
  *
@@ -131,8 +131,8 @@ GLFWAPI const char* glfwGetWin32Adapter(GLFWmonitor* monitor);
  *  `\\.\DISPLAY1\Monitor0`) of the specified monitor, or `NULL` if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_UNAVAILABLE.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_UNAVAILABLE.
  *
  *  @thread_safety This function may be called from any thread.  Access is not
  *  synchronized.
@@ -141,21 +141,21 @@ GLFWAPI const char* glfwGetWin32Adapter(GLFWmonitor* monitor);
  *
  *  @ingroup native
  */
-GLFWAPI const char* glfwGetWin32Monitor(GLFWmonitor* monitor);
+PLFWAPI const char* plfwGetWin32Monitor(PLFWmonitor* monitor);
 
 /*! @brief Returns the `HWND` of the specified window.
  *
  *  @return The `HWND` of the specified window, or `NULL` if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_UNAVAILABLE.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_UNAVAILABLE.
  *
  *  @remark The `HDC` associated with the window can be queried with the
  *  [GetDC](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getdc)
  *  function.
  *  @code
- *  HDC dc = GetDC(glfwGetWin32Window(window));
+ *  HDC dc = GetDC(plfwGetWin32Window(window));
  *  @endcode
  *  This DC is private and does not need to be released.
  *
@@ -166,17 +166,17 @@ GLFWAPI const char* glfwGetWin32Monitor(GLFWmonitor* monitor);
  *
  *  @ingroup native
  */
-GLFWAPI HWND glfwGetWin32Window(GLFWwindow* window);
+PLFWAPI HWND plfwGetWin32Window(PLFWwindow* window);
 #endif
 
-#if defined(GLFW_EXPOSE_NATIVE_WAYLAND)
-/*! @brief Returns the `struct wl_display*` used by GLFW.
+#if defined(PLFW_EXPOSE_NATIVE_WAYLAND)
+/*! @brief Returns the `struct wl_display*` used by PLFW.
  *
- *  @return The `struct wl_display*` used by GLFW, or `NULL` if an
+ *  @return The `struct wl_display*` used by PLFW, or `NULL` if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_UNAVAILABLE.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_UNAVAILABLE.
  *
  *  @thread_safety This function may be called from any thread.  Access is not
  *  synchronized.
@@ -185,15 +185,15 @@ GLFWAPI HWND glfwGetWin32Window(GLFWwindow* window);
  *
  *  @ingroup native
  */
-GLFWAPI struct wl_display* glfwGetWaylandDisplay(void);
+PLFWAPI struct wl_display* plfwGetWaylandDisplay(void);
 
 /*! @brief Returns the `struct wl_output*` of the specified monitor.
  *
  *  @return The `struct wl_output*` of the specified monitor, or `NULL` if an
  *  [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_UNAVAILABLE.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_UNAVAILABLE.
  *
  *  @thread_safety This function may be called from any thread.  Access is not
  *  synchronized.
@@ -202,15 +202,15 @@ GLFWAPI struct wl_display* glfwGetWaylandDisplay(void);
  *
  *  @ingroup native
  */
-GLFWAPI struct wl_output* glfwGetWaylandMonitor(GLFWmonitor* monitor);
+PLFWAPI struct wl_output* plfwGetWaylandMonitor(PLFWmonitor* monitor);
 
 /*! @brief Returns the main `struct wl_surface*` of the specified window.
  *
  *  @return The main `struct wl_surface*` of the specified window, or `NULL` if
  *  an [error](@ref error_handling) occurred.
  *
- *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
- *  GLFW_PLATFORM_UNAVAILABLE.
+ *  @errors Possible errors include @ref PLFW_NOT_INITIALIZED and @ref
+ *  PLFW_PLATFORM_UNAVAILABLE.
  *
  *  @thread_safety This function may be called from any thread.  Access is not
  *  synchronized.
@@ -219,12 +219,12 @@ GLFWAPI struct wl_output* glfwGetWaylandMonitor(GLFWmonitor* monitor);
  *
  *  @ingroup native
  */
-GLFWAPI struct wl_surface* glfwGetWaylandWindow(GLFWwindow* window);
+PLFWAPI struct wl_surface* plfwGetWaylandWindow(PLFWwindow* window);
 #endif
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _glfw3_native_h_ */
+#endif /* _plfw3_native_h_ */
 

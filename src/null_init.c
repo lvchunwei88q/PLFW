@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.5 - www.glfw.org
+// PLFW 3.5 - windowing-only fork of GLFW (www.glfw.org)
 //------------------------------------------------------------------------
 // Copyright (c) 2016 Google Inc.
 // Copyright (c) 2016-2017 Camilla Löwy <elmindreda@glfw.org>
@@ -32,226 +32,226 @@
 
 
 //////////////////////////////////////////////////////////////////////////
-//////                       GLFW platform API                      //////
+//////                       PLFW platform API                      //////
 //////////////////////////////////////////////////////////////////////////
 
-GLFWbool _glfwConnectNull(int platformID, _GLFWplatform* platform)
+PLFWbool _plfwConnectNull(int platformID, _PLFWplatform* platform)
 {
-    const _GLFWplatform null =
+    const _PLFWplatform null =
     {
-        .platformID = GLFW_PLATFORM_NULL,
-        .init = _glfwInitNull,
-        .terminate = _glfwTerminateNull,
-        .getCursorPos = _glfwGetCursorPosNull,
-        .setCursorPos = _glfwSetCursorPosNull,
-        .setCursorMode = _glfwSetCursorModeNull,
-        .setRawMouseMotion = _glfwSetRawMouseMotionNull,
-        .rawMouseMotionSupported = _glfwRawMouseMotionSupportedNull,
-        .createCursor = _glfwCreateCursorNull,
-        .createStandardCursor = _glfwCreateStandardCursorNull,
-        .destroyCursor = _glfwDestroyCursorNull,
-        .setCursor = _glfwSetCursorNull,
-        .getScancodeName = _glfwGetScancodeNameNull,
-        .getKeyScancode = _glfwGetKeyScancodeNull,
-        .setClipboardString = _glfwSetClipboardStringNull,
-        .getClipboardString = _glfwGetClipboardStringNull,
-        .initJoysticks = _glfwInitJoysticksNull,
-        .terminateJoysticks = _glfwTerminateJoysticksNull,
-        .pollJoystick = _glfwPollJoystickNull,
-        .getMappingName = _glfwGetMappingNameNull,
-        .updateGamepadGUID = _glfwUpdateGamepadGUIDNull,
-        .freeMonitor = _glfwFreeMonitorNull,
-        .getMonitorPos = _glfwGetMonitorPosNull,
-        .getMonitorContentScale = _glfwGetMonitorContentScaleNull,
-        .getMonitorWorkarea = _glfwGetMonitorWorkareaNull,
-        .getVideoModes = _glfwGetVideoModesNull,
-        .getVideoMode = _glfwGetVideoModeNull,
-        .getGammaRamp = _glfwGetGammaRampNull,
-        .setGammaRamp = _glfwSetGammaRampNull,
-        .createWindow = _glfwCreateWindowNull,
-        .destroyWindow = _glfwDestroyWindowNull,
-        .setWindowTitle = _glfwSetWindowTitleNull,
-        .setWindowIcon = _glfwSetWindowIconNull,
-        .getWindowPos = _glfwGetWindowPosNull,
-        .setWindowPos = _glfwSetWindowPosNull,
-        .getWindowSize = _glfwGetWindowSizeNull,
-        .setWindowSize = _glfwSetWindowSizeNull,
-        .setWindowSizeLimits = _glfwSetWindowSizeLimitsNull,
-        .setWindowAspectRatio = _glfwSetWindowAspectRatioNull,
-        .getFramebufferSize = _glfwGetFramebufferSizeNull,
-        .getWindowFrameSize = _glfwGetWindowFrameSizeNull,
-        .getWindowContentScale = _glfwGetWindowContentScaleNull,
-        .iconifyWindow = _glfwIconifyWindowNull,
-        .restoreWindow = _glfwRestoreWindowNull,
-        .maximizeWindow = _glfwMaximizeWindowNull,
-        .showWindow = _glfwShowWindowNull,
-        .hideWindow = _glfwHideWindowNull,
-        .requestWindowAttention = _glfwRequestWindowAttentionNull,
-        .focusWindow = _glfwFocusWindowNull,
-        .setWindowMonitor = _glfwSetWindowMonitorNull,
-        .windowFocused = _glfwWindowFocusedNull,
-        .windowIconified = _glfwWindowIconifiedNull,
-        .windowVisible = _glfwWindowVisibleNull,
-        .windowMaximized = _glfwWindowMaximizedNull,
-        .windowHovered = _glfwWindowHoveredNull,
-        .framebufferTransparent = _glfwFramebufferTransparentNull,
-        .getWindowOpacity = _glfwGetWindowOpacityNull,
-        .setWindowResizable = _glfwSetWindowResizableNull,
-        .setWindowDecorated = _glfwSetWindowDecoratedNull,
-        .setWindowFloating = _glfwSetWindowFloatingNull,
-        .setWindowOpacity = _glfwSetWindowOpacityNull,
-        .setWindowMousePassthrough = _glfwSetWindowMousePassthroughNull,
-        .pollEvents = _glfwPollEventsNull,
-        .waitEvents = _glfwWaitEventsNull,
-        .waitEventsTimeout = _glfwWaitEventsTimeoutNull,
-        .postEmptyEvent = _glfwPostEmptyEventNull
+        .platformID = PLFW_PLATFORM_NULL,
+        .init = _plfwInitNull,
+        .terminate = _plfwTerminateNull,
+        .getCursorPos = _plfwGetCursorPosNull,
+        .setCursorPos = _plfwSetCursorPosNull,
+        .setCursorMode = _plfwSetCursorModeNull,
+        .setRawMouseMotion = _plfwSetRawMouseMotionNull,
+        .rawMouseMotionSupported = _plfwRawMouseMotionSupportedNull,
+        .createCursor = _plfwCreateCursorNull,
+        .createStandardCursor = _plfwCreateStandardCursorNull,
+        .destroyCursor = _plfwDestroyCursorNull,
+        .setCursor = _plfwSetCursorNull,
+        .getScancodeName = _plfwGetScancodeNameNull,
+        .getKeyScancode = _plfwGetKeyScancodeNull,
+        .setClipboardString = _plfwSetClipboardStringNull,
+        .getClipboardString = _plfwGetClipboardStringNull,
+        .initJoysticks = _plfwInitJoysticksNull,
+        .terminateJoysticks = _plfwTerminateJoysticksNull,
+        .pollJoystick = _plfwPollJoystickNull,
+        .getMappingName = _plfwGetMappingNameNull,
+        .updateGamepadGUID = _plfwUpdateGamepadGUIDNull,
+        .freeMonitor = _plfwFreeMonitorNull,
+        .getMonitorPos = _plfwGetMonitorPosNull,
+        .getMonitorContentScale = _plfwGetMonitorContentScaleNull,
+        .getMonitorWorkarea = _plfwGetMonitorWorkareaNull,
+        .getVideoModes = _plfwGetVideoModesNull,
+        .getVideoMode = _plfwGetVideoModeNull,
+        .getGammaRamp = _plfwGetGammaRampNull,
+        .setGammaRamp = _plfwSetGammaRampNull,
+        .createWindow = _plfwCreateWindowNull,
+        .destroyWindow = _plfwDestroyWindowNull,
+        .setWindowTitle = _plfwSetWindowTitleNull,
+        .setWindowIcon = _plfwSetWindowIconNull,
+        .getWindowPos = _plfwGetWindowPosNull,
+        .setWindowPos = _plfwSetWindowPosNull,
+        .getWindowSize = _plfwGetWindowSizeNull,
+        .setWindowSize = _plfwSetWindowSizeNull,
+        .setWindowSizeLimits = _plfwSetWindowSizeLimitsNull,
+        .setWindowAspectRatio = _plfwSetWindowAspectRatioNull,
+        .getFramebufferSize = _plfwGetFramebufferSizeNull,
+        .getWindowFrameSize = _plfwGetWindowFrameSizeNull,
+        .getWindowContentScale = _plfwGetWindowContentScaleNull,
+        .iconifyWindow = _plfwIconifyWindowNull,
+        .restoreWindow = _plfwRestoreWindowNull,
+        .maximizeWindow = _plfwMaximizeWindowNull,
+        .showWindow = _plfwShowWindowNull,
+        .hideWindow = _plfwHideWindowNull,
+        .requestWindowAttention = _plfwRequestWindowAttentionNull,
+        .focusWindow = _plfwFocusWindowNull,
+        .setWindowMonitor = _plfwSetWindowMonitorNull,
+        .windowFocused = _plfwWindowFocusedNull,
+        .windowIconified = _plfwWindowIconifiedNull,
+        .windowVisible = _plfwWindowVisibleNull,
+        .windowMaximized = _plfwWindowMaximizedNull,
+        .windowHovered = _plfwWindowHoveredNull,
+        .framebufferTransparent = _plfwFramebufferTransparentNull,
+        .getWindowOpacity = _plfwGetWindowOpacityNull,
+        .setWindowResizable = _plfwSetWindowResizableNull,
+        .setWindowDecorated = _plfwSetWindowDecoratedNull,
+        .setWindowFloating = _plfwSetWindowFloatingNull,
+        .setWindowOpacity = _plfwSetWindowOpacityNull,
+        .setWindowMousePassthrough = _plfwSetWindowMousePassthroughNull,
+        .pollEvents = _plfwPollEventsNull,
+        .waitEvents = _plfwWaitEventsNull,
+        .waitEventsTimeout = _plfwWaitEventsTimeoutNull,
+        .postEmptyEvent = _plfwPostEmptyEventNull
     };
 
     *platform = null;
-    return GLFW_TRUE;
+    return PLFW_TRUE;
 }
 
-int _glfwInitNull(void)
+int _plfwInitNull(void)
 {
     int scancode;
 
-    memset(_glfw.null.keycodes, -1, sizeof(_glfw.null.keycodes));
-    memset(_glfw.null.scancodes, -1, sizeof(_glfw.null.scancodes));
+    memset(_plfw.null.keycodes, -1, sizeof(_plfw.null.keycodes));
+    memset(_plfw.null.scancodes, -1, sizeof(_plfw.null.scancodes));
 
-    _glfw.null.keycodes[GLFW_NULL_SC_SPACE]         = GLFW_KEY_SPACE;
-    _glfw.null.keycodes[GLFW_NULL_SC_APOSTROPHE]    = GLFW_KEY_APOSTROPHE;
-    _glfw.null.keycodes[GLFW_NULL_SC_COMMA]         = GLFW_KEY_COMMA;
-    _glfw.null.keycodes[GLFW_NULL_SC_MINUS]         = GLFW_KEY_MINUS;
-    _glfw.null.keycodes[GLFW_NULL_SC_PERIOD]        = GLFW_KEY_PERIOD;
-    _glfw.null.keycodes[GLFW_NULL_SC_SLASH]         = GLFW_KEY_SLASH;
-    _glfw.null.keycodes[GLFW_NULL_SC_0]             = GLFW_KEY_0;
-    _glfw.null.keycodes[GLFW_NULL_SC_1]             = GLFW_KEY_1;
-    _glfw.null.keycodes[GLFW_NULL_SC_2]             = GLFW_KEY_2;
-    _glfw.null.keycodes[GLFW_NULL_SC_3]             = GLFW_KEY_3;
-    _glfw.null.keycodes[GLFW_NULL_SC_4]             = GLFW_KEY_4;
-    _glfw.null.keycodes[GLFW_NULL_SC_5]             = GLFW_KEY_5;
-    _glfw.null.keycodes[GLFW_NULL_SC_6]             = GLFW_KEY_6;
-    _glfw.null.keycodes[GLFW_NULL_SC_7]             = GLFW_KEY_7;
-    _glfw.null.keycodes[GLFW_NULL_SC_8]             = GLFW_KEY_8;
-    _glfw.null.keycodes[GLFW_NULL_SC_9]             = GLFW_KEY_9;
-    _glfw.null.keycodes[GLFW_NULL_SC_SEMICOLON]     = GLFW_KEY_SEMICOLON;
-    _glfw.null.keycodes[GLFW_NULL_SC_EQUAL]         = GLFW_KEY_EQUAL;
-    _glfw.null.keycodes[GLFW_NULL_SC_A]             = GLFW_KEY_A;
-    _glfw.null.keycodes[GLFW_NULL_SC_B]             = GLFW_KEY_B;
-    _glfw.null.keycodes[GLFW_NULL_SC_C]             = GLFW_KEY_C;
-    _glfw.null.keycodes[GLFW_NULL_SC_D]             = GLFW_KEY_D;
-    _glfw.null.keycodes[GLFW_NULL_SC_E]             = GLFW_KEY_E;
-    _glfw.null.keycodes[GLFW_NULL_SC_F]             = GLFW_KEY_F;
-    _glfw.null.keycodes[GLFW_NULL_SC_G]             = GLFW_KEY_G;
-    _glfw.null.keycodes[GLFW_NULL_SC_H]             = GLFW_KEY_H;
-    _glfw.null.keycodes[GLFW_NULL_SC_I]             = GLFW_KEY_I;
-    _glfw.null.keycodes[GLFW_NULL_SC_J]             = GLFW_KEY_J;
-    _glfw.null.keycodes[GLFW_NULL_SC_K]             = GLFW_KEY_K;
-    _glfw.null.keycodes[GLFW_NULL_SC_L]             = GLFW_KEY_L;
-    _glfw.null.keycodes[GLFW_NULL_SC_M]             = GLFW_KEY_M;
-    _glfw.null.keycodes[GLFW_NULL_SC_N]             = GLFW_KEY_N;
-    _glfw.null.keycodes[GLFW_NULL_SC_O]             = GLFW_KEY_O;
-    _glfw.null.keycodes[GLFW_NULL_SC_P]             = GLFW_KEY_P;
-    _glfw.null.keycodes[GLFW_NULL_SC_Q]             = GLFW_KEY_Q;
-    _glfw.null.keycodes[GLFW_NULL_SC_R]             = GLFW_KEY_R;
-    _glfw.null.keycodes[GLFW_NULL_SC_S]             = GLFW_KEY_S;
-    _glfw.null.keycodes[GLFW_NULL_SC_T]             = GLFW_KEY_T;
-    _glfw.null.keycodes[GLFW_NULL_SC_U]             = GLFW_KEY_U;
-    _glfw.null.keycodes[GLFW_NULL_SC_V]             = GLFW_KEY_V;
-    _glfw.null.keycodes[GLFW_NULL_SC_W]             = GLFW_KEY_W;
-    _glfw.null.keycodes[GLFW_NULL_SC_X]             = GLFW_KEY_X;
-    _glfw.null.keycodes[GLFW_NULL_SC_Y]             = GLFW_KEY_Y;
-    _glfw.null.keycodes[GLFW_NULL_SC_Z]             = GLFW_KEY_Z;
-    _glfw.null.keycodes[GLFW_NULL_SC_LEFT_BRACKET]  = GLFW_KEY_LEFT_BRACKET;
-    _glfw.null.keycodes[GLFW_NULL_SC_BACKSLASH]     = GLFW_KEY_BACKSLASH;
-    _glfw.null.keycodes[GLFW_NULL_SC_RIGHT_BRACKET] = GLFW_KEY_RIGHT_BRACKET;
-    _glfw.null.keycodes[GLFW_NULL_SC_GRAVE_ACCENT]  = GLFW_KEY_GRAVE_ACCENT;
-    _glfw.null.keycodes[GLFW_NULL_SC_WORLD_1]       = GLFW_KEY_WORLD_1;
-    _glfw.null.keycodes[GLFW_NULL_SC_WORLD_2]       = GLFW_KEY_WORLD_2;
-    _glfw.null.keycodes[GLFW_NULL_SC_ESCAPE]        = GLFW_KEY_ESCAPE;
-    _glfw.null.keycodes[GLFW_NULL_SC_ENTER]         = GLFW_KEY_ENTER;
-    _glfw.null.keycodes[GLFW_NULL_SC_TAB]           = GLFW_KEY_TAB;
-    _glfw.null.keycodes[GLFW_NULL_SC_BACKSPACE]     = GLFW_KEY_BACKSPACE;
-    _glfw.null.keycodes[GLFW_NULL_SC_INSERT]        = GLFW_KEY_INSERT;
-    _glfw.null.keycodes[GLFW_NULL_SC_DELETE]        = GLFW_KEY_DELETE;
-    _glfw.null.keycodes[GLFW_NULL_SC_RIGHT]         = GLFW_KEY_RIGHT;
-    _glfw.null.keycodes[GLFW_NULL_SC_LEFT]          = GLFW_KEY_LEFT;
-    _glfw.null.keycodes[GLFW_NULL_SC_DOWN]          = GLFW_KEY_DOWN;
-    _glfw.null.keycodes[GLFW_NULL_SC_UP]            = GLFW_KEY_UP;
-    _glfw.null.keycodes[GLFW_NULL_SC_PAGE_UP]       = GLFW_KEY_PAGE_UP;
-    _glfw.null.keycodes[GLFW_NULL_SC_PAGE_DOWN]     = GLFW_KEY_PAGE_DOWN;
-    _glfw.null.keycodes[GLFW_NULL_SC_HOME]          = GLFW_KEY_HOME;
-    _glfw.null.keycodes[GLFW_NULL_SC_END]           = GLFW_KEY_END;
-    _glfw.null.keycodes[GLFW_NULL_SC_CAPS_LOCK]     = GLFW_KEY_CAPS_LOCK;
-    _glfw.null.keycodes[GLFW_NULL_SC_SCROLL_LOCK]   = GLFW_KEY_SCROLL_LOCK;
-    _glfw.null.keycodes[GLFW_NULL_SC_NUM_LOCK]      = GLFW_KEY_NUM_LOCK;
-    _glfw.null.keycodes[GLFW_NULL_SC_PRINT_SCREEN]  = GLFW_KEY_PRINT_SCREEN;
-    _glfw.null.keycodes[GLFW_NULL_SC_PAUSE]         = GLFW_KEY_PAUSE;
-    _glfw.null.keycodes[GLFW_NULL_SC_F1]            = GLFW_KEY_F1;
-    _glfw.null.keycodes[GLFW_NULL_SC_F2]            = GLFW_KEY_F2;
-    _glfw.null.keycodes[GLFW_NULL_SC_F3]            = GLFW_KEY_F3;
-    _glfw.null.keycodes[GLFW_NULL_SC_F4]            = GLFW_KEY_F4;
-    _glfw.null.keycodes[GLFW_NULL_SC_F5]            = GLFW_KEY_F5;
-    _glfw.null.keycodes[GLFW_NULL_SC_F6]            = GLFW_KEY_F6;
-    _glfw.null.keycodes[GLFW_NULL_SC_F7]            = GLFW_KEY_F7;
-    _glfw.null.keycodes[GLFW_NULL_SC_F8]            = GLFW_KEY_F8;
-    _glfw.null.keycodes[GLFW_NULL_SC_F9]            = GLFW_KEY_F9;
-    _glfw.null.keycodes[GLFW_NULL_SC_F10]           = GLFW_KEY_F10;
-    _glfw.null.keycodes[GLFW_NULL_SC_F11]           = GLFW_KEY_F11;
-    _glfw.null.keycodes[GLFW_NULL_SC_F12]           = GLFW_KEY_F12;
-    _glfw.null.keycodes[GLFW_NULL_SC_F13]           = GLFW_KEY_F13;
-    _glfw.null.keycodes[GLFW_NULL_SC_F14]           = GLFW_KEY_F14;
-    _glfw.null.keycodes[GLFW_NULL_SC_F15]           = GLFW_KEY_F15;
-    _glfw.null.keycodes[GLFW_NULL_SC_F16]           = GLFW_KEY_F16;
-    _glfw.null.keycodes[GLFW_NULL_SC_F17]           = GLFW_KEY_F17;
-    _glfw.null.keycodes[GLFW_NULL_SC_F18]           = GLFW_KEY_F18;
-    _glfw.null.keycodes[GLFW_NULL_SC_F19]           = GLFW_KEY_F19;
-    _glfw.null.keycodes[GLFW_NULL_SC_F20]           = GLFW_KEY_F20;
-    _glfw.null.keycodes[GLFW_NULL_SC_F21]           = GLFW_KEY_F21;
-    _glfw.null.keycodes[GLFW_NULL_SC_F22]           = GLFW_KEY_F22;
-    _glfw.null.keycodes[GLFW_NULL_SC_F23]           = GLFW_KEY_F23;
-    _glfw.null.keycodes[GLFW_NULL_SC_F24]           = GLFW_KEY_F24;
-    _glfw.null.keycodes[GLFW_NULL_SC_F25]           = GLFW_KEY_F25;
-    _glfw.null.keycodes[GLFW_NULL_SC_KP_0]          = GLFW_KEY_KP_0;
-    _glfw.null.keycodes[GLFW_NULL_SC_KP_1]          = GLFW_KEY_KP_1;
-    _glfw.null.keycodes[GLFW_NULL_SC_KP_2]          = GLFW_KEY_KP_2;
-    _glfw.null.keycodes[GLFW_NULL_SC_KP_3]          = GLFW_KEY_KP_3;
-    _glfw.null.keycodes[GLFW_NULL_SC_KP_4]          = GLFW_KEY_KP_4;
-    _glfw.null.keycodes[GLFW_NULL_SC_KP_5]          = GLFW_KEY_KP_5;
-    _glfw.null.keycodes[GLFW_NULL_SC_KP_6]          = GLFW_KEY_KP_6;
-    _glfw.null.keycodes[GLFW_NULL_SC_KP_7]          = GLFW_KEY_KP_7;
-    _glfw.null.keycodes[GLFW_NULL_SC_KP_8]          = GLFW_KEY_KP_8;
-    _glfw.null.keycodes[GLFW_NULL_SC_KP_9]          = GLFW_KEY_KP_9;
-    _glfw.null.keycodes[GLFW_NULL_SC_KP_DECIMAL]    = GLFW_KEY_KP_DECIMAL;
-    _glfw.null.keycodes[GLFW_NULL_SC_KP_DIVIDE]     = GLFW_KEY_KP_DIVIDE;
-    _glfw.null.keycodes[GLFW_NULL_SC_KP_MULTIPLY]   = GLFW_KEY_KP_MULTIPLY;
-    _glfw.null.keycodes[GLFW_NULL_SC_KP_SUBTRACT]   = GLFW_KEY_KP_SUBTRACT;
-    _glfw.null.keycodes[GLFW_NULL_SC_KP_ADD]        = GLFW_KEY_KP_ADD;
-    _glfw.null.keycodes[GLFW_NULL_SC_KP_ENTER]      = GLFW_KEY_KP_ENTER;
-    _glfw.null.keycodes[GLFW_NULL_SC_KP_EQUAL]      = GLFW_KEY_KP_EQUAL;
-    _glfw.null.keycodes[GLFW_NULL_SC_LEFT_SHIFT]    = GLFW_KEY_LEFT_SHIFT;
-    _glfw.null.keycodes[GLFW_NULL_SC_LEFT_CONTROL]  = GLFW_KEY_LEFT_CONTROL;
-    _glfw.null.keycodes[GLFW_NULL_SC_LEFT_ALT]      = GLFW_KEY_LEFT_ALT;
-    _glfw.null.keycodes[GLFW_NULL_SC_LEFT_SUPER]    = GLFW_KEY_LEFT_SUPER;
-    _glfw.null.keycodes[GLFW_NULL_SC_RIGHT_SHIFT]   = GLFW_KEY_RIGHT_SHIFT;
-    _glfw.null.keycodes[GLFW_NULL_SC_RIGHT_CONTROL] = GLFW_KEY_RIGHT_CONTROL;
-    _glfw.null.keycodes[GLFW_NULL_SC_RIGHT_ALT]     = GLFW_KEY_RIGHT_ALT;
-    _glfw.null.keycodes[GLFW_NULL_SC_RIGHT_SUPER]   = GLFW_KEY_RIGHT_SUPER;
-    _glfw.null.keycodes[GLFW_NULL_SC_MENU]          = GLFW_KEY_MENU;
+    _plfw.null.keycodes[PLFW_NULL_SC_SPACE]         = PLFW_KEY_SPACE;
+    _plfw.null.keycodes[PLFW_NULL_SC_APOSTROPHE]    = PLFW_KEY_APOSTROPHE;
+    _plfw.null.keycodes[PLFW_NULL_SC_COMMA]         = PLFW_KEY_COMMA;
+    _plfw.null.keycodes[PLFW_NULL_SC_MINUS]         = PLFW_KEY_MINUS;
+    _plfw.null.keycodes[PLFW_NULL_SC_PERIOD]        = PLFW_KEY_PERIOD;
+    _plfw.null.keycodes[PLFW_NULL_SC_SLASH]         = PLFW_KEY_SLASH;
+    _plfw.null.keycodes[PLFW_NULL_SC_0]             = PLFW_KEY_0;
+    _plfw.null.keycodes[PLFW_NULL_SC_1]             = PLFW_KEY_1;
+    _plfw.null.keycodes[PLFW_NULL_SC_2]             = PLFW_KEY_2;
+    _plfw.null.keycodes[PLFW_NULL_SC_3]             = PLFW_KEY_3;
+    _plfw.null.keycodes[PLFW_NULL_SC_4]             = PLFW_KEY_4;
+    _plfw.null.keycodes[PLFW_NULL_SC_5]             = PLFW_KEY_5;
+    _plfw.null.keycodes[PLFW_NULL_SC_6]             = PLFW_KEY_6;
+    _plfw.null.keycodes[PLFW_NULL_SC_7]             = PLFW_KEY_7;
+    _plfw.null.keycodes[PLFW_NULL_SC_8]             = PLFW_KEY_8;
+    _plfw.null.keycodes[PLFW_NULL_SC_9]             = PLFW_KEY_9;
+    _plfw.null.keycodes[PLFW_NULL_SC_SEMICOLON]     = PLFW_KEY_SEMICOLON;
+    _plfw.null.keycodes[PLFW_NULL_SC_EQUAL]         = PLFW_KEY_EQUAL;
+    _plfw.null.keycodes[PLFW_NULL_SC_A]             = PLFW_KEY_A;
+    _plfw.null.keycodes[PLFW_NULL_SC_B]             = PLFW_KEY_B;
+    _plfw.null.keycodes[PLFW_NULL_SC_C]             = PLFW_KEY_C;
+    _plfw.null.keycodes[PLFW_NULL_SC_D]             = PLFW_KEY_D;
+    _plfw.null.keycodes[PLFW_NULL_SC_E]             = PLFW_KEY_E;
+    _plfw.null.keycodes[PLFW_NULL_SC_F]             = PLFW_KEY_F;
+    _plfw.null.keycodes[PLFW_NULL_SC_G]             = PLFW_KEY_G;
+    _plfw.null.keycodes[PLFW_NULL_SC_H]             = PLFW_KEY_H;
+    _plfw.null.keycodes[PLFW_NULL_SC_I]             = PLFW_KEY_I;
+    _plfw.null.keycodes[PLFW_NULL_SC_J]             = PLFW_KEY_J;
+    _plfw.null.keycodes[PLFW_NULL_SC_K]             = PLFW_KEY_K;
+    _plfw.null.keycodes[PLFW_NULL_SC_L]             = PLFW_KEY_L;
+    _plfw.null.keycodes[PLFW_NULL_SC_M]             = PLFW_KEY_M;
+    _plfw.null.keycodes[PLFW_NULL_SC_N]             = PLFW_KEY_N;
+    _plfw.null.keycodes[PLFW_NULL_SC_O]             = PLFW_KEY_O;
+    _plfw.null.keycodes[PLFW_NULL_SC_P]             = PLFW_KEY_P;
+    _plfw.null.keycodes[PLFW_NULL_SC_Q]             = PLFW_KEY_Q;
+    _plfw.null.keycodes[PLFW_NULL_SC_R]             = PLFW_KEY_R;
+    _plfw.null.keycodes[PLFW_NULL_SC_S]             = PLFW_KEY_S;
+    _plfw.null.keycodes[PLFW_NULL_SC_T]             = PLFW_KEY_T;
+    _plfw.null.keycodes[PLFW_NULL_SC_U]             = PLFW_KEY_U;
+    _plfw.null.keycodes[PLFW_NULL_SC_V]             = PLFW_KEY_V;
+    _plfw.null.keycodes[PLFW_NULL_SC_W]             = PLFW_KEY_W;
+    _plfw.null.keycodes[PLFW_NULL_SC_X]             = PLFW_KEY_X;
+    _plfw.null.keycodes[PLFW_NULL_SC_Y]             = PLFW_KEY_Y;
+    _plfw.null.keycodes[PLFW_NULL_SC_Z]             = PLFW_KEY_Z;
+    _plfw.null.keycodes[PLFW_NULL_SC_LEFT_BRACKET]  = PLFW_KEY_LEFT_BRACKET;
+    _plfw.null.keycodes[PLFW_NULL_SC_BACKSLASH]     = PLFW_KEY_BACKSLASH;
+    _plfw.null.keycodes[PLFW_NULL_SC_RIGHT_BRACKET] = PLFW_KEY_RIGHT_BRACKET;
+    _plfw.null.keycodes[PLFW_NULL_SC_GRAVE_ACCENT]  = PLFW_KEY_GRAVE_ACCENT;
+    _plfw.null.keycodes[PLFW_NULL_SC_WORLD_1]       = PLFW_KEY_WORLD_1;
+    _plfw.null.keycodes[PLFW_NULL_SC_WORLD_2]       = PLFW_KEY_WORLD_2;
+    _plfw.null.keycodes[PLFW_NULL_SC_ESCAPE]        = PLFW_KEY_ESCAPE;
+    _plfw.null.keycodes[PLFW_NULL_SC_ENTER]         = PLFW_KEY_ENTER;
+    _plfw.null.keycodes[PLFW_NULL_SC_TAB]           = PLFW_KEY_TAB;
+    _plfw.null.keycodes[PLFW_NULL_SC_BACKSPACE]     = PLFW_KEY_BACKSPACE;
+    _plfw.null.keycodes[PLFW_NULL_SC_INSERT]        = PLFW_KEY_INSERT;
+    _plfw.null.keycodes[PLFW_NULL_SC_DELETE]        = PLFW_KEY_DELETE;
+    _plfw.null.keycodes[PLFW_NULL_SC_RIGHT]         = PLFW_KEY_RIGHT;
+    _plfw.null.keycodes[PLFW_NULL_SC_LEFT]          = PLFW_KEY_LEFT;
+    _plfw.null.keycodes[PLFW_NULL_SC_DOWN]          = PLFW_KEY_DOWN;
+    _plfw.null.keycodes[PLFW_NULL_SC_UP]            = PLFW_KEY_UP;
+    _plfw.null.keycodes[PLFW_NULL_SC_PAGE_UP]       = PLFW_KEY_PAGE_UP;
+    _plfw.null.keycodes[PLFW_NULL_SC_PAGE_DOWN]     = PLFW_KEY_PAGE_DOWN;
+    _plfw.null.keycodes[PLFW_NULL_SC_HOME]          = PLFW_KEY_HOME;
+    _plfw.null.keycodes[PLFW_NULL_SC_END]           = PLFW_KEY_END;
+    _plfw.null.keycodes[PLFW_NULL_SC_CAPS_LOCK]     = PLFW_KEY_CAPS_LOCK;
+    _plfw.null.keycodes[PLFW_NULL_SC_SCROLL_LOCK]   = PLFW_KEY_SCROLL_LOCK;
+    _plfw.null.keycodes[PLFW_NULL_SC_NUM_LOCK]      = PLFW_KEY_NUM_LOCK;
+    _plfw.null.keycodes[PLFW_NULL_SC_PRINT_SCREEN]  = PLFW_KEY_PRINT_SCREEN;
+    _plfw.null.keycodes[PLFW_NULL_SC_PAUSE]         = PLFW_KEY_PAUSE;
+    _plfw.null.keycodes[PLFW_NULL_SC_F1]            = PLFW_KEY_F1;
+    _plfw.null.keycodes[PLFW_NULL_SC_F2]            = PLFW_KEY_F2;
+    _plfw.null.keycodes[PLFW_NULL_SC_F3]            = PLFW_KEY_F3;
+    _plfw.null.keycodes[PLFW_NULL_SC_F4]            = PLFW_KEY_F4;
+    _plfw.null.keycodes[PLFW_NULL_SC_F5]            = PLFW_KEY_F5;
+    _plfw.null.keycodes[PLFW_NULL_SC_F6]            = PLFW_KEY_F6;
+    _plfw.null.keycodes[PLFW_NULL_SC_F7]            = PLFW_KEY_F7;
+    _plfw.null.keycodes[PLFW_NULL_SC_F8]            = PLFW_KEY_F8;
+    _plfw.null.keycodes[PLFW_NULL_SC_F9]            = PLFW_KEY_F9;
+    _plfw.null.keycodes[PLFW_NULL_SC_F10]           = PLFW_KEY_F10;
+    _plfw.null.keycodes[PLFW_NULL_SC_F11]           = PLFW_KEY_F11;
+    _plfw.null.keycodes[PLFW_NULL_SC_F12]           = PLFW_KEY_F12;
+    _plfw.null.keycodes[PLFW_NULL_SC_F13]           = PLFW_KEY_F13;
+    _plfw.null.keycodes[PLFW_NULL_SC_F14]           = PLFW_KEY_F14;
+    _plfw.null.keycodes[PLFW_NULL_SC_F15]           = PLFW_KEY_F15;
+    _plfw.null.keycodes[PLFW_NULL_SC_F16]           = PLFW_KEY_F16;
+    _plfw.null.keycodes[PLFW_NULL_SC_F17]           = PLFW_KEY_F17;
+    _plfw.null.keycodes[PLFW_NULL_SC_F18]           = PLFW_KEY_F18;
+    _plfw.null.keycodes[PLFW_NULL_SC_F19]           = PLFW_KEY_F19;
+    _plfw.null.keycodes[PLFW_NULL_SC_F20]           = PLFW_KEY_F20;
+    _plfw.null.keycodes[PLFW_NULL_SC_F21]           = PLFW_KEY_F21;
+    _plfw.null.keycodes[PLFW_NULL_SC_F22]           = PLFW_KEY_F22;
+    _plfw.null.keycodes[PLFW_NULL_SC_F23]           = PLFW_KEY_F23;
+    _plfw.null.keycodes[PLFW_NULL_SC_F24]           = PLFW_KEY_F24;
+    _plfw.null.keycodes[PLFW_NULL_SC_F25]           = PLFW_KEY_F25;
+    _plfw.null.keycodes[PLFW_NULL_SC_KP_0]          = PLFW_KEY_KP_0;
+    _plfw.null.keycodes[PLFW_NULL_SC_KP_1]          = PLFW_KEY_KP_1;
+    _plfw.null.keycodes[PLFW_NULL_SC_KP_2]          = PLFW_KEY_KP_2;
+    _plfw.null.keycodes[PLFW_NULL_SC_KP_3]          = PLFW_KEY_KP_3;
+    _plfw.null.keycodes[PLFW_NULL_SC_KP_4]          = PLFW_KEY_KP_4;
+    _plfw.null.keycodes[PLFW_NULL_SC_KP_5]          = PLFW_KEY_KP_5;
+    _plfw.null.keycodes[PLFW_NULL_SC_KP_6]          = PLFW_KEY_KP_6;
+    _plfw.null.keycodes[PLFW_NULL_SC_KP_7]          = PLFW_KEY_KP_7;
+    _plfw.null.keycodes[PLFW_NULL_SC_KP_8]          = PLFW_KEY_KP_8;
+    _plfw.null.keycodes[PLFW_NULL_SC_KP_9]          = PLFW_KEY_KP_9;
+    _plfw.null.keycodes[PLFW_NULL_SC_KP_DECIMAL]    = PLFW_KEY_KP_DECIMAL;
+    _plfw.null.keycodes[PLFW_NULL_SC_KP_DIVIDE]     = PLFW_KEY_KP_DIVIDE;
+    _plfw.null.keycodes[PLFW_NULL_SC_KP_MULTIPLY]   = PLFW_KEY_KP_MULTIPLY;
+    _plfw.null.keycodes[PLFW_NULL_SC_KP_SUBTRACT]   = PLFW_KEY_KP_SUBTRACT;
+    _plfw.null.keycodes[PLFW_NULL_SC_KP_ADD]        = PLFW_KEY_KP_ADD;
+    _plfw.null.keycodes[PLFW_NULL_SC_KP_ENTER]      = PLFW_KEY_KP_ENTER;
+    _plfw.null.keycodes[PLFW_NULL_SC_KP_EQUAL]      = PLFW_KEY_KP_EQUAL;
+    _plfw.null.keycodes[PLFW_NULL_SC_LEFT_SHIFT]    = PLFW_KEY_LEFT_SHIFT;
+    _plfw.null.keycodes[PLFW_NULL_SC_LEFT_CONTROL]  = PLFW_KEY_LEFT_CONTROL;
+    _plfw.null.keycodes[PLFW_NULL_SC_LEFT_ALT]      = PLFW_KEY_LEFT_ALT;
+    _plfw.null.keycodes[PLFW_NULL_SC_LEFT_SUPER]    = PLFW_KEY_LEFT_SUPER;
+    _plfw.null.keycodes[PLFW_NULL_SC_RIGHT_SHIFT]   = PLFW_KEY_RIGHT_SHIFT;
+    _plfw.null.keycodes[PLFW_NULL_SC_RIGHT_CONTROL] = PLFW_KEY_RIGHT_CONTROL;
+    _plfw.null.keycodes[PLFW_NULL_SC_RIGHT_ALT]     = PLFW_KEY_RIGHT_ALT;
+    _plfw.null.keycodes[PLFW_NULL_SC_RIGHT_SUPER]   = PLFW_KEY_RIGHT_SUPER;
+    _plfw.null.keycodes[PLFW_NULL_SC_MENU]          = PLFW_KEY_MENU;
 
-    for (scancode = GLFW_NULL_SC_FIRST;  scancode < GLFW_NULL_SC_LAST;  scancode++)
+    for (scancode = PLFW_NULL_SC_FIRST;  scancode < PLFW_NULL_SC_LAST;  scancode++)
     {
-        if (_glfw.null.keycodes[scancode] > 0)
-            _glfw.null.scancodes[_glfw.null.keycodes[scancode]] = scancode;
+        if (_plfw.null.keycodes[scancode] > 0)
+            _plfw.null.scancodes[_plfw.null.keycodes[scancode]] = scancode;
     }
 
-    _glfwPollMonitorsNull();
-    return GLFW_TRUE;
+    _plfwPollMonitorsNull();
+    return PLFW_TRUE;
 }
 
-void _glfwTerminateNull(void)
+void _plfwTerminateNull(void)
 {
-    free(_glfw.null.clipboardString);
-    memset(&_glfw.null, 0, sizeof(_glfw.null));
+    free(_plfw.null.clipboardString);
+    memset(&_plfw.null, 0, sizeof(_plfw.null));
 }
 

@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.5 POSIX - www.glfw.org
+// PLFW 3.5 POSIX - windowing-only fork of GLFW (www.glfw.org)
 //------------------------------------------------------------------------
 // Copyright (c) 2002-2006 Marcus Geelnard
 // Copyright (c) 2006-2017 Camilla Löwy <elmindreda@glfw.org>
@@ -25,7 +25,7 @@
 //
 //========================================================================
 
-#define GLFW_POSIX_LIBRARY_TIMER_STATE _GLFWtimerPOSIX posix;
+#define PLFW_POSIX_LIBRARY_TIMER_STATE _PLFWtimerPOSIX posix;
 
 #include <stdint.h>
 #include <time.h>
@@ -33,9 +33,9 @@
 
 // POSIX-specific global timer data
 //
-typedef struct _GLFWtimerPOSIX
+typedef struct _PLFWtimerPOSIX
 {
     clockid_t   clock;
     uint64_t    frequency;
-} _GLFWtimerPOSIX;
+} _PLFWtimerPOSIX;
 

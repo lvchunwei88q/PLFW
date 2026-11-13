@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.5 POSIX - www.glfw.org
+// PLFW 3.5 POSIX - windowing-only fork of GLFW (www.glfw.org)
 //------------------------------------------------------------------------
 // Copyright (c) 2002-2006 Marcus Geelnard
 // Copyright (c) 2006-2017 Camilla Löwy <elmindreda@glfw.org>
@@ -27,23 +27,23 @@
 
 #include <pthread.h>
 
-#define GLFW_POSIX_TLS_STATE    _GLFWtlsPOSIX   posix;
-#define GLFW_POSIX_MUTEX_STATE  _GLFWmutexPOSIX posix;
+#define PLFW_POSIX_TLS_STATE    _PLFWtlsPOSIX   posix;
+#define PLFW_POSIX_MUTEX_STATE  _PLFWmutexPOSIX posix;
 
 
 // POSIX-specific thread local storage data
 //
-typedef struct _GLFWtlsPOSIX
+typedef struct _PLFWtlsPOSIX
 {
-    GLFWbool        allocated;
+    PLFWbool        allocated;
     pthread_key_t   key;
-} _GLFWtlsPOSIX;
+} _PLFWtlsPOSIX;
 
 // POSIX-specific mutex data
 //
-typedef struct _GLFWmutexPOSIX
+typedef struct _PLFWmutexPOSIX
 {
-    GLFWbool        allocated;
+    PLFWbool        allocated;
     pthread_mutex_t handle;
-} _GLFWmutexPOSIX;
+} _PLFWmutexPOSIX;
 

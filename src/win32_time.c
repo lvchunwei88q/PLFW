@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.5 Win32 - www.glfw.org
+// PLFW 3.5 Win32 - windowing-only fork of GLFW (www.glfw.org)
 //------------------------------------------------------------------------
 // Copyright (c) 2002-2006 Marcus Geelnard
 // Copyright (c) 2006-2017 Camilla Löwy <elmindreda@glfw.org>
@@ -27,28 +27,28 @@
 
 #include "internal.h"
 
-#if defined(GLFW_BUILD_WIN32_TIMER)
+#if defined(PLFW_BUILD_WIN32_TIMER)
 
 //////////////////////////////////////////////////////////////////////////
-//////                       GLFW platform API                      //////
+//////                       PLFW platform API                      //////
 //////////////////////////////////////////////////////////////////////////
 
-void _glfwPlatformInitTimer(void)
+void _plfwPlatformInitTimer(void)
 {
-    QueryPerformanceFrequency((LARGE_INTEGER*) &_glfw.timer.win32.frequency);
+    QueryPerformanceFrequency((LARGE_INTEGER*) &_plfw.timer.win32.frequency);
 }
 
-uint64_t _glfwPlatformGetTimerValue(void)
+uint64_t _plfwPlatformGetTimerValue(void)
 {
     uint64_t value;
     QueryPerformanceCounter((LARGE_INTEGER*) &value);
     return value;
 }
 
-uint64_t _glfwPlatformGetTimerFrequency(void)
+uint64_t _plfwPlatformGetTimerFrequency(void)
 {
-    return _glfw.timer.win32.frequency;
+    return _plfw.timer.win32.frequency;
 }
 
-#endif // GLFW_BUILD_WIN32_TIMER
+#endif // PLFW_BUILD_WIN32_TIMER
 

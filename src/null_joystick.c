@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.5 - www.glfw.org
+// PLFW 3.5 - windowing-only fork of GLFW (www.glfw.org)
 //------------------------------------------------------------------------
 // Copyright (c) 2016-2017 Camilla Löwy <elmindreda@glfw.org>
 //
@@ -28,29 +28,29 @@
 
 
 //////////////////////////////////////////////////////////////////////////
-//////                       GLFW platform API                      //////
+//////                       PLFW platform API                      //////
 //////////////////////////////////////////////////////////////////////////
 
-GLFWbool _glfwInitJoysticksNull(void)
+PLFWbool _plfwInitJoysticksNull(void)
 {
-    return GLFW_TRUE;
+    return PLFW_TRUE;
 }
 
-void _glfwTerminateJoysticksNull(void)
+void _plfwTerminateJoysticksNull(void)
 {
 }
 
-GLFWbool _glfwPollJoystickNull(_GLFWjoystick* js, int mode)
+PLFWbool _plfwPollJoystickNull(_PLFWjoystick* js, int mode)
 {
-    return GLFW_FALSE;
+    return PLFW_FALSE;
 }
 
-const char* _glfwGetMappingNameNull(void)
+const char* _plfwGetMappingNameNull(void)
 {
     return "";
 }
 
-void _glfwUpdateGamepadGUIDNull(char* guid)
+void _plfwUpdateGamepadGUIDNull(char* guid)
 {
 }
 

@@ -1,21 +1,21 @@
 // =========================================================================
 //  window-input.c -- window, input and event demo for the windowing-only
-//  build of GLFW.
+//  build of PLFW.
 //
-//  This fork of GLFW has no graphics context support: glfwCreateWindow does
-//  not create an OpenGL, OpenGL ES, Vulkan or OSMesa context, and there is no
-//  glfwMakeContextCurrent / glfwSwapBuffers / glfwGetProcAddress.  The
-//  library owns the native window, the input state and the event queue; how
-//  anything gets drawn into the window is entirely up to the application
-//  (Direct3D, Vulkan, GDI, a child control, ...).
+//  This windowing-only build of PLFW has no graphics context support:
+//  plfwCreateWindow does not create an OpenGL, OpenGL ES, Vulkan or OSMesa
+//  context, and there is no glfwMakeContextCurrent / glfwSwapBuffers /
+//  glfwGetProcAddress.  The library owns the native window, the input state
+//  and the event queue; how anything gets drawn into the window is entirely
+//  up to the application (Direct3D, Vulkan, GDI, a child control, ...).
 //
 //  What this program shows:
 //    - creating a window without any graphics API
 //    - callbacks: key, char, cursor position, mouse button, scroll,
 //      window focus, window size, framebuffer size, joystick hotplug
-//    - polling: glfwGetKey, glfwGetMouseButton, glfwGetCursorPos,
-//      glfwJoystickPresent, glfwGetJoystickAxes/Buttons/Hats
-//    - the event loop: glfwPollEvents and glfwWaitEventsTimeout
+//    - polling: plfwGetKey, plfwGetMouseButton, plfwGetCursorPos,
+//      plfwJoystickPresent, plfwGetJoystickAxes/Buttons/Hats
+//    - the event loop: plfwPollEvents and plfwWaitEventsTimeout
 //
 //  Press Escape or close the window to exit.
 // =========================================================================
@@ -23,69 +23,69 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <GLFW/glfw3.h>
+#include <PLFW/plfw3.h>
 
 static void errorCallback(int code, const char* description)
 {
-    fprintf(stderr, "GLFW error 0x%08X: %s\n", (unsigned int) code, description);
+    fprintf(stderr, "PLFW error 0x%08X: %s\n", (unsigned int) code, description);
 }
 
-static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+static void keyCallback(PLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    const char* name = glfwGetKeyName(key, scancode);
+    const char* name = plfwGetKeyName(key, scancode);
     printf("[key]   key=%-3d scancode=%-3d %-5s mods=0x%02X (%s)\n",
            key, scancode,
-           action == GLFW_PRESS ? "press" :
-           action == GLFW_RELEASE ? "rel" : "repeat",
+           action == PLFW_PRESS ? "press" :
+           action == PLFW_RELEASE ? "rel" : "repeat",
            (unsigned int) mods,
            name ? name : "unnamed");
 
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
+    if (key == PLFW_KEY_ESCAPE && action == PLFW_PRESS)
+        plfwSetWindowShouldClose(window, PLFW_TRUE);
 }
 
-static void charCallback(GLFWwindow* window, unsigned int codepoint)
+static void charCallback(PLFWwindow* window, unsigned int codepoint)
 {
     printf("[char]  U+%04X '%c'\n", codepoint,
            (codepoint >= 0x20 && codepoint < 0x7F) ? (char) codepoint : '?');
 }
 
-static void cursorPosCallback(GLFWwindow* window, double xpos, double ypos)
+static void cursorPosCallback(PLFWwindow* window, double xpos, double ypos)
 {
     printf("[cursor] %.0f, %.0f\n", xpos, ypos);
 }
 
-static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+static void mouseButtonCallback(PLFWwindow* window, int button, int action, int mods)
 {
     printf("[mouse] button=%d %s mods=0x%02X\n",
-           button, action == GLFW_PRESS ? "press" : "release",
+           button, action == PLFW_PRESS ? "press" : "release",
            (unsigned int) mods);
 }
 
-static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+static void scrollCallback(PLFWwindow* window, double xoffset, double yoffset)
 {
     printf("[scroll] %.2f, %.2f\n", xoffset, yoffset);
 }
 
-static void focusCallback(GLFWwindow* window, int focused)
+static void focusCallback(PLFWwindow* window, int focused)
 {
     printf("[focus] %s\n", focused ? "gained" : "lost");
 }
 
-static void windowSizeCallback(GLFWwindow* window, int width, int height)
+static void windowSizeCallback(PLFWwindow* window, int width, int height)
 {
     printf("[size]  window %dx%d\n", width, height);
 }
 
-static void framebufferSizeCallback(GLFWwindow* window, int width, int height)
+static void framebufferSizeCallback(PLFWwindow* window, int width, int height)
 {
     printf("[fb]    framebuffer %dx%d\n", width, height);
 }
 
 static void joystickCallback(int jid, int event)
 {
-    if (event == GLFW_CONNECTED)
-        printf("[pad]   joystick %d connected: %s\n", jid, glfwGetJoystickName(jid));
+    if (event == PLFW_CONNECTED)
+        printf("[pad]   joystick %d connected: %s\n", jid, plfwGetJoystickName(jid));
     else
         printf("[pad]   joystick %d disconnected\n", jid);
 }
@@ -94,22 +94,22 @@ static void joystickCallback(int jid, int event)
 // console is not flooded by axis updates.
 static void reportJoysticks(void)
 {
-    for (int jid = GLFW_JOYSTICK_1;  jid <= GLFW_JOYSTICK_LAST;  jid++)
+    for (int jid = PLFW_JOYSTICK_1;  jid <= PLFW_JOYSTICK_LAST;  jid++)
     {
         int axisCount, buttonCount, hatCount;
         const float* axes;
         const unsigned char* buttons;
         const unsigned char* hats;
 
-        if (!glfwJoystickPresent(jid))
+        if (!plfwJoystickPresent(jid))
             continue;
 
-        axes = glfwGetJoystickAxes(jid, &axisCount);
-        buttons = glfwGetJoystickButtons(jid, &buttonCount);
-        hats = glfwGetJoystickHats(jid, &hatCount);
+        axes = plfwGetJoystickAxes(jid, &axisCount);
+        buttons = plfwGetJoystickButtons(jid, &buttonCount);
+        hats = plfwGetJoystickHats(jid, &hatCount);
 
         printf("[pad]   %d \"%s\": %d axes, %d buttons, %d hats\n",
-               jid, glfwGetJoystickName(jid), axisCount, buttonCount, hatCount);
+               jid, plfwGetJoystickName(jid), axisCount, buttonCount, hatCount);
 
         if (axes && axisCount > 0)
         {
@@ -141,50 +141,50 @@ int main(void)
 {
     setvbuf(stdout, NULL, _IONBF, 0);
 
-    glfwSetErrorCallback(errorCallback);
+    plfwSetErrorCallback(errorCallback);
 
-    if (!glfwInit())
+    if (!plfwInit())
         return 1;
 
     printf("windowing-only build, platform %s\n",
-           glfwGetPlatform() == GLFW_PLATFORM_WIN32 ? "Win32" :
-           glfwGetPlatform() == GLFW_PLATFORM_WAYLAND ? "Wayland" : "Null");
+           plfwGetPlatform() == PLFW_PLATFORM_WIN32 ? "Win32" :
+           plfwGetPlatform() == PLFW_PLATFORM_WAYLAND ? "Wayland" : "Null");
 
     // The window is created without any graphics API: the share parameter of
-    // glfwCreateWindow is accepted for source compatibility and ignored.
-    GLFWwindow* window = glfwCreateWindow(800, 480,
-                                          "GLFW window / input demo (no graphics API)",
+    // plfwCreateWindow is accepted for source compatibility and ignored.
+    PLFWwindow* window = plfwCreateWindow(800, 480,
+                                          "PLFW window / input demo (no graphics API)",
                                           NULL, NULL);
     if (!window)
     {
-        glfwTerminate();
+        plfwTerminate();
         return 1;
     }
 
-    glfwSetKeyCallback(window, keyCallback);
-    glfwSetCharCallback(window, charCallback);
-    glfwSetCursorPosCallback(window, cursorPosCallback);
-    glfwSetMouseButtonCallback(window, mouseButtonCallback);
-    glfwSetScrollCallback(window, scrollCallback);
-    glfwSetWindowFocusCallback(window, focusCallback);
-    glfwSetWindowSizeCallback(window, windowSizeCallback);
-    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
-    glfwSetJoystickCallback(joystickCallback);
+    plfwSetKeyCallback(window, keyCallback);
+    plfwSetCharCallback(window, charCallback);
+    plfwSetCursorPosCallback(window, cursorPosCallback);
+    plfwSetMouseButtonCallback(window, mouseButtonCallback);
+    plfwSetScrollCallback(window, scrollCallback);
+    plfwSetWindowFocusCallback(window, focusCallback);
+    plfwSetWindowSizeCallback(window, windowSizeCallback);
+    plfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+    plfwSetJoystickCallback(joystickCallback);
 
     // Cursor mode is a window-system feature and works without a context
     printf("cursor mode: normal, sticky keys off\n");
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    plfwSetInputMode(window, PLFW_CURSOR, PLFW_CURSOR_NORMAL);
 
     printf("monitors:\n");
     int monitorCount;
-    GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
+    PLFWmonitor** monitors = plfwGetMonitors(&monitorCount);
     for (int i = 0;  i < monitorCount;  i++)
     {
         int xpos, ypos, width, height;
-        const GLFWvidmode* mode = glfwGetVideoMode(monitors[i]);
-        glfwGetMonitorWorkarea(monitors[i], &xpos, &ypos, &width, &height);
+        const PLFWvidmode* mode = plfwGetVideoMode(monitors[i]);
+        plfwGetMonitorWorkarea(monitors[i], &xpos, &ypos, &width, &height);
         printf("  %s: video mode %dx%d @ %d Hz, work area %d,%d %dx%d\n",
-               glfwGetMonitorName(monitors[i]),
+               plfwGetMonitorName(monitors[i]),
                mode ? mode->width : 0, mode ? mode->height : 0,
                mode ? mode->refreshRate : 0, xpos, ypos, width, height);
     }
@@ -193,28 +193,28 @@ int main(void)
     reportJoysticks();
     printf("event loop started, press Escape to exit\n");
 
-    double lastReport = glfwGetTime();
+    double lastReport = plfwGetTime();
     unsigned int frame = 0;
 
-    while (!glfwWindowShouldClose(window))
+    while (!plfwWindowShouldClose(window))
     {
         // Wait for input instead of spinning: a real renderer would draw a
         // frame here using its own graphics API.
-        glfwWaitEventsTimeout(1.0 / 60.0);
+        plfwWaitEventsTimeout(1.0 / 60.0);
         frame++;
 
-        const double now = glfwGetTime();
+        const double now = plfwGetTime();
         if (now - lastReport >= 1.0)
         {
             double xpos, ypos;
             int width, height;
-            glfwGetCursorPos(window, &xpos, &ypos);
-            glfwGetWindowSize(window, &width, &height);
+            plfwGetCursorPos(window, &xpos, &ypos);
+            plfwGetWindowSize(window, &width, &height);
             printf("[tick]  t=%.2fs frame=%u window=%dx%d cursor=%.0f,%.0f "
                    "LMB=%d focused=%d\n",
                    now, frame, width, height, xpos, ypos,
-                   glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS,
-                   glfwGetWindowAttrib(window, GLFW_FOCUSED));
+                   plfwGetMouseButton(window, PLFW_MOUSE_BUTTON_LEFT) == PLFW_PRESS,
+                   plfwGetWindowAttrib(window, PLFW_FOCUSED));
 
             reportJoysticks();
             lastReport = now;
@@ -222,7 +222,7 @@ int main(void)
     }
 
     printf("closing window\n");
-    glfwDestroyWindow(window);
-    glfwTerminate();
+    plfwDestroyWindow(window);
+    plfwTerminate();
     return 0;
 }

@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.5 POSIX - www.glfw.org
+// PLFW 3.5 POSIX - windowing-only fork of GLFW (www.glfw.org)
 //------------------------------------------------------------------------
 // Copyright (c) 2022 Camilla Löwy <elmindreda@glfw.org>
 //
@@ -26,5 +26,5 @@
 
 #include <poll.h>
 
-GLFWbool _glfwPollPOSIX(struct pollfd* fds, nfds_t count, double* timeout);
+PLFWbool _plfwPollPOSIX(struct pollfd* fds, nfds_t count, double* timeout);
 

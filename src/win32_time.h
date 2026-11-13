@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.5 Win32 - www.glfw.org
+// PLFW 3.5 Win32 - windowing-only fork of GLFW (www.glfw.org)
 //------------------------------------------------------------------------
 // Copyright (c) 2002-2006 Marcus Geelnard
 // Copyright (c) 2006-2017 Camilla Löwy <elmindreda@glfw.org>
@@ -25,19 +25,19 @@
 //
 //========================================================================
 
-// This is a workaround for the fact that glfw3.h needs to export APIENTRY (for
+// This is a workaround for the fact that plfw3.h needs to export APIENTRY (for
 // example to allow applications to correctly declare a GL_KHR_debug callback)
 // but windows.h assumes no one will define APIENTRY before it does
 #undef APIENTRY
 
 #include <windows.h>
 
-#define GLFW_WIN32_LIBRARY_TIMER_STATE  _GLFWtimerWin32   win32;
+#define PLFW_WIN32_LIBRARY_TIMER_STATE  _PLFWtimerWin32   win32;
 
 // Win32-specific global timer data
 //
-typedef struct _GLFWtimerWin32
+typedef struct _PLFWtimerWin32
 {
     uint64_t            frequency;
-} _GLFWtimerWin32;
+} _PLFWtimerWin32;
 

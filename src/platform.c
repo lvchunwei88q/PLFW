@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.5 - www.glfw.org
+// PLFW 3.5 - windowing-only fork of GLFW (www.glfw.org)
 //------------------------------------------------------------------------
 // Copyright (c) 2002-2006 Marcus Geelnard
 // Copyright (c) 2006-2018 Camilla Löwy <elmindreda@glfw.org>
@@ -31,53 +31,53 @@
 #include <stdlib.h>
 
 //////////////////////////////////////////////////////////////////////////
-//////                       GLFW internal API                      //////
+//////                       PLFW internal API                      //////
 //////////////////////////////////////////////////////////////////////////
 
 static const struct
 {
     int ID;
-    GLFWbool (*connect)(int,_GLFWplatform*);
+    PLFWbool (*connect)(int,_PLFWplatform*);
 } supportedPlatforms[] =
 {
-#if defined(_GLFW_WIN32)
-    { GLFW_PLATFORM_WIN32, _glfwConnectWin32 },
+#if defined(_PLFW_WIN32)
+    { PLFW_PLATFORM_WIN32, _plfwConnectWin32 },
 #endif
-#if defined(_GLFW_WAYLAND)
-    { GLFW_PLATFORM_WAYLAND, _glfwConnectWayland },
+#if defined(_PLFW_WAYLAND)
+    { PLFW_PLATFORM_WAYLAND, _plfwConnectWayland },
 #endif
 };
 
-GLFWbool _glfwSelectPlatform(int desiredID, _GLFWplatform* platform)
+PLFWbool _plfwSelectPlatform(int desiredID, _PLFWplatform* platform)
 {
     const size_t count = sizeof(supportedPlatforms) / sizeof(supportedPlatforms[0]);
     size_t i;
 
     // The X11 and Cocoa identifiers are still accepted as known platform IDs so
-    // that a caller asking for a removed backend gets GLFW_PLATFORM_UNAVAILABLE
-    // instead of GLFW_INVALID_ENUM.  They are never listed in
+    // that a caller asking for a removed backend gets PLFW_PLATFORM_UNAVAILABLE
+    // instead of PLFW_INVALID_ENUM.  They are never listed in
     // supportedPlatforms, so they cannot be selected.
-    if (desiredID != GLFW_ANY_PLATFORM &&
-        desiredID != GLFW_PLATFORM_WIN32 &&
-        desiredID != GLFW_PLATFORM_COCOA &&
-        desiredID != GLFW_PLATFORM_WAYLAND &&
-        desiredID != GLFW_PLATFORM_X11 &&
-        desiredID != GLFW_PLATFORM_NULL)
+    if (desiredID != PLFW_ANY_PLATFORM &&
+        desiredID != PLFW_PLATFORM_WIN32 &&
+        desiredID != PLFW_PLATFORM_COCOA &&
+        desiredID != PLFW_PLATFORM_WAYLAND &&
+        desiredID != PLFW_PLATFORM_X11 &&
+        desiredID != PLFW_PLATFORM_NULL)
     {
-        _glfwInputError(GLFW_INVALID_ENUM, "Invalid platform ID 0x%08X", desiredID);
-        return GLFW_FALSE;
+        _plfwInputError(PLFW_INVALID_ENUM, "Invalid platform ID 0x%08X", desiredID);
+        return PLFW_FALSE;
     }
 
     // Only allow the Null platform if specifically requested
-    if (desiredID == GLFW_PLATFORM_NULL)
-        return _glfwConnectNull(desiredID, platform);
+    if (desiredID == PLFW_PLATFORM_NULL)
+        return _plfwConnectNull(desiredID, platform);
     else if (count == 0)
     {
-        _glfwInputError(GLFW_PLATFORM_UNAVAILABLE, "This binary only supports the Null platform");
-        return GLFW_FALSE;
+        _plfwInputError(PLFW_PLATFORM_UNAVAILABLE, "This binary only supports the Null platform");
+        return PLFW_FALSE;
     }
 
-    if (desiredID == GLFW_ANY_PLATFORM)
+    if (desiredID == PLFW_ANY_PLATFORM)
     {
         // If there is exactly one platform available for auto-selection, let it emit the
         // error on failure as the platform-specific error description may be more helpful
@@ -87,10 +87,10 @@ GLFWbool _glfwSelectPlatform(int desiredID, _GLFWplatform* platform)
         for (i = 0;  i < count;  i++)
         {
             if (supportedPlatforms[i].connect(desiredID, platform))
-                return GLFW_TRUE;
+                return PLFW_TRUE;
         }
 
-        _glfwInputError(GLFW_PLATFORM_UNAVAILABLE, "Failed to detect any supported platform");
+        _plfwInputError(PLFW_PLATFORM_UNAVAILABLE, "Failed to detect any supported platform");
     }
     else
     {
@@ -100,46 +100,46 @@ GLFWbool _glfwSelectPlatform(int desiredID, _GLFWplatform* platform)
                 return supportedPlatforms[i].connect(desiredID, platform);
         }
 
-        _glfwInputError(GLFW_PLATFORM_UNAVAILABLE, "The requested platform is not supported");
+        _plfwInputError(PLFW_PLATFORM_UNAVAILABLE, "The requested platform is not supported");
     }
 
-    return GLFW_FALSE;
+    return PLFW_FALSE;
 }
 
 //////////////////////////////////////////////////////////////////////////
-//////                        GLFW public API                       //////
+//////                        PLFW public API                       //////
 //////////////////////////////////////////////////////////////////////////
 
-GLFWAPI int glfwGetPlatform(void)
+PLFWAPI int plfwGetPlatform(void)
 {
-    _GLFW_REQUIRE_INIT_OR_RETURN(0);
-    return _glfw.platform.platformID;
+    _PLFW_REQUIRE_INIT_OR_RETURN(0);
+    return _plfw.platform.platformID;
 }
 
-GLFWAPI int glfwPlatformSupported(int platformID)
+PLFWAPI int plfwPlatformSupported(int platformID)
 {
     const size_t count = sizeof(supportedPlatforms) / sizeof(supportedPlatforms[0]);
     size_t i;
 
-    if (platformID != GLFW_PLATFORM_WIN32 &&
-        platformID != GLFW_PLATFORM_COCOA &&
-        platformID != GLFW_PLATFORM_WAYLAND &&
-        platformID != GLFW_PLATFORM_X11 &&
-        platformID != GLFW_PLATFORM_NULL)
+    if (platformID != PLFW_PLATFORM_WIN32 &&
+        platformID != PLFW_PLATFORM_COCOA &&
+        platformID != PLFW_PLATFORM_WAYLAND &&
+        platformID != PLFW_PLATFORM_X11 &&
+        platformID != PLFW_PLATFORM_NULL)
     {
-        _glfwInputError(GLFW_INVALID_ENUM, "Invalid platform ID 0x%08X", platformID);
-        return GLFW_FALSE;
+        _plfwInputError(PLFW_INVALID_ENUM, "Invalid platform ID 0x%08X", platformID);
+        return PLFW_FALSE;
     }
 
-    if (platformID == GLFW_PLATFORM_NULL)
-        return GLFW_TRUE;
+    if (platformID == PLFW_PLATFORM_NULL)
+        return PLFW_TRUE;
 
     for (i = 0;  i < count;  i++)
     {
         if (platformID == supportedPlatforms[i].ID)
-            return GLFW_TRUE;
+            return PLFW_TRUE;
     }
 
-    return GLFW_FALSE;
+    return PLFW_FALSE;
 }
 

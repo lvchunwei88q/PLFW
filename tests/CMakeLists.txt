@@ -3,7 +3,7 @@
 # window and exercises the window, monitor, input, clipboard and event APIs
 # without touching any graphics API.
 
-link_libraries(glfw)
+link_libraries(plfw)
 
 if (MATH_LIBRARY)
     link_libraries("${MATH_LIBRARY}")
@@ -18,7 +18,7 @@ add_executable(smoke smoke.c)
 
 set_target_properties(smoke PROPERTIES
                       C_STANDARD 99
-                      FOLDER "GLFW3/Tests")
+                      FOLDER "PLFW3/Tests")
 
 enable_testing()
 add_test(NAME smoke COMMAND smoke)

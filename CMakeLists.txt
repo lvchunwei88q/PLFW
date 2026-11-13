@@ -1,56 +1,56 @@
 cmake_minimum_required(VERSION 3.16...3.28 FATAL_ERROR)
 
-project(GLFW VERSION 3.5.1 LANGUAGES C HOMEPAGE_URL "https://www.glfw.org/")
+project(PLFW VERSION 3.5.1 LANGUAGES C)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" GLFW_STANDALONE)
+string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" PLFW_STANDALONE)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
-option(GLFW_BUILD_EXAMPLES "Build the GLFW example programs" ${GLFW_STANDALONE})
-option(GLFW_BUILD_TESTS "Build the GLFW test programs" ${GLFW_STANDALONE})
-option(GLFW_INSTALL "Generate installation target" ON)
+option(PLFW_BUILD_EXAMPLES "Build the PLFW example programs" ${PLFW_STANDALONE})
+option(PLFW_BUILD_TESTS "Build the PLFW test programs" ${PLFW_STANDALONE})
+option(PLFW_INSTALL "Generate installation target" ON)
 
 include(GNUInstallDirs)
 include(CMakeDependentOption)
 
 if (GLFW_USE_OSMESA)
-    message(FATAL_ERROR "GLFW_USE_OSMESA has been removed; set the GLFW_PLATFORM init hint")
+    message(FATAL_ERROR "GLFW_USE_OSMESA has been removed; set the PLFW_PLATFORM init hint")
 endif()
 
 if (DEFINED GLFW_USE_WAYLAND AND UNIX AND NOT APPLE)
     message(FATAL_ERROR
-        "GLFW_USE_WAYLAND has been removed; delete the CMake cache and set GLFW_BUILD_WAYLAND instead")
+        "GLFW_USE_WAYLAND has been removed; delete the CMake cache and set PLFW_BUILD_WAYLAND instead")
 endif()
 
-cmake_dependent_option(GLFW_BUILD_WIN32 "Build support for Win32" ON "WIN32" OFF)
-cmake_dependent_option(GLFW_BUILD_WAYLAND "Build support for Wayland" ON "UNIX;NOT APPLE" OFF)
+cmake_dependent_option(PLFW_BUILD_WIN32 "Build support for Win32" ON "WIN32" OFF)
+cmake_dependent_option(PLFW_BUILD_WAYLAND "Build support for Wayland" ON "UNIX;NOT APPLE" OFF)
 
-cmake_dependent_option(GLFW_USE_HYBRID_HPG "Force use of high-performance GPU on hybrid systems" OFF
+cmake_dependent_option(PLFW_USE_HYBRID_HPG "Force use of high-performance GPU on hybrid systems" OFF
                        "WIN32" OFF)
 cmake_dependent_option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" ON
                        "MSVC" OFF)
 
-set(GLFW_LIBRARY_TYPE "${GLFW_LIBRARY_TYPE}" CACHE STRING
-    "Library type override for GLFW (SHARED, STATIC, OBJECT, or empty to follow BUILD_SHARED_LIBS)")
+set(PLFW_LIBRARY_TYPE "${PLFW_LIBRARY_TYPE}" CACHE STRING
+    "Library type override for PLFW (SHARED, STATIC, OBJECT, or empty to follow BUILD_SHARED_LIBS)")
 
-if (GLFW_LIBRARY_TYPE)
-    string(COMPARE EQUAL "${GLFW_LIBRARY_TYPE}" "SHARED" GLFW_BUILD_SHARED_LIBRARY)
+if (PLFW_LIBRARY_TYPE)
+    string(COMPARE EQUAL "${PLFW_LIBRARY_TYPE}" "SHARED" PLFW_BUILD_SHARED_LIBRARY)
 else()
-    set(GLFW_BUILD_SHARED_LIBRARY ${BUILD_SHARED_LIBS})
+    set(PLFW_BUILD_SHARED_LIBRARY ${BUILD_SHARED_LIBS})
 endif()
 
-list(APPEND CMAKE_MODULE_PATH "${GLFW_SOURCE_DIR}/CMake/modules")
+list(APPEND CMAKE_MODULE_PATH "${PLFW_SOURCE_DIR}/CMake/modules")
 
 find_package(Threads REQUIRED)
 
 #--------------------------------------------------------------------
 # Report backend selection
 #--------------------------------------------------------------------
-if (GLFW_BUILD_WIN32)
+if (PLFW_BUILD_WIN32)
     message(STATUS "Including Win32 support")
 endif()
-if (GLFW_BUILD_WAYLAND)
+if (PLFW_BUILD_WAYLAND)
     message(STATUS "Including Wayland support")
 endif()
 
@@ -67,15 +67,15 @@ endif()
 #--------------------------------------------------------------------
 include(CMakePackageConfigHelpers)
 
-set(GLFW_CONFIG_PATH "${CMAKE_INSTALL_LIBDIR}/cmake/glfw3")
+set(PLFW_CONFIG_PATH "${CMAKE_INSTALL_LIBDIR}/cmake/plfw3")
 
-configure_package_config_file(CMake/glfw3Config.cmake.in
-                              src/glfw3Config.cmake
-                              INSTALL_DESTINATION "${GLFW_CONFIG_PATH}"
+configure_package_config_file(CMake/plfw3Config.cmake.in
+                              src/plfw3Config.cmake
+                              INSTALL_DESTINATION "${PLFW_CONFIG_PATH}"
                               NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
-write_basic_package_version_file(src/glfw3ConfigVersion.cmake
-                                 VERSION ${GLFW_VERSION}
+write_basic_package_version_file(src/plfw3ConfigVersion.cmake
+                                 VERSION ${PLFW_VERSION}
                                  COMPATIBILITY SameMajorVersion)
 
 #--------------------------------------------------------------------
@@ -83,11 +83,11 @@ write_basic_package_version_file(src/glfw3ConfigVersion.cmake
 #--------------------------------------------------------------------
 add_subdirectory(src)
 
-if (GLFW_BUILD_EXAMPLES)
+if (PLFW_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
 
-if (GLFW_BUILD_TESTS)
+if (PLFW_BUILD_TESTS)
     # Registered at the top level so that "ctest --test-dir build" finds the
     # smoke test instead of requiring the build/tests subdirectory
     enable_testing()
@@ -98,18 +98,18 @@ endif()
 # Install files other than the library
 # The library is installed by src/CMakeLists.txt
 #--------------------------------------------------------------------
-if (GLFW_INSTALL)
-    install(DIRECTORY include/GLFW DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-            FILES_MATCHING PATTERN glfw3.h PATTERN glfw3native.h)
+if (PLFW_INSTALL)
+    install(DIRECTORY include/PLFW DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+            FILES_MATCHING PATTERN plfw3.h PATTERN plfw3native.h)
 
-    install(FILES "${GLFW_BINARY_DIR}/src/glfw3Config.cmake"
-                  "${GLFW_BINARY_DIR}/src/glfw3ConfigVersion.cmake"
-            DESTINATION "${GLFW_CONFIG_PATH}")
+    install(FILES "${PLFW_BINARY_DIR}/src/plfw3Config.cmake"
+                  "${PLFW_BINARY_DIR}/src/plfw3ConfigVersion.cmake"
+            DESTINATION "${PLFW_CONFIG_PATH}")
 
-    install(EXPORT glfwTargets FILE glfw3Targets.cmake
+    install(EXPORT plfwTargets FILE plfw3Targets.cmake
             EXPORT_LINK_INTERFACE_LIBRARIES
-            DESTINATION "${GLFW_CONFIG_PATH}")
-    install(FILES "${GLFW_BINARY_DIR}/src/glfw3.pc"
+            DESTINATION "${PLFW_CONFIG_PATH}")
+    install(FILES "${PLFW_BINARY_DIR}/src/plfw3.pc"
             DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 
     # Only generate this target if no higher-level project already has
@@ -119,8 +119,8 @@ if (GLFW_INSTALL)
 
         add_custom_target(uninstall
                           "${CMAKE_COMMAND}" -P
-                          "${GLFW_BINARY_DIR}/cmake_uninstall.cmake")
-        set_target_properties(uninstall PROPERTIES FOLDER "GLFW3")
+                          "${PLFW_BINARY_DIR}/cmake_uninstall.cmake")
+        set_target_properties(uninstall PROPERTIES FOLDER "PLFW3")
     endif()
 endif()
 

@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.5 Win32 - www.glfw.org
+// PLFW 3.5 Win32 - windowing-only fork of GLFW (www.glfw.org)
 //------------------------------------------------------------------------
 // Copyright (c) 2021 Camilla Löwy <elmindreda@glfw.org>
 //
@@ -26,27 +26,27 @@
 
 #include "internal.h"
 
-#if defined(GLFW_BUILD_WIN32_MODULE)
+#if defined(PLFW_BUILD_WIN32_MODULE)
 
 //////////////////////////////////////////////////////////////////////////
-//////                       GLFW platform API                      //////
+//////                       PLFW platform API                      //////
 //////////////////////////////////////////////////////////////////////////
 
-void* _glfwPlatformLoadModule(const char* path)
+void* _plfwPlatformLoadModule(const char* path)
 {
     return LoadLibraryA(path);
 }
 
-void _glfwPlatformFreeModule(void* module)
+void _plfwPlatformFreeModule(void* module)
 {
     if (module)
         FreeLibrary((HMODULE) module);
 }
 
-GLFWproc _glfwPlatformGetModuleSymbol(void* module, const char* name)
+PLFWproc _plfwPlatformGetModuleSymbol(void* module, const char* name)
 {
-    return (GLFWproc) GetProcAddress((HMODULE) module, name);
+    return (PLFWproc) GetProcAddress((HMODULE) module, name);
 }
 
-#endif // GLFW_BUILD_WIN32_MODULE
+#endif // PLFW_BUILD_WIN32_MODULE
 

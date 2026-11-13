@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.5 POSIX - www.glfw.org
+// PLFW 3.5 POSIX - windowing-only fork of GLFW (www.glfw.org)
 //------------------------------------------------------------------------
 // Copyright (c) 2021 Camilla Löwy <elmindreda@glfw.org>
 //
@@ -26,29 +26,29 @@
 
 #include "internal.h"
 
-#if defined(GLFW_BUILD_POSIX_MODULE)
+#if defined(PLFW_BUILD_POSIX_MODULE)
 
 #include <dlfcn.h>
 
 //////////////////////////////////////////////////////////////////////////
-//////                       GLFW platform API                      //////
+//////                       PLFW platform API                      //////
 //////////////////////////////////////////////////////////////////////////
 
-void* _glfwPlatformLoadModule(const char* path)
+void* _plfwPlatformLoadModule(const char* path)
 {
     return dlopen(path, RTLD_LAZY | RTLD_LOCAL);
 }
 
-void _glfwPlatformFreeModule(void* module)
+void _plfwPlatformFreeModule(void* module)
 {
     if (module)
         dlclose(module);
 }
 
-GLFWproc _glfwPlatformGetModuleSymbol(void* module, const char* name)
+PLFWproc _plfwPlatformGetModuleSymbol(void* module, const char* name)
 {
     return dlsym(module, name);
 }
 
-#endif // GLFW_BUILD_POSIX_MODULE
+#endif // PLFW_BUILD_POSIX_MODULE
 

@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.5 - www.glfw.org
+// PLFW 3.5 - windowing-only fork of GLFW (www.glfw.org)
 //------------------------------------------------------------------------
 // Copyright (c) 2002-2006 Marcus Geelnard
 // Copyright (c) 2006-2018 Camilla Löwy <elmindreda@glfw.org>
@@ -34,26 +34,26 @@
 #include <assert.h>
 
 
-// NOTE: The global variables below comprise all mutable global data in GLFW
+// NOTE: The global variables below comprise all mutable global data in PLFW
 //       Any other mutable global variable is a bug
 
-// This contains all mutable state shared between compilation units of GLFW
+// This contains all mutable state shared between compilation units of PLFW
 //
-_GLFWlibrary _glfw = { GLFW_FALSE };
+_PLFWlibrary _plfw = { PLFW_FALSE };
 
-// These are outside of _glfw so they can be used before initialization and
-// after termination without special handling when _glfw is cleared to zero
+// These are outside of _plfw so they can be used before initialization and
+// after termination without special handling when _plfw is cleared to zero
 //
-static _GLFWerror _glfwMainThreadError;
-static GLFWerrorfun _glfwErrorCallback;
-static GLFWallocator _glfwInitAllocator;
-static _GLFWinitconfig _glfwInitHints =
+static _PLFWerror _plfwMainThreadError;
+static PLFWerrorfun _plfwErrorCallback;
+static PLFWallocator _plfwInitAllocator;
+static _PLFWinitconfig _plfwInitHints =
 {
     .hatButtons = true,
-    .platformID = GLFW_ANY_PLATFORM,
+    .platformID = PLFW_ANY_PLATFORM,
     .wl =
     {
-        .libdecorMode = GLFW_WAYLAND_PREFER_LIBDECOR
+        .libdecorMode = PLFW_WAYLAND_PREFER_LIBDECOR
     },
 };
 
@@ -84,57 +84,57 @@ static void terminate(void)
 {
     int i;
 
-    memset(&_glfw.callbacks, 0, sizeof(_glfw.callbacks));
+    memset(&_plfw.callbacks, 0, sizeof(_plfw.callbacks));
 
-    while (_glfw.windowListHead)
-        glfwDestroyWindow((GLFWwindow*) _glfw.windowListHead);
+    while (_plfw.windowListHead)
+        plfwDestroyWindow((PLFWwindow*) _plfw.windowListHead);
 
-    while (_glfw.cursorListHead)
-        glfwDestroyCursor((GLFWcursor*) _glfw.cursorListHead);
+    while (_plfw.cursorListHead)
+        plfwDestroyCursor((PLFWcursor*) _plfw.cursorListHead);
 
-    for (i = 0;  i < _glfw.monitorCount;  i++)
+    for (i = 0;  i < _plfw.monitorCount;  i++)
     {
-        _GLFWmonitor* monitor = _glfw.monitors[i];
+        _PLFWmonitor* monitor = _plfw.monitors[i];
         if (monitor->originalRamp.size)
-            _glfw.platform.setGammaRamp(monitor, &monitor->originalRamp);
-        _glfwFreeMonitor(monitor);
+            _plfw.platform.setGammaRamp(monitor, &monitor->originalRamp);
+        _plfwFreeMonitor(monitor);
     }
 
-    _glfw_free(_glfw.monitors);
-    _glfw.monitors = NULL;
-    _glfw.monitorCount = 0;
+    _plfw_free(_plfw.monitors);
+    _plfw.monitors = NULL;
+    _plfw.monitorCount = 0;
 
-    _glfw_free(_glfw.mappings);
-    _glfw.mappings = NULL;
-    _glfw.mappingCount = 0;
+    _plfw_free(_plfw.mappings);
+    _plfw.mappings = NULL;
+    _plfw.mappingCount = 0;
 
-    _glfw.platform.terminateJoysticks();
-    _glfw.platform.terminate();
+    _plfw.platform.terminateJoysticks();
+    _plfw.platform.terminate();
 
-    _glfw.initialized = GLFW_FALSE;
+    _plfw.initialized = PLFW_FALSE;
 
-    while (_glfw.errorListHead)
+    while (_plfw.errorListHead)
     {
-        _GLFWerror* error = _glfw.errorListHead;
-        _glfw.errorListHead = error->next;
-        _glfw_free(error);
+        _PLFWerror* error = _plfw.errorListHead;
+        _plfw.errorListHead = error->next;
+        _plfw_free(error);
     }
 
-    _glfwPlatformDestroyTls(&_glfw.errorSlot);
-    _glfwPlatformDestroyMutex(&_glfw.errorLock);
+    _plfwPlatformDestroyTls(&_plfw.errorSlot);
+    _plfwPlatformDestroyMutex(&_plfw.errorLock);
 
-    memset(&_glfw, 0, sizeof(_glfw));
+    memset(&_plfw, 0, sizeof(_plfw));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-//////                       GLFW internal API                      //////
+//////                       PLFW internal API                      //////
 //////////////////////////////////////////////////////////////////////////
 
 // Encode a Unicode code point to a UTF-8 stream
 // Based on cutef8 by Jeff Bezanson (Public Domain)
 //
-size_t _glfwEncodeUTF8(char* s, uint32_t codepoint)
+size_t _plfwEncodeUTF8(char* s, uint32_t codepoint)
 {
     size_t count = 0;
 
@@ -165,7 +165,7 @@ size_t _glfwEncodeUTF8(char* s, uint32_t codepoint)
 // Splits and translates a text/uri-list into separate file paths
 // NOTE: This function destroys the provided string
 //
-char** _glfwParseUriList(char* text, int* count)
+char** _plfwParseUriList(char* text, int* count)
 {
     const char* prefix = "file://";
     char** paths = NULL;
@@ -192,8 +192,8 @@ char** _glfwParseUriList(char* text, int* count)
 
         (*count)++;
 
-        path = _glfw_calloc(strlen(line) + 1, 1);
-        paths = _glfw_realloc(paths, *count * sizeof(char*));
+        path = _plfw_calloc(strlen(line) + 1, 1);
+        paths = _plfw_realloc(paths, *count * sizeof(char*));
         paths[*count - 1] = path;
 
         while (*line)
@@ -215,25 +215,25 @@ char** _glfwParseUriList(char* text, int* count)
     return paths;
 }
 
-char* _glfw_strdup(const char* source)
+char* _plfw_strdup(const char* source)
 {
     const size_t length = strlen(source);
-    char* result = _glfw_calloc(length + 1, 1);
+    char* result = _plfw_calloc(length + 1, 1);
     strcpy(result, source);
     return result;
 }
 
-int _glfw_min(int a, int b)
+int _plfw_min(int a, int b)
 {
     return a < b ? a : b;
 }
 
-int _glfw_max(int a, int b)
+int _plfw_max(int a, int b)
 {
     return a > b ? a : b;
 }
 
-void* _glfw_calloc(size_t count, size_t size)
+void* _plfw_calloc(size_t count, size_t size)
 {
     if (count && size)
     {
@@ -241,16 +241,16 @@ void* _glfw_calloc(size_t count, size_t size)
 
         if (count > SIZE_MAX / size)
         {
-            _glfwInputError(GLFW_INVALID_VALUE, "Allocation size overflow");
+            _plfwInputError(PLFW_INVALID_VALUE, "Allocation size overflow");
             return NULL;
         }
 
-        block = _glfw.allocator.allocate(count * size, _glfw.allocator.user);
+        block = _plfw.allocator.allocate(count * size, _plfw.allocator.user);
         if (block)
             return memset(block, 0, count * size);
         else
         {
-            _glfwInputError(GLFW_OUT_OF_MEMORY, NULL);
+            _plfwInputError(PLFW_OUT_OF_MEMORY, NULL);
             return NULL;
         }
     }
@@ -258,45 +258,45 @@ void* _glfw_calloc(size_t count, size_t size)
         return NULL;
 }
 
-void* _glfw_realloc(void* block, size_t size)
+void* _plfw_realloc(void* block, size_t size)
 {
     if (block && size)
     {
-        void* resized = _glfw.allocator.reallocate(block, size, _glfw.allocator.user);
+        void* resized = _plfw.allocator.reallocate(block, size, _plfw.allocator.user);
         if (resized)
             return resized;
         else
         {
-            _glfwInputError(GLFW_OUT_OF_MEMORY, NULL);
+            _plfwInputError(PLFW_OUT_OF_MEMORY, NULL);
             return NULL;
         }
     }
     else if (block)
     {
-        _glfw_free(block);
+        _plfw_free(block);
         return NULL;
     }
     else
-        return _glfw_calloc(1, size);
+        return _plfw_calloc(1, size);
 }
 
-void _glfw_free(void* block)
+void _plfw_free(void* block)
 {
     if (block)
-        _glfw.allocator.deallocate(block, _glfw.allocator.user);
+        _plfw.allocator.deallocate(block, _plfw.allocator.user);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-//////                         GLFW event API                       //////
+//////                         PLFW event API                       //////
 //////////////////////////////////////////////////////////////////////////
 
 // Notifies shared code of an error
 //
-void _glfwInputError(int code, const char* format, ...)
+void _plfwInputError(int code, const char* format, ...)
 {
-    _GLFWerror* error;
-    char description[_GLFW_MESSAGE_SIZE];
+    _PLFWerror* error;
+    char description[_PLFW_MESSAGE_SIZE];
 
     if (format)
     {
@@ -310,168 +310,168 @@ void _glfwInputError(int code, const char* format, ...)
     }
     else
     {
-        if (code == GLFW_NOT_INITIALIZED)
-            strcpy(description, "The GLFW library is not initialized");
-        else if (code == GLFW_NO_CURRENT_CONTEXT)
+        if (code == PLFW_NOT_INITIALIZED)
+            strcpy(description, "The PLFW library is not initialized");
+        else if (code == PLFW_NO_CURRENT_CONTEXT)
             strcpy(description, "There is no current context");
-        else if (code == GLFW_INVALID_ENUM)
+        else if (code == PLFW_INVALID_ENUM)
             strcpy(description, "Invalid argument for enum parameter");
-        else if (code == GLFW_INVALID_VALUE)
+        else if (code == PLFW_INVALID_VALUE)
             strcpy(description, "Invalid value for parameter");
-        else if (code == GLFW_OUT_OF_MEMORY)
+        else if (code == PLFW_OUT_OF_MEMORY)
             strcpy(description, "Out of memory");
-        else if (code == GLFW_API_UNAVAILABLE)
+        else if (code == PLFW_API_UNAVAILABLE)
             strcpy(description, "The requested API is unavailable");
-        else if (code == GLFW_VERSION_UNAVAILABLE)
+        else if (code == PLFW_VERSION_UNAVAILABLE)
             strcpy(description, "The requested API version is unavailable");
-        else if (code == GLFW_PLATFORM_ERROR)
+        else if (code == PLFW_PLATFORM_ERROR)
             strcpy(description, "A platform-specific error occurred");
-        else if (code == GLFW_FORMAT_UNAVAILABLE)
+        else if (code == PLFW_FORMAT_UNAVAILABLE)
             strcpy(description, "The requested format is unavailable");
-        else if (code == GLFW_NO_WINDOW_CONTEXT)
+        else if (code == PLFW_NO_WINDOW_CONTEXT)
             strcpy(description, "The specified window has no context");
-        else if (code == GLFW_CURSOR_UNAVAILABLE)
+        else if (code == PLFW_CURSOR_UNAVAILABLE)
             strcpy(description, "The specified cursor shape is unavailable");
-        else if (code == GLFW_FEATURE_UNAVAILABLE)
+        else if (code == PLFW_FEATURE_UNAVAILABLE)
             strcpy(description, "The requested feature cannot be implemented for this platform");
-        else if (code == GLFW_FEATURE_UNIMPLEMENTED)
+        else if (code == PLFW_FEATURE_UNIMPLEMENTED)
             strcpy(description, "The requested feature has not yet been implemented for this platform");
-        else if (code == GLFW_PLATFORM_UNAVAILABLE)
+        else if (code == PLFW_PLATFORM_UNAVAILABLE)
             strcpy(description, "The requested platform is unavailable");
         else
-            strcpy(description, "ERROR: UNKNOWN GLFW ERROR");
+            strcpy(description, "ERROR: UNKNOWN PLFW ERROR");
     }
 
-    if (_glfw.initialized)
+    if (_plfw.initialized)
     {
-        error = _glfwPlatformGetTls(&_glfw.errorSlot);
+        error = _plfwPlatformGetTls(&_plfw.errorSlot);
         if (!error)
         {
-            error = _glfw_calloc(1, sizeof(_GLFWerror));
-            _glfwPlatformSetTls(&_glfw.errorSlot, error);
-            _glfwPlatformLockMutex(&_glfw.errorLock);
-            error->next = _glfw.errorListHead;
-            _glfw.errorListHead = error;
-            _glfwPlatformUnlockMutex(&_glfw.errorLock);
+            error = _plfw_calloc(1, sizeof(_PLFWerror));
+            _plfwPlatformSetTls(&_plfw.errorSlot, error);
+            _plfwPlatformLockMutex(&_plfw.errorLock);
+            error->next = _plfw.errorListHead;
+            _plfw.errorListHead = error;
+            _plfwPlatformUnlockMutex(&_plfw.errorLock);
         }
     }
     else
-        error = &_glfwMainThreadError;
+        error = &_plfwMainThreadError;
 
     error->code = code;
     strcpy(error->description, description);
 
-    if (_glfwErrorCallback)
-        _glfwErrorCallback(code, description);
+    if (_plfwErrorCallback)
+        _plfwErrorCallback(code, description);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-//////                        GLFW public API                       //////
+//////                        PLFW public API                       //////
 //////////////////////////////////////////////////////////////////////////
 
-GLFWAPI int glfwInit(void)
+PLFWAPI int plfwInit(void)
 {
-    if (_glfw.initialized)
-        return GLFW_TRUE;
+    if (_plfw.initialized)
+        return PLFW_TRUE;
 
-    memset(&_glfw, 0, sizeof(_glfw));
-    _glfw.hints.init = _glfwInitHints;
+    memset(&_plfw, 0, sizeof(_plfw));
+    _plfw.hints.init = _plfwInitHints;
 
-    _glfw.allocator = _glfwInitAllocator;
-    if (!_glfw.allocator.allocate)
+    _plfw.allocator = _plfwInitAllocator;
+    if (!_plfw.allocator.allocate)
     {
-        _glfw.allocator.allocate   = defaultAllocate;
-        _glfw.allocator.reallocate = defaultReallocate;
-        _glfw.allocator.deallocate = defaultDeallocate;
+        _plfw.allocator.allocate   = defaultAllocate;
+        _plfw.allocator.reallocate = defaultReallocate;
+        _plfw.allocator.deallocate = defaultDeallocate;
     }
 
-    if (!_glfwSelectPlatform(_glfw.hints.init.platformID, &_glfw.platform))
-        return GLFW_FALSE;
+    if (!_plfwSelectPlatform(_plfw.hints.init.platformID, &_plfw.platform))
+        return PLFW_FALSE;
 
-    if (!_glfw.platform.init())
-    {
-        terminate();
-        return GLFW_FALSE;
-    }
-
-    if (!_glfwPlatformCreateMutex(&_glfw.errorLock) ||
-        !_glfwPlatformCreateTls(&_glfw.errorSlot))
+    if (!_plfw.platform.init())
     {
         terminate();
-        return GLFW_FALSE;
+        return PLFW_FALSE;
     }
 
-    _glfwPlatformSetTls(&_glfw.errorSlot, &_glfwMainThreadError);
+    if (!_plfwPlatformCreateMutex(&_plfw.errorLock) ||
+        !_plfwPlatformCreateTls(&_plfw.errorSlot))
+    {
+        terminate();
+        return PLFW_FALSE;
+    }
 
-    _glfwInitGamepadMappings();
+    _plfwPlatformSetTls(&_plfw.errorSlot, &_plfwMainThreadError);
 
-    _glfwPlatformInitTimer();
-    _glfw.timer.offset = _glfwPlatformGetTimerValue();
+    _plfwInitGamepadMappings();
 
-    _glfw.initialized = GLFW_TRUE;
+    _plfwPlatformInitTimer();
+    _plfw.timer.offset = _plfwPlatformGetTimerValue();
 
-    glfwDefaultWindowHints();
-    return GLFW_TRUE;
+    _plfw.initialized = PLFW_TRUE;
+
+    plfwDefaultWindowHints();
+    return PLFW_TRUE;
 }
 
-GLFWAPI void glfwTerminate(void)
+PLFWAPI void plfwTerminate(void)
 {
-    if (!_glfw.initialized)
+    if (!_plfw.initialized)
         return;
 
     terminate();
 }
 
-GLFWAPI void glfwInitHint(int hint, int value)
+PLFWAPI void plfwInitHint(int hint, int value)
 {
     switch (hint)
     {
-        case GLFW_JOYSTICK_HAT_BUTTONS:
-            _glfwInitHints.hatButtons = value;
+        case PLFW_JOYSTICK_HAT_BUTTONS:
+            _plfwInitHints.hatButtons = value;
             return;
-        case GLFW_PLATFORM:
-            _glfwInitHints.platformID = value;
+        case PLFW_PLATFORM:
+            _plfwInitHints.platformID = value;
             return;
-        case GLFW_WAYLAND_LIBDECOR:
-            _glfwInitHints.wl.libdecorMode = value;
+        case PLFW_WAYLAND_LIBDECOR:
+            _plfwInitHints.wl.libdecorMode = value;
             return;
     }
 
-    _glfwInputError(GLFW_INVALID_ENUM,
+    _plfwInputError(PLFW_INVALID_ENUM,
                     "Invalid init hint 0x%08X", hint);
 }
 
-GLFWAPI void glfwInitAllocator(const GLFWallocator* allocator)
+PLFWAPI void plfwInitAllocator(const PLFWallocator* allocator)
 {
     if (allocator)
     {
         if (allocator->allocate && allocator->reallocate && allocator->deallocate)
-            _glfwInitAllocator = *allocator;
+            _plfwInitAllocator = *allocator;
         else
-            _glfwInputError(GLFW_INVALID_VALUE, "Missing function in allocator");
+            _plfwInputError(PLFW_INVALID_VALUE, "Missing function in allocator");
     }
     else
-        memset(&_glfwInitAllocator, 0, sizeof(GLFWallocator));
+        memset(&_plfwInitAllocator, 0, sizeof(PLFWallocator));
 }
 
-GLFWAPI int glfwGetError(const char** description)
+PLFWAPI int plfwGetError(const char** description)
 {
-    _GLFWerror* error;
-    int code = GLFW_NO_ERROR;
+    _PLFWerror* error;
+    int code = PLFW_NO_ERROR;
 
     if (description)
         *description = NULL;
 
-    if (_glfw.initialized)
-        error = _glfwPlatformGetTls(&_glfw.errorSlot);
+    if (_plfw.initialized)
+        error = _plfwPlatformGetTls(&_plfw.errorSlot);
     else
-        error = &_glfwMainThreadError;
+        error = &_plfwMainThreadError;
 
     if (error)
     {
         code = error->code;
-        error->code = GLFW_NO_ERROR;
+        error->code = PLFW_NO_ERROR;
         if (description && code)
             *description = error->description;
     }
@@ -479,9 +479,9 @@ GLFWAPI int glfwGetError(const char** description)
     return code;
 }
 
-GLFWAPI GLFWerrorfun glfwSetErrorCallback(GLFWerrorfun cbfun)
+PLFWAPI PLFWerrorfun plfwSetErrorCallback(PLFWerrorfun cbfun)
 {
-    _GLFW_SWAP(GLFWerrorfun, _glfwErrorCallback, cbfun);
+    _PLFW_SWAP(PLFWerrorfun, _plfwErrorCallback, cbfun);
     return cbfun;
 }
 

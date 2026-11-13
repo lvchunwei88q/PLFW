@@ -1,15 +1,15 @@
 # 上手 <a name="quick_guide"></a>
 
 本指南带你从零写一个完整的小程序：创建一个窗口，处理键盘与关闭事件，读取计时器，
-然后干净退出。它只用 `glfw3.h` 里现存的 API——本库**不创建任何图形上下文**，
+然后干净退出。它只用 `plfw3.h` 里现存的 API——本库**不创建任何图形上下文**，
 窗口里画什么由你自己决定。
 
 ## 分步说明 <a name="quick_steps"></a>
 
-### 包含 GLFW 头文件 <a name="quick_include"></a>
+### 包含 PLFW 头文件 <a name="quick_include"></a>
 
 ```c
-#include <GLFW/glfw3.h>
+#include <PLFW/plfw3.h>
 ```
 
 这个头文件包含全部常量、类型与函数声明。它**不再引入任何 GL、EGL、Vulkan、
@@ -17,23 +17,23 @@ OSMesa 头文件**，所以不会和你的 D3D、Vulkan 或 GDI 头文件抢占�
 窗口句柄（`HWND` / `struct wl_surface*`）时，再单独包含：
 
 ```c
-#define GLFW_EXPOSE_NATIVE_WAYLAND   // 或 GLFW_EXPOSE_NATIVE_WIN32
-#include <GLFW/glfw3native.h>
+#define PLFW_EXPOSE_NATIVE_WAYLAND   // 或 PLFW_EXPOSE_NATIVE_WIN32
+#include <PLFW/plfw3native.h>
 ```
 
 ### 初始化与终止 <a name="quick_init_term"></a>
 
 ```c
-if (!glfwInit())
+if (!plfwInit())
     return 1;
 
 ...   // 使用 API
 
-glfwTerminate();
+plfwTerminate();
 ```
 
-`glfwInit` 成功返回 `GLFW_TRUE`，失败返回 `GLFW_FALSE` 并设置错误。
-`glfwTerminate` 会销毁所有剩余窗口、显示器与手柄对象。窗口在终止时不会自动
+`plfwInit` 成功返回 `PLFW_TRUE`，失败返回 `PLFW_FALSE` 并设置错误。
+`plfwTerminate` 会销毁所有剩余窗口、显示器与手柄对象。窗口在终止时不会自动
 “优雅关闭”，它只是被销毁，所以不要跳过这一步。
 
 ### 设置错误回调 <a name="quick_capture_error"></a>
@@ -43,147 +43,147 @@ glfwTerminate();
 ```c
 static void errorCallback(int code, const char* description)
 {
-    fprintf(stderr, "GLFW error 0x%08X: %s\n", (unsigned int) code, description);
+    fprintf(stderr, "PLFW error 0x%08X: %s\n", (unsigned int) code, description);
 }
 
-glfwSetErrorCallback(errorCallback);
+plfwSetErrorCallback(errorCallback);
 ```
 
-回调里的 `code` 是 `GLFW_*_UNAVAILABLE`、`GLFW_PLATFORM_ERROR` 这类类别，具体
-含义见 [error_handling](intro.md#error_handling)。回调里不要调用 GLFW，只能记录。
+回调里的 `code` 是 `PLFW_*_UNAVAILABLE`、`PLFW_PLATFORM_ERROR` 这类类别，具体
+含义见 [error_handling](intro.md#error_handling)。回调里不要调用 PLFW，只能记录。
 
 ### 创建窗口 <a name="quick_create_window"></a>
 
 ```c
-GLFWwindow* window = glfwCreateWindow(800, 480, "GLFW window", NULL, NULL);
+PLFWwindow* window = plfwCreateWindow(800, 480, "PLFW window", NULL, NULL);
 ```
 
 - 第 2、3 个参数是初始内容区宽高与标题；宽高必须大于 0。
-- 第 4 个参数是显示器：传 `NULL` 得到窗口模式，传 `glfwGetPrimaryMonitor()`
+- 第 4 个参数是显示器：传 `NULL` 得到窗口模式，传 `plfwGetPrimaryMonitor()`
   得到全屏窗口。
 - 第 5 个参数 `share` 在**这个构建里被忽略**：保留它是为了让上游代码继续编译，
   传什么都一样，建议直接写 `NULL`。
 
-窗口创建失败返回 `NULL`，此时别忘了 `glfwTerminate`。创建后的窗口默认可见、
+窗口创建失败返回 `NULL`，此时别忘了 `plfwTerminate`。创建后的窗口默认可见、
 可缩放、有装饰、接收焦点；这些都可以用 [窗口提示](window.md#window_hints) 在创建前
 改掉。
 
 ### 检查关闭标志 <a name="quick_window_close"></a>
 
 ```c
-while (!glfwWindowShouldClose(window))
+while (!plfwWindowShouldClose(window))
 {
     ...
 }
 ```
 
-用户点击关闭按钮、按 Alt+F4、或在 Wayland 下由合成器发出关闭请求时，GLFW 会
+用户点击关闭按钮、按 Alt+F4、或在 Wayland 下由合成器发出关闭请求时，PLFW 会
 置上这个标志。你也可以自己置：
 
 ```c
-glfwSetWindowShouldClose(window, GLFW_TRUE);
+plfwSetWindowShouldClose(window, PLFW_TRUE);
 ```
 
-想先问一句“真的要关吗”，用 `glfwSetWindowCloseCallback` 接住关闭请求，在里面
-决定是否让标志保持 `GLFW_FALSE`。
+想先问一句“真的要关吗”，用 `plfwSetWindowCloseCallback` 接住关闭请求，在里面
+决定是否让标志保持 `PLFW_FALSE`。
 
 ### 接收键盘输入 <a name="quick_key_input"></a>
 
 ```c
-static void keyCallback(GLFWwindow* window, int key, int scancode,
+static void keyCallback(PLFWwindow* window, int key, int scancode,
                         int action, int mods)
 {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
+    if (key == PLFW_KEY_ESCAPE && action == PLFW_PRESS)
+        plfwSetWindowShouldClose(window, PLFW_TRUE);
 }
 
-glfwSetKeyCallback(window, keyCallback);
+plfwSetKeyCallback(window, keyCallback);
 ```
 
-`action` 是 `GLFW_PRESS` / `GLFW_RELEASE` / `GLFW_REPEAT`。`key` 是与布局无关的
-物理键常量（见 [keys](../include/GLFW/glfw3.h)），`scancode` 是平台原始扫描码；要拿到“这个键在这个
-键盘布局上印的字符”，用 `glfwGetKeyName`。文字输入（输入法、组合键）走
-`glfwSetCharCallback`，不要从按键拼字符串。
+`action` 是 `PLFW_PRESS` / `PLFW_RELEASE` / `PLFW_REPEAT`。`key` 是与布局无关的
+物理键常量（见 [keys](../include/PLFW/plfw3.h)），`scancode` 是平台原始扫描码；要拿到“这个键在这个
+键盘布局上印的字符”，用 `plfwGetKeyName`。文字输入（输入法、组合键）走
+`plfwSetCharCallback`，不要从按键拼字符串。
 
 ### 读计时器 <a name="quick_timer"></a>
 
 ```c
-const double now = glfwGetTime();
+const double now = plfwGetTime();
 ```
 
-`glfwGetTime` 返回自 `glfwInit` 起的秒数（双精度），可以直接拿来做帧间隔；
-精度用 `glfwGetTimerFrequency` 判断。`glfwSetTime` 可以把它归零。
+`plfwGetTime` 返回自 `plfwInit` 起的秒数（双精度），可以直接拿来做帧间隔；
+精度用 `plfwGetTimerFrequency` 判断。`plfwSetTime` 可以把它归零。
 
 ### 处理事件 <a name="quick_process_events"></a>
 
 ```c
-glfwPollEvents();          // 不阻塞：把已有事件取回来分发
-glfwWaitEvents();          // 阻塞：没事件就睡，省电
-glfwWaitEventsTimeout(0.1); // 最多阻塞 0.1 秒
+plfwPollEvents();          // 不阻塞：把已有事件取回来分发
+plfwWaitEvents();          // 阻塞：没事件就睡，省电
+plfwWaitEventsTimeout(0.1); // 最多阻塞 0.1 秒
 ```
 
-事件是按到达顺序分发的（见 [event_order](intro.md#event_order)）。窗口内容需要重绘时，GLFW 会调用
-`glfwSetWindowRefreshCallback`；渲染循环里通常把它和 `glfwPollEvents` 结合使用。
-从别的线程唤醒阻塞中的主循环，用 `glfwPostEmptyEvent`。
+事件是按到达顺序分发的（见 [event_order](intro.md#event_order)）。窗口内容需要重绘时，PLFW 会调用
+`plfwSetWindowRefreshCallback`；渲染循环里通常把它和 `plfwPollEvents` 结合使用。
+从别的线程唤醒阻塞中的主循环，用 `plfwPostEmptyEvent`。
 
 ## 完整示例 <a name="quick_example"></a>
 
-下面这段可以直接编译运行（Windows 用 `gcc demo.c -lglfw3 -lgdi32`，
+下面这段可以直接编译运行（Windows 用 `gcc demo.c -lplfw3 -lgdi32`，
 Linux 见 [build_guide](build.md#build_guide)）。它创建 800×480 窗口，打印每一次按键与光标位置，
 每秒打印一次时间，`Escape` 或关闭窗口退出。
 
 ```c
-#include <GLFW/glfw3.h>
+#include <PLFW/plfw3.h>
 #include <stdio.h>
 
 static void errorCallback(int code, const char* description)
 {
-    fprintf(stderr, "GLFW error 0x%08X: %s\n", (unsigned int) code, description);
+    fprintf(stderr, "PLFW error 0x%08X: %s\n", (unsigned int) code, description);
 }
 
-static void keyCallback(GLFWwindow* window, int key, int scancode,
+static void keyCallback(PLFWwindow* window, int key, int scancode,
                         int action, int mods)
 {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
+    if (key == PLFW_KEY_ESCAPE && action == PLFW_PRESS)
+        plfwSetWindowShouldClose(window, PLFW_TRUE);
 }
 
-static void cursorCallback(GLFWwindow* window, double x, double y)
+static void cursorCallback(PLFWwindow* window, double x, double y)
 {
     printf("cursor %.1f %.1f\n", x, y);
 }
 
 int main(void)
 {
-    glfwSetErrorCallback(errorCallback);
+    plfwSetErrorCallback(errorCallback);
 
-    if (!glfwInit())
+    if (!plfwInit())
         return 1;
 
-    GLFWwindow* window = glfwCreateWindow(800, 480,
-                                          "GLFW window (no graphics API)",
+    PLFWwindow* window = plfwCreateWindow(800, 480,
+                                          "PLFW window (no graphics API)",
                                           NULL, NULL);
     if (!window)
     {
-        glfwTerminate();
+        plfwTerminate();
         return 1;
     }
 
-    glfwSetKeyCallback(window, keyCallback);
-    glfwSetCursorPosCallback(window, cursorCallback);
+    plfwSetKeyCallback(window, keyCallback);
+    plfwSetCursorPosCallback(window, cursorCallback);
 
     double lastReport = 0.0;
 
-    while (!glfwWindowShouldClose(window))
+    while (!plfwWindowShouldClose(window))
     {
-        glfwPollEvents();
+        plfwPollEvents();
 
-        const double now = glfwGetTime();
+        const double now = plfwGetTime();
         if (now - lastReport >= 1.0)
         {
             int width, height, fbWidth, fbHeight;
-            glfwGetWindowSize(window, &width, &height);
-            glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+            plfwGetWindowSize(window, &width, &height);
+            plfwGetFramebufferSize(window, &fbWidth, &fbHeight);
 
             printf("t=%.2fs window=%dx%d framebuffer=%dx%d\n",
                    now, width, height, fbWidth, fbHeight);
@@ -191,8 +191,8 @@ int main(void)
         }
     }
 
-    glfwDestroyWindow(window);
-    glfwTerminate();
+    plfwDestroyWindow(window);
+    plfwTerminate();
     return 0;
 }
 ```

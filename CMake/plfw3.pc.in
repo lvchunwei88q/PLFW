@@ -1,0 +1,12 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+
+Name: PLFW
+Description: A multi-platform window, input and event library (no graphics contexts)
+Version: @PLFW_VERSION@
+Requires.private: @PLFW_PKG_CONFIG_REQUIRES_PRIVATE@
+Libs: -L${libdir} -l@PLFW_LIB_NAME@@PLFW_LIB_NAME_SUFFIX@
+Libs.private: @PLFW_PKG_CONFIG_LIBS_PRIVATE@
+Cflags: -I${includedir}

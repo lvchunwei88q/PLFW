@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.5 Win32 - www.glfw.org
+// PLFW 3.5 Win32 - windowing-only fork of GLFW (www.glfw.org)
 //------------------------------------------------------------------------
 // Copyright (c) 2002-2006 Marcus Geelnard
 // Copyright (c) 2006-2017 Camilla Löwy <elmindreda@glfw.org>
@@ -27,74 +27,74 @@
 
 #include "internal.h"
 
-#if defined(GLFW_BUILD_WIN32_THREAD)
+#if defined(PLFW_BUILD_WIN32_THREAD)
 
 #include <assert.h>
 
 
 //////////////////////////////////////////////////////////////////////////
-//////                       GLFW platform API                      //////
+//////                       PLFW platform API                      //////
 //////////////////////////////////////////////////////////////////////////
 
-GLFWbool _glfwPlatformCreateTls(_GLFWtls* tls)
+PLFWbool _plfwPlatformCreateTls(_PLFWtls* tls)
 {
-    assert(tls->win32.allocated == GLFW_FALSE);
+    assert(tls->win32.allocated == PLFW_FALSE);
 
     tls->win32.index = TlsAlloc();
     if (tls->win32.index == TLS_OUT_OF_INDEXES)
     {
-        _glfwInputError(GLFW_PLATFORM_ERROR, "Win32: Failed to allocate TLS index");
-        return GLFW_FALSE;
+        _plfwInputError(PLFW_PLATFORM_ERROR, "Win32: Failed to allocate TLS index");
+        return PLFW_FALSE;
     }
 
-    tls->win32.allocated = GLFW_TRUE;
-    return GLFW_TRUE;
+    tls->win32.allocated = PLFW_TRUE;
+    return PLFW_TRUE;
 }
 
-void _glfwPlatformDestroyTls(_GLFWtls* tls)
+void _plfwPlatformDestroyTls(_PLFWtls* tls)
 {
     if (tls->win32.allocated)
         TlsFree(tls->win32.index);
-    memset(tls, 0, sizeof(_GLFWtls));
+    memset(tls, 0, sizeof(_PLFWtls));
 }
 
-void* _glfwPlatformGetTls(_GLFWtls* tls)
+void* _plfwPlatformGetTls(_PLFWtls* tls)
 {
-    assert(tls->win32.allocated == GLFW_TRUE);
+    assert(tls->win32.allocated == PLFW_TRUE);
     return TlsGetValue(tls->win32.index);
 }
 
-void _glfwPlatformSetTls(_GLFWtls* tls, void* value)
+void _plfwPlatformSetTls(_PLFWtls* tls, void* value)
 {
-    assert(tls->win32.allocated == GLFW_TRUE);
+    assert(tls->win32.allocated == PLFW_TRUE);
     TlsSetValue(tls->win32.index, value);
 }
 
-GLFWbool _glfwPlatformCreateMutex(_GLFWmutex* mutex)
+PLFWbool _plfwPlatformCreateMutex(_PLFWmutex* mutex)
 {
-    assert(mutex->win32.allocated == GLFW_FALSE);
+    assert(mutex->win32.allocated == PLFW_FALSE);
     InitializeCriticalSection(&mutex->win32.section);
-    return mutex->win32.allocated = GLFW_TRUE;
+    return mutex->win32.allocated = PLFW_TRUE;
 }
 
-void _glfwPlatformDestroyMutex(_GLFWmutex* mutex)
+void _plfwPlatformDestroyMutex(_PLFWmutex* mutex)
 {
     if (mutex->win32.allocated)
         DeleteCriticalSection(&mutex->win32.section);
-    memset(mutex, 0, sizeof(_GLFWmutex));
+    memset(mutex, 0, sizeof(_PLFWmutex));
 }
 
-void _glfwPlatformLockMutex(_GLFWmutex* mutex)
+void _plfwPlatformLockMutex(_PLFWmutex* mutex)
 {
-    assert(mutex->win32.allocated == GLFW_TRUE);
+    assert(mutex->win32.allocated == PLFW_TRUE);
     EnterCriticalSection(&mutex->win32.section);
 }
 
-void _glfwPlatformUnlockMutex(_GLFWmutex* mutex)
+void _plfwPlatformUnlockMutex(_PLFWmutex* mutex)
 {
-    assert(mutex->win32.allocated == GLFW_TRUE);
+    assert(mutex->win32.allocated == PLFW_TRUE);
     LeaveCriticalSection(&mutex->win32.section);
 }
 
-#endif // GLFW_BUILD_WIN32_THREAD
+#endif // PLFW_BUILD_WIN32_THREAD
 

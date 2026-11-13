@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.5 Win32 - www.glfw.org
+// PLFW 3.5 Win32 - windowing-only fork of GLFW (www.glfw.org)
 //------------------------------------------------------------------------
 // Copyright (c) 2002-2006 Marcus Geelnard
 // Copyright (c) 2006-2017 Camilla Löwy <elmindreda@glfw.org>
@@ -25,29 +25,29 @@
 //
 //========================================================================
 
-// This is a workaround for the fact that glfw3.h needs to export APIENTRY (for
+// This is a workaround for the fact that plfw3.h needs to export APIENTRY (for
 // example to allow applications to correctly declare a GL_KHR_debug callback)
 // but windows.h assumes no one will define APIENTRY before it does
 #undef APIENTRY
 
 #include <windows.h>
 
-#define GLFW_WIN32_TLS_STATE            _GLFWtlsWin32     win32;
-#define GLFW_WIN32_MUTEX_STATE          _GLFWmutexWin32   win32;
+#define PLFW_WIN32_TLS_STATE            _PLFWtlsWin32     win32;
+#define PLFW_WIN32_MUTEX_STATE          _PLFWmutexWin32   win32;
 
 // Win32-specific thread local storage data
 //
-typedef struct _GLFWtlsWin32
+typedef struct _PLFWtlsWin32
 {
-    GLFWbool            allocated;
+    PLFWbool            allocated;
     DWORD               index;
-} _GLFWtlsWin32;
+} _PLFWtlsWin32;
 
 // Win32-specific mutex data
 //
-typedef struct _GLFWmutexWin32
+typedef struct _PLFWmutexWin32
 {
-    GLFWbool            allocated;
+    PLFWbool            allocated;
     CRITICAL_SECTION    section;
-} _GLFWmutexWin32;
+} _PLFWmutexWin32;
 

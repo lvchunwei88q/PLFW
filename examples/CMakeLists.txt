@@ -4,7 +4,7 @@
 # demonstrates windowing, input, monitors and event handling with no graphics
 # API at all.
 
-link_libraries(glfw)
+link_libraries(plfw)
 
 if (MATH_LIBRARY)
     link_libraries("${MATH_LIBRARY}")
@@ -20,4 +20,4 @@ add_executable(multi-window multi-window.c)
 
 set_target_properties(window-input multi-window PROPERTIES
                       C_STANDARD 99
-                      FOLDER "GLFW3/Examples")
+                      FOLDER "PLFW3/Examples")

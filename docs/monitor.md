@@ -1,35 +1,35 @@
 # 显示器指南 <a name="monitor_guide"></a>
 
-显示器对象由 GLFW 管理，应用不能创建或销毁它们。它们只用于查询视频模式、摆放
+显示器对象由 PLFW 管理，应用不能创建或销毁它们。它们只用于查询视频模式、摆放
 全屏窗口、读取工作区与 gamma。
 
 ## 显示器对象 <a name="monitor_object"></a>
 
-`GLFWmonitor*` 是不透明句柄。显示器热插拔时，GLFW 会销毁失效的句柄、为新显示器
+`PLFWmonitor*` 是不透明句柄。显示器热插拔时，PLFW 会销毁失效的句柄、为新显示器
 创建新句柄，所以**不要在回调之外长期缓存显示器指针**。
 
 ### 取回显示器 <a name="monitor_monitors"></a>
 
 ```c
 int count;
-GLFWmonitor** monitors = glfwGetMonitors(&count);
-GLFWmonitor* primary = glfwGetPrimaryMonitor();
+PLFWmonitor** monitors = plfwGetMonitors(&count);
+PLFWmonitor* primary = plfwGetPrimaryMonitor();
 ```
 
 返回的数组由库持有，在下次调用前有效。主显示器由系统决定，可能不是你期望的那块。
-每个显示器都有名字（`glfwGetMonitorName`），可以据此选择。
+每个显示器都有名字（`plfwGetMonitorName`），可以据此选择。
 
 Wayland 下“主显示器”与显示器位置不可靠：协议不暴露全局坐标，位置恒为 `0,0`。
 
 ### 显示器配置变化 <a name="monitor_event"></a>
 
 ```c
-void monitorCallback(GLFWmonitor* monitor, int event);
+void monitorCallback(PLFWmonitor* monitor, int event);
 
-glfwSetMonitorCallback(monitorCallback);
+plfwSetMonitorCallback(monitorCallback);
 ```
 
-`event` 是 `GLFW_CONNECTED` 或 `GLFW_DISCONNECTED`。回调发生时管理器状态可能还在
+`event` 是 `PLFW_CONNECTED` 或 `PLFW_DISCONNECTED`。回调发生时管理器状态可能还在
 更新，回调里只能记录，不要枚举显示器。
 
 ## 显示器属性 <a name="monitor_properties"></a>
@@ -38,12 +38,12 @@ glfwSetMonitorCallback(monitorCallback);
 
 ```c
 int count;
-const GLFWvidmode* modes = glfwGetVideoModes(monitor, &count);
-const GLFWvidmode* current = glfwGetVideoMode(monitor);
+const PLFWvidmode* modes = plfwGetVideoModes(monitor, &count);
+const PLFWvidmode* current = plfwGetVideoMode(monitor);
 ```
 
-`GLFWvidmode` 的字段：`width`、`height`、`redBits`、`greenBits`、`blueBits`、
-`refreshRate`（Hz）。`glfwGetVideoMode` 返回当前模式，`glfwGetVideoModes` 返回该
+`PLFWvidmode` 的字段：`width`、`height`、`redBits`、`greenBits`、`blueBits`、
+`refreshRate`（Hz）。`plfwGetVideoMode` 返回当前模式，`plfwGetVideoModes` 返回该
 显示器支持的全部模式（按分辨率与刷新率排序）。
 
 本构建没有帧缓冲位深提示，`*Bits` 只是平台报告的名义值，不能拿来要求特定格式；
@@ -53,7 +53,7 @@ Wayland 下这些字段通常固定为 8/8/8。
 
 ```c
 int widthMM, heightMM;
-glfwGetMonitorPhysicalSize(monitor, &widthMM, &heightMM);
+plfwGetMonitorPhysicalSize(monitor, &widthMM, &heightMM);
 ```
 
 单位毫米。很多后端拿不到真实尺寸，此时返回 0，不要用它在 0 值上做除法。
@@ -62,7 +62,7 @@ glfwGetMonitorPhysicalSize(monitor, &widthMM, &heightMM);
 
 ```c
 float xscale, yscale;
-glfwGetMonitorContentScale(monitor, &xscale, &yscale);
+plfwGetMonitorContentScale(monitor, &xscale, &yscale);
 ```
 
 系统缩放比例（例如 Windows 150% 时为 1.5）。它决定窗口尺寸（逻辑像素）与帧缓冲
@@ -73,7 +73,7 @@ glfwGetMonitorContentScale(monitor, &xscale, &yscale);
 
 ```c
 int xpos, ypos;
-glfwGetMonitorPos(monitor, &xpos, &ypos);
+plfwGetMonitorPos(monitor, &xpos, &ypos);
 ```
 
 显示器左上角在虚拟桌面中的位置，以主显示器左上角为原点（主显示器
@@ -83,7 +83,7 @@ glfwGetMonitorPos(monitor, &xpos, &ypos);
 
 ```c
 int xpos, ypos, width, height;
-glfwGetMonitorWorkarea(monitor, &xpos, &ypos, &width, &height);
+plfwGetMonitorWorkarea(monitor, &xpos, &ypos, &width, &height);
 ```
 
 去掉任务栏 / 顶栏 / Dock 之后可用的矩形，适合算“无边框全屏窗口”的位置。
@@ -91,7 +91,7 @@ glfwGetMonitorWorkarea(monitor, &xpos, &ypos, &width, &height);
 ### 可读名字 <a name="monitor_name"></a>
 
 ```c
-const char* name = glfwGetMonitorName(monitor);
+const char* name = plfwGetMonitorName(monitor);
 ```
 
 例如 Windows 上的 `Generic PnP Monitor`、Weston 的 `weston headless`。指针由库持有。
@@ -99,8 +99,8 @@ const char* name = glfwGetMonitorName(monitor);
 ### 用户指针 <a name="monitor_userptr"></a>
 
 ```c
-glfwSetMonitorUserPointer(monitor, pointer);
-void* pointer = glfwGetMonitorUserPointer(monitor);
+plfwSetMonitorUserPointer(monitor, pointer);
+void* pointer = plfwGetMonitorUserPointer(monitor);
 ```
 
 存自己的结构，便于在监视器回调里定位。
@@ -108,21 +108,21 @@ void* pointer = glfwGetMonitorUserPointer(monitor);
 ### Gamma <a name="monitor_gamma"></a>
 
 ```c
-glfwSetGamma(monitor, 1.0f);                 // 线性
-const GLFWgammaramp* ramp = glfwGetGammaRamp(monitor);
-glfwSetGammaRamp(monitor, ramp);
+plfwSetGamma(monitor, 1.0f);                 // 线性
+const PLFWgammaramp* ramp = plfwGetGammaRamp(monitor);
+plfwSetGammaRamp(monitor, ramp);
 ```
 
-`GLFWgammaramp` 是三条 `unsigned short` 表（红、绿、蓝）与长度。`glfwSetGamma`
+`PLFWgammaramp` 是三条 `unsigned short` 表（红、绿、蓝）与长度。`plfwSetGamma`
 按给定 gamma 值生成一条近似线性化曲线，比手写表更方便。
 
-支持情况：Win32 实现了 gamma。Wayland 没有 gamma 概念：`glfwGetGammaRamp` 报
-`GLFW_FEATURE_UNAVAILABLE` 并返回 `NULL`，`glfwSetGamma` 拿不到原始 ramp 就直接返回
+支持情况：Win32 实现了 gamma。Wayland 没有 gamma 概念：`plfwGetGammaRamp` 报
+`PLFW_FEATURE_UNAVAILABLE` 并返回 `NULL`，`plfwSetGamma` 拿不到原始 ramp 就直接返回
 （窗口不会因此崩溃，设置也确实没生效）。程序应当把 gamma 当作可选能力，查询失败就
 跳过。
 
 ## 全屏窗口与显示器
 
-`glfwCreateWindow` 的第 4 个参数传显示器就得到全屏窗口，见
-[window_monitor](window.md#window_monitor)；切换窗口模式用 `glfwSetWindowMonitor`。全屏窗口的尺寸
+`plfwCreateWindow` 的第 4 个参数传显示器就得到全屏窗口，见
+[window_monitor](window.md#window_monitor)；切换窗口模式用 `plfwSetWindowMonitor`。全屏窗口的尺寸
 会成为“期望视频模式”，后端会选最接近的支持模式。
