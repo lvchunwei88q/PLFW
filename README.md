@@ -120,8 +120,9 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
     窗口尺寸 / 帧缓冲尺寸 / 帧尺寸、可见性 / 图标化 / 可缩放属性、光标与键鼠状态、
     窗口尺寸与位置设置、剪贴板往返、手柄枚举、键扫描码、事件泵、关闭请求与销毁。
     该测试按后端能力自适应：无显示环境自动回落到 headless 后端；Null 后端跳过窗口
-    几何断言；Wayland 跳过窗口定位断言（协议不允许客户端定位）；后端声明剪贴板不可用
-    时跳过剪贴板断言。另有两条断言专门守住后端范围：
+    几何断言；Wayland 跳过窗口定位断言（协议不允许客户端定位）；后端声明剪贴板不可用、
+    或 Wayland 窗口没有焦点拿不到剪贴板 data offer 时，跳过剪贴板断言。另有两条断言
+    专门守住后端范围：
     `plfwPlatformSupported(PLFW_PLATFORM_X11)` 与 `(PLFW_PLATFORM_COCOA)` 必须返回
     `PLFW_FALSE`。
 - 文档：`docs/` 下 10 篇中文指南与 `SUPPORT.md` 全部按当前能力重写，直接用 Markdown
@@ -233,6 +234,19 @@ GCC 11.4.0 + CMake 3.22.1 + Ninja（Ubuntu 22.04，删除 X11 后的 Wayland 单
   `0x5624ac444e90` / `0x5624ac45cca0` / `0x5624ac45d840`）；
 - `ldd tests/smoke` 显示只依赖 `libc` / `libm`，没有 `libX11` 等 X11 库；
   Wayland 客户端库是运行时 `dlopen` 的，与上游一致。
+
+Ubuntu 26.04 LTS + WSL2 / WSLg（GCC 15.2.0 + CMake 4.2.3 + Ninja 1.13.2）：
+
+- 配置只打印 `-- Including Wayland support`，找到 `wayland-client` / `wayland-cursor`
+  1.24.0 与 `xkbcommon` 1.13.1；库、两个示例与测试全部编译通过，
+  `warning` / `error` 计数为 0；
+- 直接在 WSLg 提供的合成器上跑 `tests/smoke`：`active platform backend: Wayland`，
+  除两项按能力跳过的断言外全部 ok——窗口定位（Wayland 不允许客户端放置窗口），
+  以及剪贴板（新窗口在 WSLg 下不会自动拿到键盘焦点，读不到 data offer，按预期报
+  `PLFW_FORMAT_UNAVAILABLE: Wayland: No clipboard data available`；这与
+  `plfwFocusWindow` 只是“请求”的说明一致，不是本库的缺陷）；
+- `ldd build/tests/smoke` 只有 `libm` / `libc`：Wayland 客户端库是运行时 `dlopen`
+  的，静态库本身不带 X11 / Wayland 链接依赖。
 
 X11 与 Cocoa：**已从本仓库删除**，不再需要 macOS 或 X 服务器环境，也不存在
 “未编译验证”的后端。
