@@ -246,7 +246,14 @@ Ubuntu 26.04 LTS + WSL2 / WSLg（GCC 15.2.0 + CMake 4.2.3 + Ninja 1.13.2）：
   `PLFW_FORMAT_UNAVAILABLE: Wayland: No clipboard data available`；这与
   `plfwFocusWindow` 只是“请求”的说明一致，不是本库的缺陷）；
 - `ldd build/tests/smoke` 只有 `libm` / `libc`：Wayland 客户端库是运行时 `dlopen`
-  的，静态库本身不带 X11 / Wayland 链接依赖。
+  的，静态库本身不带 X11 / Wayland 链接依赖；
+- `BUILD_SHARED_LIBS=ON` 得到 `libplfw.so.3.5`（SONAME `libplfw.so.3`），
+  `nm -D --defined-only` 里 `plfw*` 导出符号 113 个、`glfw*` 0 个；
+- `PLFW_INSTALL=ON` 安装后是 `include/PLFW/`、`lib/cmake/plfw3/`、`lib/pkgconfig/plfw3.pc`；
+  分别用 `pkg-config plfw3` 和 `find_package(plfw3 3.5 CONFIG)` 写一个最小消费者，
+  两者都能编译、链接并跑起来（报告 `monitor=weston rdp`）；
+- `-DPLFW_BUILD_WAYLAND=OFF` 的纯 Null 构建同样通过，`tests/smoke` 报
+  `active platform backend: Null`。
 
 X11 与 Cocoa：**已从本仓库删除**，不再需要 macOS 或 X 服务器环境，也不存在
 “未编译验证”的后端。
