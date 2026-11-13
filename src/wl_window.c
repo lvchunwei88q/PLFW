@@ -201,11 +201,93 @@ static struct wl_buffer* createShmBuffer(const PLFWimage* image)
     return buffer;
 }
 
+// A Wayland surface is only mapped once a buffer has been attached and committed,
+// but this build has no graphics context and therefore never draws.  Without a
+// buffer the compositor has nothing to show, the window stays unmapped and it can
+// never receive pointer or keyboard focus.  Paint a flat opaque surface instead,
+// which is what a windowing-only build should show.
+static struct wl_buffer* createBlankBuffer(int width, int height)
+{
+    const int stride = width * 4;
+    const int length = stride * height;
+
+    const int fd = createAnonymousFile(length);
+    if (fd < 0)
+    {
+        _plfwInputError(PLFW_PLATFORM_ERROR,
+                        "Wayland: Failed to create window buffer file of size %d: %s",
+                        length, strerror(errno));
+        return NULL;
+    }
+
+    void* data = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (data == MAP_FAILED)
+    {
+        _plfwInputError(PLFW_PLATFORM_ERROR,
+                        "Wayland: Failed to map window buffer file: %s", strerror(errno));
+        close(fd);
+        return NULL;
+    }
+
+    struct wl_shm_pool* pool = wl_shm_create_pool(_plfw.wl.shm, fd, length);
+
+    close(fd);
+
+    // Opaque dark gray, premultiplied ARGB8888 (blue, green, red, alpha)
+    unsigned char* target = data;
+    for (int i = 0;  i < width * height;  i++)
+    {
+        *target++ = 0x20;
+        *target++ = 0x20;
+        *target++ = 0x20;
+        *target++ = 0xff;
+    }
+
+    struct wl_buffer* buffer =
+        wl_shm_pool_create_buffer(pool, 0, width, height, stride, WL_SHM_FORMAT_ARGB8888);
+    munmap(data, length);
+    wl_shm_pool_destroy(pool);
+
+    return buffer;
+}
+
+// Attach (or keep attached) the blank buffer that makes the window exist on screen.
+static void attachBlankBuffer(_PLFWwindow* window)
+{
+    if (!window->wl.surface || !_plfw.wl.shm || !window->wl.visible)
+        return;
+
+    const int scale = window->wl.bufferScale > 0 ? window->wl.bufferScale : 1;
+    const int width  = window->wl.width * scale;
+    const int height = window->wl.height * scale;
+
+    if (width <= 0 || height <= 0)
+        return;
+
+    if (!window->wl.blankBuffer ||
+        window->wl.blankWidth != width ||
+        window->wl.blankHeight != height)
+    {
+        if (window->wl.blankBuffer)
+            wl_buffer_destroy(window->wl.blankBuffer);
+
+        window->wl.blankBuffer = createBlankBuffer(width, height);
+        window->wl.blankWidth = width;
+        window->wl.blankHeight = height;
+    }
+
+    if (!window->wl.blankBuffer)
+        return;
+
+    wl_surface_attach(window->wl.surface, window->wl.blankBuffer, 0, 0);
+    wl_surface_damage(window->wl.surface, 0, 0, window->wl.width, window->wl.height);
+    wl_surface_commit(window->wl.surface);
+}
+
 static void callbackHandleDone(void* userData, struct wl_callback* callback, uint32_t data)
 {
     wl_callback_destroy(callback);
 }
-
 static const struct wl_callback_listener noopCallbackListener =
 {
     callbackHandleDone
@@ -836,6 +918,9 @@ static void xdgSurfaceHandleConfigure(void* userData,
             _plfwInputWindowDamage(window);
         }
     }
+
+    if (window->wl.visible)
+        attachBlankBuffer(window);
 }
 
 static const struct xdg_surface_listener xdgSurfaceListener =
@@ -929,6 +1014,9 @@ void libdecorFrameHandleConfigure(struct libdecor_frame* frame,
         _plfwInputWindowDamage(window);
     else
         wl_surface_commit(window->wl.surface);
+
+    if (window->wl.visible)
+        attachBlankBuffer(window);
 }
 
 void libdecorFrameHandleClose(struct libdecor_frame* frame, void* userData)
@@ -2378,6 +2466,9 @@ void _plfwDestroyWindowWayland(_PLFWwindow* window)
 
     if (window->wl.confinedPointer)
         zwp_confined_pointer_v1_destroy(window->wl.confinedPointer);
+
+    if (window->wl.blankBuffer)
+        wl_buffer_destroy(window->wl.blankBuffer);
 
     destroyShellObjects(window);
 

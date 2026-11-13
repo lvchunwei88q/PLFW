@@ -358,6 +358,12 @@ typedef struct _PLFWwindowWayland
     PLFWbool                    scaleFramebuffer;
     struct wl_surface*          surface;
 
+    // A Wayland surface is only mapped once a buffer has been committed to it.
+    // This build never draws (there is no graphics context), so the window
+    // keeps a flat wl_shm buffer of its own size just to exist on screen.
+    struct wl_buffer*           blankBuffer;
+    int                         blankWidth, blankHeight;
+
     struct {
         int                     width, height;
         PLFWbool                maximized;

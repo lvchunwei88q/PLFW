@@ -148,14 +148,19 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
    `PLFW_BUILD_WAYLAND` 两个后端选项。
 6. **null 后端可用**（`PLFW_PLATFORM_NULL`），用于无窗口系统的自动化测试；
    它与另外两个后端一样只做窗口与输入，不创建任何图形上下文。
-7. **Wayland 的剪贴板在无 seat 时明确报错而不是崩溃**。合成器不提供
+7. **Wayland 窗口会自己垫一块纯色 `wl_shm` buffer**。Wayland 的 surface 只有提交过
+   buffer 才会被合成器映射成窗口；上游靠应用每次 `glfwSwapBuffers` 提供 buffer，而本库
+   没有任何图形上下文、永远不会绘制。若不补这一块，窗口在 Wayland 上永远不会出现，
+   也拿不到指针进入与键盘焦点（剪贴板随之不可用）。现在窗口变可见、尺寸变化时会
+   attach 一块与窗口同尺寸的不透明深灰 buffer，窗口因此能正常显示、被点击聚焦和缩放。
+8. **Wayland 的剪贴板在无 seat 时明确报错而不是崩溃**。合成器不提供
    `wl_data_device_manager` 或 seat 时，`plfwSetClipboardString` /
    `plfwGetClipboardString` 返回 `PLFW_PLATFORM_ERROR`（上游会解引用空指针）。
-8. **Linux 上不再有 `DISPLAY` 回退**：只编译 Wayland 时，`DISPLAY` 指向一个不可用
+9. **Linux 上不再有 `DISPLAY` 回退**：只编译 Wayland 时，`DISPLAY` 指向一个不可用
    的 X 服务器不会有任何效果——`plfwInit()` 会直接在 Wayland 连接阶段失败
    （`PLFW_PLATFORM_UNAVAILABLE` / 平台错误），需要 headless 时显式使用
    `PLFW_PLATFORM_NULL`。
-9. **不提供版本查询 API**：`glfwGetVersion` / `glfwGetVersionString` 与三个
+10. **不提供版本查询 API**：`glfwGetVersion` / `glfwGetVersionString` 与三个
    `PLFW_VERSION_*` 宏已删除，库不再报告自身版本；版本号只留在 `CMakeLists.txt` 的
    `project(PLFW VERSION 3.5.1)`（供 `plfw3.pc` 与 CMake 包配置使用），二进制本身
    不带版本信息。
