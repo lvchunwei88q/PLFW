@@ -149,31 +149,17 @@ struct _PLFWwndconfig
 
 // Framebuffer configuration
 //
-// This describes buffers and their sizes.  It also contains
-// a platform-specific ID used to map back to the backend API object.
-//
-// It is used to pass framebuffer parameters from shared code to the platform
-// API and also to enumerate and select available framebuffer configs.
+// There is no graphics context and therefore no real framebuffer to configure.
+// What is left is what the windowing layer still consumes: the nominal colour
+// bit depths reported as the window's video mode, and whether the window
+// surface should be treated as transparent.
 //
 struct _PLFWfbconfig
 {
     int         redBits;
     int         greenBits;
     int         blueBits;
-    int         alphaBits;
-    int         depthBits;
-    int         stencilBits;
-    int         accumRedBits;
-    int         accumGreenBits;
-    int         accumBlueBits;
-    int         accumAlphaBits;
-    int         auxBuffers;
-    bool        stereo;
-    int         samples;
-    bool        sRGB;
-    bool        doublebuffer;
     bool        transparent;
-    uintptr_t   handle;
 };
 
 // Window structure
@@ -523,10 +509,6 @@ void _plfwInputError(int code, const char* format, ...);
 
 PLFWbool _plfwSelectPlatform(int platformID, _PLFWplatform* platform);
 
-PLFWbool _plfwStringInExtensionString(const char* string, const char* extensions);
-const _PLFWfbconfig* _plfwChooseFBConfig(const _PLFWfbconfig* desired,
-                                         const _PLFWfbconfig* alternatives,
-                                         unsigned int count);
 const PLFWvidmode* _plfwChooseVideoMode(_PLFWmonitor* monitor,
                                         const PLFWvidmode* desired);
 int _plfwCompareVideoModes(const PLFWvidmode* first, const PLFWvidmode* second);
