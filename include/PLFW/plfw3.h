@@ -709,13 +709,6 @@ extern "C" {
  *  Cursor centering [window hint](@ref PLFW_CENTER_CURSOR_hint).
  */
 #define PLFW_CENTER_CURSOR          0x00020009
-/*! @brief Window framebuffer transparency hint and attribute
- *
- *  Window framebuffer transparency
- *  [window hint](@ref PLFW_TRANSPARENT_FRAMEBUFFER_hint) and
- *  [window attribute](@ref PLFW_TRANSPARENT_FRAMEBUFFER_attrib).
- */
-#define PLFW_TRANSPARENT_FRAMEBUFFER 0x0002000A
 /*! @brief Mouse cursor hover window attribute.
  *
  *  Mouse cursor hover [window attribute](@ref PLFW_HOVERED_attrib).

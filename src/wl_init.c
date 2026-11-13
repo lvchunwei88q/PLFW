@@ -489,7 +489,6 @@ PLFWbool _plfwConnectWayland(int platformID, _PLFWplatform* platform)
         .windowVisible = _plfwWindowVisibleWayland,
         .windowMaximized = _plfwWindowMaximizedWayland,
         .windowHovered = _plfwWindowHoveredWayland,
-        .framebufferTransparent = _plfwFramebufferTransparentWayland,
         .getWindowOpacity = _plfwGetWindowOpacityWayland,
         .setWindowResizable = _plfwSetWindowResizableWayland,
         .setWindowDecorated = _plfwSetWindowDecoratedWayland,

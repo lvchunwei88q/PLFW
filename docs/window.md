@@ -41,7 +41,6 @@ if (!window)
 `PLFW_FLOATING` | `PLFW_FALSE` | 是否置顶
 `PLFW_MAXIMIZED` | `PLFW_FALSE` | 是否以最大化状态创建
 `PLFW_CENTER_CURSOR` | `PLFW_TRUE` | 全屏窗口创建时是否把光标居中
-`PLFW_TRANSPARENT_FRAMEBUFFER` | `PLFW_FALSE` | 请求帧缓冲透明（窗口背后可透出桌面）
 `PLFW_FOCUS_ON_SHOW` | `PLFW_TRUE` | `plfwShowWindow` 时是否获取焦点
 `PLFW_MOUSE_PASSTHROUGH` | `PLFW_FALSE` | 鼠标事件是否穿透到窗口下方
 `PLFW_SCALE_TO_MONITOR` | `PLFW_FALSE` | 是否按显示器内容缩放自动调整窗口尺寸
@@ -77,8 +76,8 @@ EGL / 角 API 相关提示。代码里还写着它们的需要一并删掉。
 
 ### 硬约束 <a name="window_hints_hard"></a>
 
-`PLFW_SCALE_FRAMEBUFFER`、`PLFW_SCALE_TO_MONITOR`、`PLFW_TRANSPARENT_FRAMEBUFFER`
-这类触摸到像素格式或系统外观的提示属于硬约束：平台不满足时创建会失败并报
+`PLFW_SCALE_FRAMEBUFFER`、`PLFW_SCALE_TO_MONITOR` 这类触摸到像素缩放的提示属于硬约束：
+平台不满足时创建会失败并报
 `PLFW_PLATFORM_ERROR`，而不是悄悄换一个值。其余窗口提示只是“尽量照办”，实际值用
 `plfwGetWindowAttrib`、`plfwGetWindowSize`、`plfwGetFramebufferSize`
 查询。
@@ -324,8 +323,7 @@ float opacity = plfwGetWindowOpacity(window);
 plfwSetWindowOpacity(window, 0.85f);
 ```
 
-整窗不透明度，`0` 全透明、`1` 不透明。与 `PLFW_TRANSPARENT_FRAMEBUFFER` 不同：后者
-让帧缓冲像素的 alpha 生效，前者只是整窗淡出。Wayland 合成器可能不实现。
+整窗不透明度，`0` 全透明、`1` 不透明。Wayland 合成器可能不实现。
 
 ### 属性读写 <a name="window_attribs"></a>
 
@@ -349,8 +347,7 @@ plfwSetWindowAttrib(window, PLFW_RESIZABLE, PLFW_FALSE);
 `PLFW_AUTO_ICONIFY` | 全屏失焦是否自动还原 | 是
 `PLFW_FOCUS_ON_SHOW` | 显示时是否取焦点 | 是
 `PLFW_MOUSE_PASSTHROUGH` | 鼠标是否穿透 | 是
-`PLFW_TRANSPARENT_FRAMEBUFFER` | 帧缓冲是否透明 | 否
 
 “可写”为“是”的才能传给 `plfwSetWindowAttrib`；传其余属性报
-`PLFW_INVALID_ENUM`，传非法值报 `PLFW_INVALID_VALUE`——请求透明帧缓冲之类必须在
+`PLFW_INVALID_ENUM`，传非法值报 `PLFW_INVALID_VALUE`——请求缩放窗口之类必须在
 创建前用提示表达。

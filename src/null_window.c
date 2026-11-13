@@ -100,7 +100,6 @@ static int createNativeWindow(_PLFWwindow* window,
     window->null.decorated = wndconfig->decorated;
     window->null.maximized = wndconfig->maximized;
     window->null.floating = wndconfig->floating;
-    window->null.transparent = fbconfig->transparent;
     window->null.opacity = 1.f;
 
     return PLFW_TRUE;
@@ -359,11 +358,6 @@ PLFWbool _plfwWindowHoveredNull(_PLFWwindow* window)
            _plfw.null.ycursor >= window->null.ypos &&
            _plfw.null.xcursor <= window->null.xpos + window->null.width - 1 &&
            _plfw.null.ycursor <= window->null.ypos + window->null.height - 1;
-}
-
-PLFWbool _plfwFramebufferTransparentNull(_PLFWwindow* window)
-{
-    return window->null.transparent;
 }
 
 void _plfwSetWindowResizableNull(_PLFWwindow* window, PLFWbool enabled)

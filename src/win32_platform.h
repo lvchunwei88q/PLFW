@@ -66,7 +66,6 @@
 
 #include <wctype.h>
 #include <windows.h>
-#include <dwmapi.h>
 #include <dinput.h>
 #include <xinput.h>
 #include <dbt.h>
@@ -187,16 +186,6 @@ typedef int (WINAPI * PFN_GetSystemMetricsForDpi)(int,UINT);
 #define AdjustWindowRectExForDpi _plfw.win32.user32.AdjustWindowRectExForDpi_
 #define GetSystemMetricsForDpi _plfw.win32.user32.GetSystemMetricsForDpi_
 
-// dwmapi.dll function pointer typedefs
-typedef HRESULT (WINAPI * PFN_DwmIsCompositionEnabled)(BOOL*);
-typedef HRESULT (WINAPI * PFN_DwmFlush)(VOID);
-typedef HRESULT(WINAPI * PFN_DwmEnableBlurBehindWindow)(HWND,const DWM_BLURBEHIND*);
-typedef HRESULT (WINAPI * PFN_DwmGetColorizationColor)(DWORD*,BOOL*);
-#define DwmIsCompositionEnabled _plfw.win32.dwmapi.IsCompositionEnabled
-#define DwmFlush _plfw.win32.dwmapi.Flush
-#define DwmEnableBlurBehindWindow _plfw.win32.dwmapi.EnableBlurBehindWindow
-#define DwmGetColorizationColor _plfw.win32.dwmapi.GetColorizationColor
-
 // shcore.dll function pointer typedefs
 typedef HRESULT (WINAPI * PFN_SetProcessDpiAwareness)(PROCESS_DPI_AWARENESS);
 typedef HRESULT (WINAPI * PFN_GetDpiForMonitor)(HMONITOR,MONITOR_DPI_TYPE,UINT*,UINT*);
@@ -224,8 +213,6 @@ typedef struct _PLFWwindowWin32
     PLFWbool            frameAction;
     PLFWbool            iconified;
     PLFWbool            maximized;
-    // Whether to enable framebuffer transparency on DWM
-    PLFWbool            transparent;
     PLFWbool            scaleToMonitor;
     PLFWbool            keymenu;
     PLFWbool            showDefault;
@@ -285,14 +272,6 @@ typedef struct _PLFWlibraryWin32
         PFN_AdjustWindowRectExForDpi    AdjustWindowRectExForDpi_;
         PFN_GetSystemMetricsForDpi      GetSystemMetricsForDpi_;
     } user32;
-
-    struct {
-        HINSTANCE                       instance;
-        PFN_DwmIsCompositionEnabled     IsCompositionEnabled;
-        PFN_DwmFlush                    Flush;
-        PFN_DwmEnableBlurBehindWindow   EnableBlurBehindWindow;
-        PFN_DwmGetColorizationColor     GetColorizationColor;
-    } dwmapi;
 
     struct {
         HINSTANCE                       instance;
@@ -370,7 +349,6 @@ PLFWbool _plfwWindowIconifiedWin32(_PLFWwindow* window);
 PLFWbool _plfwWindowVisibleWin32(_PLFWwindow* window);
 PLFWbool _plfwWindowMaximizedWin32(_PLFWwindow* window);
 PLFWbool _plfwWindowHoveredWin32(_PLFWwindow* window);
-PLFWbool _plfwFramebufferTransparentWin32(_PLFWwindow* window);
 void _plfwSetWindowResizableWin32(_PLFWwindow* window, PLFWbool enabled);
 void _plfwSetWindowDecoratedWin32(_PLFWwindow* window, PLFWbool enabled);
 void _plfwSetWindowFloatingWin32(_PLFWwindow* window, PLFWbool enabled);

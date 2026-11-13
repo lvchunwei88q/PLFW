@@ -570,8 +570,7 @@ static void resizeFramebuffer(_PLFWwindow* window)
         window->wl.fbHeight = window->wl.height * window->wl.bufferScale;
     }
 
-    if (!window->wl.transparent)
-        setContentAreaOpaque(window);
+    setContentAreaOpaque(window);
 
     _plfwInputFramebufferSize(window, window->wl.fbWidth, window->wl.fbHeight);
 }
@@ -1296,9 +1295,7 @@ static PLFWbool createNativeSurface(_PLFWwindow* window,
 
     window->wl.maximized = wndconfig->maximized;
 
-    window->wl.transparent = fbconfig->transparent;
-    if (!window->wl.transparent)
-        setContentAreaOpaque(window);
+    setContentAreaOpaque(window);
 
     if (_plfw.wl.fractionalScaleManager)
     {
@@ -2812,11 +2809,6 @@ PLFWbool _plfwWindowMaximizedWayland(_PLFWwindow* window)
 PLFWbool _plfwWindowHoveredWayland(_PLFWwindow* window)
 {
     return window->wl.surface == _plfw.wl.pointerSurface;
-}
-
-PLFWbool _plfwFramebufferTransparentWayland(_PLFWwindow* window)
-{
-    return window->wl.transparent;
 }
 
 void _plfwSetWindowResizableWayland(_PLFWwindow* window, PLFWbool enabled)

@@ -283,9 +283,6 @@ PLFWAPI void plfwWindowHint(int hint, int value)
 
     switch (hint)
     {
-        case PLFW_TRANSPARENT_FRAMEBUFFER:
-            _plfw.hints.framebuffer.transparent = value;
-            return;
         case PLFW_RESIZABLE:
             _plfw.hints.window.resizable = value;
             return;
@@ -789,8 +786,6 @@ PLFWAPI int plfwGetWindowAttrib(PLFWwindow* handle, int attrib)
             return window->focusOnShow;
         case PLFW_MOUSE_PASSTHROUGH:
             return window->mousePassthrough;
-        case PLFW_TRANSPARENT_FRAMEBUFFER:
-            return _plfw.platform.framebufferTransparent(window);
         case PLFW_RESIZABLE:
             return window->resizable;
         case PLFW_DECORATED:

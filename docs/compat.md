@@ -7,10 +7,9 @@
 
 依赖 | 说明 | 缺失后果
 ---- | ---- | ----
-Windows 7 及以上 | 用到 `Dwmapi`、`SetProcessDpiAwareness` 等 API | 更老的系统不支持
+Windows 7 及以上 | 用到 `SetProcessDpiAwareness` 等 API | 更老的系统不支持
 `user32.dll` | 窗口、消息循环、输入 | 无法运行
 `gdi32.dll` | 光标、显示模式、DIB 光标 | 链接失败
-`dwmapi.dll` | 透明帧缓冲（`PLFW_TRANSPARENT_FRAMEBUFFER`） | 该提示无效
 `XInput` | 手柄 | 手柄不可用
 `/dev/input` 等价能力 | — | Win32 不用
 Raw Input | `PLFW_RAW_MOUSE_MOTION` | 模式下退化为普通鼠标

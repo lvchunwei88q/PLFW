@@ -170,7 +170,6 @@ typedef struct _PLFWwindowNull
     PLFWbool        resizable;
     PLFWbool        decorated;
     PLFWbool        floating;
-    PLFWbool        transparent;
     float           opacity;
 } _PLFWwindowNull;
 
@@ -227,7 +226,6 @@ void _plfwRestoreWindowNull(_PLFWwindow* window);
 void _plfwMaximizeWindowNull(_PLFWwindow* window);
 PLFWbool _plfwWindowMaximizedNull(_PLFWwindow* window);
 PLFWbool _plfwWindowHoveredNull(_PLFWwindow* window);
-PLFWbool _plfwFramebufferTransparentNull(_PLFWwindow* window);
 void _plfwSetWindowResizableNull(_PLFWwindow* window, PLFWbool enabled);
 void _plfwSetWindowDecoratedNull(_PLFWwindow* window, PLFWbool enabled);
 void _plfwSetWindowFloatingNull(_PLFWwindow* window, PLFWbool enabled);

@@ -367,40 +367,6 @@ static void updateWindowStyles(const _PLFWwindow* window)
                  SWP_FRAMECHANGED | SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-// Update window framebuffer transparency
-//
-static void updateFramebufferTransparency(const _PLFWwindow* window)
-{
-    BOOL composition, opaque;
-    DWORD color;
-
-    if (FAILED(DwmIsCompositionEnabled(&composition)) || !composition)
-       return;
-
-    if (IsWindows8OrGreater() ||
-        (SUCCEEDED(DwmGetColorizationColor(&color, &opaque)) && !opaque))
-    {
-        HRGN region = CreateRectRgn(0, 0, -1, -1);
-        DWM_BLURBEHIND bb = {0};
-        bb.dwFlags = DWM_BB_ENABLE | DWM_BB_BLURREGION;
-        bb.hRgnBlur = region;
-        bb.fEnable = TRUE;
-
-        DwmEnableBlurBehindWindow(window->win32.handle, &bb);
-        DeleteObject(region);
-    }
-    else
-    {
-        // HACK: Disable framebuffer transparency on Windows 7 when the
-        //       colorization color is opaque, because otherwise the window
-        //       contents is blended additively with the previous frame instead
-        //       of replacing it
-        DWM_BLURBEHIND bb = {0};
-        bb.dwFlags = DWM_BB_ENABLE;
-        DwmEnableBlurBehindWindow(window->win32.handle, &bb);
-    }
-}
-
 // Retrieves and translates modifier keys
 //
 static int getKeyMods(void)
@@ -1159,14 +1125,6 @@ static LRESULT CALLBACK windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
             break;
         }
 
-        case WM_DWMCOMPOSITIONCHANGED:
-        case WM_DWMCOLORIZATIONCOLORCHANGED:
-        {
-            if (window->win32.transparent)
-                updateFramebufferTransparency(window);
-            return 0;
-        }
-
         case WM_GETDPISCALEDSIZE:
         {
             if (window->win32.scaleToMonitor)
@@ -1471,12 +1429,6 @@ static int createNativeWindow(_PLFWwindow* window,
     }
 
     DragAcceptFiles(window->win32.handle, TRUE);
-
-    if (fbconfig->transparent)
-    {
-        updateFramebufferTransparency(window);
-        window->win32.transparent = PLFW_TRUE;
-    }
 
     _plfwGetWindowSizeWin32(window, &window->win32.width, &window->win32.height);
 
@@ -1933,30 +1885,6 @@ PLFWbool _plfwWindowMaximizedWin32(_PLFWwindow* window)
 PLFWbool _plfwWindowHoveredWin32(_PLFWwindow* window)
 {
     return cursorInContentArea(window);
-}
-
-PLFWbool _plfwFramebufferTransparentWin32(_PLFWwindow* window)
-{
-    BOOL composition, opaque;
-    DWORD color;
-
-    if (!window->win32.transparent)
-        return PLFW_FALSE;
-
-    if (FAILED(DwmIsCompositionEnabled(&composition)) || !composition)
-        return PLFW_FALSE;
-
-    if (!IsWindows8OrGreater())
-    {
-        // HACK: Disable framebuffer transparency on Windows 7 when the
-        //       colorization color is opaque, because otherwise the window
-        //       contents is blended additively with the previous frame instead
-        //       of replacing it
-        if (FAILED(DwmGetColorizationColor(&color, &opaque)) || opaque)
-            return PLFW_FALSE;
-    }
-
-    return PLFW_TRUE;
 }
 
 void _plfwSetWindowResizableWin32(_PLFWwindow* window, PLFWbool enabled)

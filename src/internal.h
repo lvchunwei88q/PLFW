@@ -150,16 +150,14 @@ struct _PLFWwndconfig
 // Framebuffer configuration
 //
 // There is no graphics context and therefore no real framebuffer to configure.
-// What is left is what the windowing layer still consumes: the nominal colour
-// bit depths reported as the window's video mode, and whether the window
-// surface should be treated as transparent.
+// What is left is the nominal colour bit depths the windowing layer reports as
+// the window's video mode.  Windows are always opaque.
 //
 struct _PLFWfbconfig
 {
     int         redBits;
     int         greenBits;
     int         blueBits;
-    bool        transparent;
 };
 
 // Window structure
@@ -374,7 +372,6 @@ struct _PLFWplatform
     PLFWbool (*windowVisible)(_PLFWwindow*);
     PLFWbool (*windowMaximized)(_PLFWwindow*);
     PLFWbool (*windowHovered)(_PLFWwindow*);
-    PLFWbool (*framebufferTransparent)(_PLFWwindow*);
     float (*getWindowOpacity)(_PLFWwindow*);
     void (*setWindowResizable)(_PLFWwindow*,PLFWbool);
     void (*setWindowDecorated)(_PLFWwindow*,PLFWbool);

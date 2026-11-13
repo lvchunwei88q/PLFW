@@ -134,19 +134,6 @@ static PLFWbool loadLibraries(void)
         }
     }
 
-    _plfw.win32.dwmapi.instance = _plfwPlatformLoadModule("dwmapi.dll");
-    if (_plfw.win32.dwmapi.instance)
-    {
-        _plfw.win32.dwmapi.IsCompositionEnabled = (PFN_DwmIsCompositionEnabled)
-            _plfwPlatformGetModuleSymbol(_plfw.win32.dwmapi.instance, "DwmIsCompositionEnabled");
-        _plfw.win32.dwmapi.Flush = (PFN_DwmFlush)
-            _plfwPlatformGetModuleSymbol(_plfw.win32.dwmapi.instance, "DwmFlush");
-        _plfw.win32.dwmapi.EnableBlurBehindWindow = (PFN_DwmEnableBlurBehindWindow)
-            _plfwPlatformGetModuleSymbol(_plfw.win32.dwmapi.instance, "DwmEnableBlurBehindWindow");
-        _plfw.win32.dwmapi.GetColorizationColor = (PFN_DwmGetColorizationColor)
-            _plfwPlatformGetModuleSymbol(_plfw.win32.dwmapi.instance, "DwmGetColorizationColor");
-    }
-
     _plfw.win32.shcore.instance = _plfwPlatformLoadModule("shcore.dll");
     if (_plfw.win32.shcore.instance)
     {
@@ -631,7 +618,6 @@ PLFWbool _plfwConnectWin32(int platformID, _PLFWplatform* platform)
         .windowVisible = _plfwWindowVisibleWin32,
         .windowMaximized = _plfwWindowMaximizedWin32,
         .windowHovered = _plfwWindowHoveredWin32,
-        .framebufferTransparent = _plfwFramebufferTransparentWin32,
         .getWindowOpacity = _plfwGetWindowOpacityWin32,
         .setWindowResizable = _plfwSetWindowResizableWin32,
         .setWindowDecorated = _plfwSetWindowDecoratedWin32,
@@ -691,7 +677,6 @@ void _plfwTerminateWin32(void)
     _plfwPlatformFreeModule(_plfw.win32.xinput.instance);
     _plfwPlatformFreeModule(_plfw.win32.dinput8.instance);
     _plfwPlatformFreeModule(_plfw.win32.user32.instance);
-    _plfwPlatformFreeModule(_plfw.win32.dwmapi.instance);
     _plfwPlatformFreeModule(_plfw.win32.shcore.instance);
     _plfwPlatformFreeModule(_plfw.win32.ntdll.instance);
 

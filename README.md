@@ -18,7 +18,7 @@
 
 | 类别 | 内容 |
 | --- | --- |
-| 窗口 | 创建 / 销毁、标题、图标、位置与尺寸、尺寸限制、宽高比、图标化、最大化、还原、显示 / 隐藏、焦点、置顶、装饰、透明度、鼠标穿透、内容缩放、`PLFW_SCALE_TO_MONITOR` / `PLFW_SCALE_FRAMEBUFFER`、`PLFW_TRANSPARENT_FRAMEBUFFER`、全屏切换（`plfwSetWindowMonitor`）、`PLFW_REFRESH_RATE` 提示 |
+| 窗口 | 创建 / 销毁、标题、图标、位置与尺寸、尺寸限制、宽高比、图标化、最大化、还原、显示 / 隐藏、焦点、置顶、装饰、整窗不透明度、鼠标穿透、内容缩放、`PLFW_SCALE_TO_MONITOR` / `PLFW_SCALE_FRAMEBUFFER`、全屏切换（`plfwSetWindowMonitor`）、`PLFW_REFRESH_RATE` 提示 |
 | 输入 | 键盘（键、扫描码、键名、字符回调、粘滞键 / 锁定键）、鼠标（按键、光标位置、光标模式、原始鼠标运动、滚轮）、手柄 / 游戏杆（连接热插拔、轴、按键、帽、映射、用户映射文件） |
 | 事件 | `plfwPollEvents`、`plfwWaitEvents`、`plfwWaitEventsTimeout`、`plfwPostEmptyEvent`、全部窗口 / 输入 / 显示器 / 手柄回调 |
 | 显示器 | 枚举、名称、位置、工作区、内容缩放、视频模式、gamma ramp |
@@ -135,35 +135,38 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
 2. **帧缓冲位深提示被移除**，`GLFW_RED_BITS` / `GLFW_GREEN_BITS` / `GLFW_BLUE_BITS` /
    `GLFW_ALPHA_BITS` / `GLFW_DEPTH_BITS` / `GLFW_STENCIL_BITS` 不再可设置；
    `_PLFWfbconfig` 内部仍以 8/8/8 作为 `plfwGetVideoMode` 与 `plfwGetWindowAttrib`
-   名义值使用。`PLFW_TRANSPARENT_FRAMEBUFFER`、`PLFW_SCALE_TO_MONITOR`、
-   `PLFW_SCALE_FRAMEBUFFER`、`GLFW_COCOA_RETINA_FRAMEBUFFER` 等窗口/帧缓冲缩放类提示
-   仍然有效。
-3. **`plfwGetWindowAttrib` 不再返回 `GLFW_DOUBLEBUFFER` 和任何上下文属性**
+   名义值使用。`PLFW_SCALE_TO_MONITOR`、`PLFW_SCALE_FRAMEBUFFER` 等窗口/帧缓冲缩放类
+   提示仍然有效。
+3. **透明帧缓冲能力整体移除**：`PLFW_TRANSPARENT_FRAMEBUFFER` 提示与属性、
+   `_PLFWfbconfig` 的透明字段、三个后端的透明分支、Win32 上加载 `dwmapi.dll` 做 DWM
+   模糊启用的整条路径都已删除。窗口恒为不透明，`plfwWindowHint` 传该枚举报
+   `PLFW_INVALID_ENUM`；整窗淡出仍可用 `plfwSetWindowOpacity`。
+4. **`plfwGetWindowAttrib` 不再返回 `GLFW_DOUBLEBUFFER` 和任何上下文属性**
    （`GLFW_CLIENT_API`、`GLFW_CONTEXT_CREATION_API`、`GLFW_CONTEXT_VERSION_*`、
    `GLFW_OPENGL_*` 等）。
-4. **`PLFW_NO_CURRENT_CONTEXT` 错误码保留但不再产生**（源码/ABI 兼容）。
-5. **平台范围只保留 Win32 与 Wayland**：X11 与 Cocoa 后端已从源码树中整体删除
+5. **`PLFW_NO_CURRENT_CONTEXT` 错误码保留但不再产生**（源码/ABI 兼容）。
+6. **平台范围只保留 Win32 与 Wayland**：X11 与 Cocoa 后端已从源码树中整体删除
    （详见上文“平台后端范围”一节），Linux 侧只剩 Wayland + Null，Windows 侧为
    Win32 + Null。顶层 `CMakeLists.txt` 只保留 `PLFW_BUILD_WIN32` /
    `PLFW_BUILD_WAYLAND` 两个后端选项。
-6. **null 后端可用**（`PLFW_PLATFORM_NULL`），用于无窗口系统的自动化测试；
+7. **null 后端可用**（`PLFW_PLATFORM_NULL`），用于无窗口系统的自动化测试；
    它与另外两个后端一样只做窗口与输入，不创建任何图形上下文。
-7. **Wayland 窗口会自己垫一块纯色 `wl_shm` buffer**。Wayland 的 surface 只有提交过
+8. **Wayland 窗口会自己垫一块纯色 `wl_shm` buffer**。Wayland 的 surface 只有提交过
    buffer 才会被合成器映射成窗口；上游靠应用每次 `glfwSwapBuffers` 提供 buffer，而本库
    没有任何图形上下文、永远不会绘制。若不补这一块，窗口在 Wayland 上永远不会出现，
    也拿不到指针进入与键盘焦点（剪贴板随之不可用）。现在窗口变可见、尺寸变化时会
-   attach 一块与窗口同尺寸的不透明深灰 buffer，窗口因此能正常显示、被点击聚焦和缩放。
-8. **Wayland 的剪贴板在无 seat 时明确报错而不是崩溃**。合成器不提供
+   attach 一块与窗口同尺寸、始终不透明的深灰 buffer，窗口因此能正常显示、被点击聚焦和缩放。
+9. **Wayland 的剪贴板在无 seat 时明确报错而不是崩溃**。合成器不提供
    `wl_data_device_manager` 或 seat 时，`plfwSetClipboardString` /
    `plfwGetClipboardString` 返回 `PLFW_PLATFORM_ERROR`（上游会解引用空指针）。
-9. **Linux 上不再有 `DISPLAY` 回退**：只编译 Wayland 时，`DISPLAY` 指向一个不可用
-   的 X 服务器不会有任何效果——`plfwInit()` 会直接在 Wayland 连接阶段失败
-   （`PLFW_PLATFORM_UNAVAILABLE` / 平台错误），需要 headless 时显式使用
-   `PLFW_PLATFORM_NULL`。
-10. **不提供版本查询 API**：`glfwGetVersion` / `glfwGetVersionString` 与三个
-   `PLFW_VERSION_*` 宏已删除，库不再报告自身版本；版本号只留在 `CMakeLists.txt` 的
-   `project(PLFW VERSION 3.5.1)`（供 `plfw3.pc` 与 CMake 包配置使用），二进制本身
-   不带版本信息。
+10. **Linux 上不再有 `DISPLAY` 回退**：只编译 Wayland 时，`DISPLAY` 指向一个不可用
+    的 X 服务器不会有任何效果——`plfwInit()` 会直接在 Wayland 连接阶段失败
+    （`PLFW_PLATFORM_UNAVAILABLE` / 平台错误），需要 headless 时显式使用
+    `PLFW_PLATFORM_NULL`。
+11. **不提供版本查询 API**：`glfwGetVersion` / `glfwGetVersionString` 与三个
+    `PLFW_VERSION_*` 宏已删除，库不再报告自身版本；版本号只留在 `CMakeLists.txt` 的
+    `project(PLFW VERSION 3.5.1)`（供 `plfw3.pc` 与 CMake 包配置使用），二进制本身
+    不带版本信息。
 
 ### 构建与验证
 

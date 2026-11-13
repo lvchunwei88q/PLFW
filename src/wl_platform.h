@@ -354,7 +354,6 @@ typedef struct _PLFWwindowWayland
     PLFWbool                    maximized;
     PLFWbool                    activated;
     PLFWbool                    fullscreen;
-    PLFWbool                    transparent;
     PLFWbool                    scaleFramebuffer;
     struct wl_surface*          surface;
 
@@ -651,7 +650,6 @@ PLFWbool _plfwWindowIconifiedWayland(_PLFWwindow* window);
 PLFWbool _plfwWindowVisibleWayland(_PLFWwindow* window);
 PLFWbool _plfwWindowMaximizedWayland(_PLFWwindow* window);
 PLFWbool _plfwWindowHoveredWayland(_PLFWwindow* window);
-PLFWbool _plfwFramebufferTransparentWayland(_PLFWwindow* window);
 void _plfwSetWindowResizableWayland(_PLFWwindow* window, PLFWbool enabled);
 void _plfwSetWindowDecoratedWayland(_PLFWwindow* window, PLFWbool enabled);
 void _plfwSetWindowFloatingWayland(_PLFWwindow* window, PLFWbool enabled);

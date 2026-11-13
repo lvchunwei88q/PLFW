@@ -94,7 +94,6 @@ PLFWbool _plfwConnectNull(int platformID, _PLFWplatform* platform)
         .windowVisible = _plfwWindowVisibleNull,
         .windowMaximized = _plfwWindowMaximizedNull,
         .windowHovered = _plfwWindowHoveredNull,
-        .framebufferTransparent = _plfwFramebufferTransparentNull,
         .getWindowOpacity = _plfwGetWindowOpacityNull,
         .setWindowResizable = _plfwSetWindowResizableNull,
         .setWindowDecorated = _plfwSetWindowDecoratedNull,
