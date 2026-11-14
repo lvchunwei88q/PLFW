@@ -187,23 +187,24 @@ Windows 上重新构建）。
 不想用 CMake 时，自己指定源文件与宏。**公共核心**（两个后端都要）：
 
 ```text
-src/context?      —— 不存在，已删除
 src/init.c  src/input.c  src/monitor.c  src/platform.c  src/window.c
-src/null_init.c  src/null_monitor.c  src/null_window.c  src/null_joystick.c
-src/platform.h  src/internal.h  src/mappings.h   （头文件）
+src/null/null_init.c  src/null/null_monitor.c
+src/null/null_window.c  src/null/null_joystick.c
+src/internal.h  src/platform.h  src/mappings.h   （头文件）
 ```
 
-再加一套 OS 层：
+再加一套 OS 层（`src/posix/` 与 `src/win32/` 是 OS 原语，不是后端）：
 
 ```text
-Windows： src/win32_time.c src/win32_thread.c src/win32_module.c
-Linux：   src/posix_time.c src/posix_thread.c src/posix_module.c
+Windows： src/win32/win32_time.c src/win32/win32_thread.c src/win32/win32_module.c
+Linux：   src/posix/posix_time.c src/posix/posix_thread.c src/posix/posix_module.c
 ```
 
 Win32 后端（宏 `_PLFW_WIN32`、`UNICODE`、`_UNICODE`、`_CRT_SECURE_NO_WARNINGS`）：
 
 ```text
-src/win32_init.c src/win32_joystick.c src/win32_monitor.c src/win32_window.c
+src/win32/win32_init.c src/win32/win32_joystick.c
+src/win32/win32_monitor.c src/win32/win32_window.c
 ```
 
 链接：`-lgdi32`（其余系统库由默认链接补上）。
@@ -212,8 +213,8 @@ Wayland 后端（宏 `_PLFW_WAYLAND`、`_DEFAULT_SOURCE`，Linux 上另有
 `_PLFW_LINUX` 语义的 `linux_joystick.c`）：
 
 ```text
-src/wl_init.c src/wl_monitor.c src/wl_window.c
-src/linux_joystick.c src/posix_poll.c
+src/wayland/wl_init.c src/wayland/wl_monitor.c src/wayland/wl_window.c
+src/wayland/linux_joystick.c src/posix/posix_poll.c
 deps/wayland/*.xml  → wayland-scanner 生成的 18 个头/源文件
 ```
 
@@ -223,8 +224,8 @@ deps/wayland/*.xml  → wayland-scanner 生成的 18 个头/源文件
 手动编译示例（Linux）：
 
 ```sh
-gcc -c -std=c99 -D_DEFAULT_SOURCE -D_PLFW_WAYLAND \
-    -Iinclude -Isrc src/*.c build/wl-proto/*.c
+gcc -c -std=c99 -D_DEFAULT_SOURCE -D_PLFW_WAYLAND -Iinclude -Isrc \
+    src/*.c src/null/*.c src/posix/*.c src/wayland/*.c build/wl-proto/*.c
 gcc my_program.o libplfw_objects.a -lwayland-client -lwayland-cursor \
     -lxkbcommon -lpthread -ldl -lrt -lm -o my_program
 ```

@@ -2,6 +2,33 @@
 
 本页给要改这个库的人看：源码树怎么分层、抽象接口在哪、加后端要动什么。
 
+## 源码树布局 <a name="internals_layout"></a>
+
+`src/` 按“与后端无关的核心 / OS 原语层 / 各后端”分层，根目录只放核心文件：
+
+```text
+src/
+├── internal.h  platform.h            内部结构与平台层声明
+├── mappings.h  mappings.h.in         手柄映射（由 CMake 生成）
+├── plfw.rc.in                        Windows DLL 版本资源模板
+├── init.c  input.c  monitor.c  window.c   公共 API 实现（后端无关）
+├── platform.c                        平台表：后端选择
+├── posix/            posix_time.* posix_thread.* posix_module.c posix_poll.*
+│                     非 Windows 的 OS 原语层（Wayland 与 Null 共用）
+├── null/             null_init.c null_monitor.c null_window.c
+│                     null_joystick.c/h  null_platform.h
+├── win32/            win32_init.c win32_monitor.c win32_window.c
+│                     win32_joystick.c/h  win32_platform.h
+│                     win32_time.* win32_thread.* win32_module.c
+└── wayland/          wl_init.c wl_monitor.c wl_window.c wl_platform.h
+                      linux_joystick.c/h
+```
+
+规则：根目录的文件**不得包含**任何后端头文件；后端之间互不包含；`platform.h`
+是唯一同时认识所有后端的地方。新增一个后端 = 新建 `src/<后端>/` 目录，
+在 `platform.h` 里加状态宏与 include 分支，在 `src/CMakeLists.txt` 里加一段
+`target_sources`。
+
 ## 公共接口 <a name="internals_public"></a>
 
 `include/PLFW/plfw3.h` 是唯一的公共头，`include/PLFW/plfw3native.h` 暴露原生句柄。
@@ -11,8 +38,8 @@
 
 ## 原生接口 <a name="internals_native"></a>
 
-`plfw3native.h` 的实现散在 `src/win32_window.c`（`plfwGetWin32Window`）与
-`src/wl_window.c`（`plfwGetWaylandDisplay` / `plfwGetWaylandWindow`）里。每个访问器
+`plfw3native.h` 的实现散在 `src/win32/win32_window.c`（`plfwGetWin32Window`）与
+`src/wayland/wl_window.c`（`plfwGetWaylandDisplay` / `plfwGetWaylandWindow`）里。每个访问器
 都只在对应后端编译时才存在，所以缺后端时是链接错误而不是运行期 `NULL`——这是有意的。
 
 ## 内部接口 <a name="internals_internal"></a>
@@ -51,12 +78,12 @@
 平台表里的函数，事件上报一律走这些 `_plfwInput*`，不要直接调用户回调。
 
 `plfwPollEvents` → 平台表 `pollEvents` → 后端读原生事件 → `_plfwInput*`。阻塞版本
-`plfwWaitEvents` 在 Linux 上靠 `posix_poll.c` 的 `poll()`，Windows 上靠
+`plfwWaitEvents` 在 Linux 上靠 `posix/posix_poll.c` 的 `poll()`，Windows 上靠
 `MsgWaitForMultipleObjects`；`plfwPostEmptyEvent` 通过一对内部事件 / pipe 唤醒。
 
 ## 静态分析工具 <a name="internals_static"></a>
 
-- `src/mappings.h` 由 `src/mappings.h.in` + `CMake/GenerateMappings.cmake` 生成，
+- `src/mappings.h` 由 `src/mappings.h.in` + `CMake/generate-mappings.cmake` 生成，
   内置 SDL_GameControllerDB 映射。更新用 `cmake --build build --target update_mappings`。
 - `tests/smoke.c` 是唯一的自动化测试，随 `ctest` 跑；它断言 X11 / Cocoa 后端不在
   构建里，防止误把后端加回来。

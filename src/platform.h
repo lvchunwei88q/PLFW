@@ -36,10 +36,10 @@
  #error "You must not define these; define zero or more _PLFW_<platform> macros instead"
 #endif
 
-#include "null_platform.h"
+#include "null/null_platform.h"
 
 #if defined(_PLFW_WIN32)
- #include "win32_platform.h"
+ #include "win32/win32_platform.h"
  #define PLFW_EXPOSE_NATIVE_WIN32
 #else
  #define PLFW_WIN32_WINDOW_STATE
@@ -49,7 +49,7 @@
 #endif
 
 #if defined(_PLFW_WAYLAND)
- #include "wl_platform.h"
+ #include "wayland/wl_platform.h"
  #define PLFW_EXPOSE_NATIVE_WAYLAND
 #else
  #define PLFW_WAYLAND_WINDOW_STATE
@@ -58,10 +58,10 @@
  #define PLFW_WAYLAND_LIBRARY_WINDOW_STATE
 #endif
 
-#include "null_joystick.h"
+#include "null/null_joystick.h"
 
 #if defined(_PLFW_WIN32)
- #include "win32_joystick.h"
+ #include "win32/win32_joystick.h"
 #else
  #define PLFW_WIN32_JOYSTICK_STATE
  #define PLFW_WIN32_LIBRARY_JOYSTICK_STATE
@@ -72,7 +72,7 @@
 #endif
 
 #if defined(PLFW_BUILD_LINUX_JOYSTICK)
- #include "linux_joystick.h"
+ #include "wayland/linux_joystick.h"
 #else
  #define PLFW_LINUX_JOYSTICK_STATE
  #define PLFW_LINUX_LIBRARY_JOYSTICK_STATE
@@ -113,11 +113,11 @@
 #endif
 
 #if defined(PLFW_BUILD_WIN32_THREAD)
- #include "win32_thread.h"
+ #include "win32/win32_thread.h"
  #define PLFW_PLATFORM_TLS_STATE    PLFW_WIN32_TLS_STATE
  #define PLFW_PLATFORM_MUTEX_STATE  PLFW_WIN32_MUTEX_STATE
 #elif defined(PLFW_BUILD_POSIX_THREAD)
- #include "posix_thread.h"
+ #include "posix/posix_thread.h"
  #define PLFW_PLATFORM_TLS_STATE    PLFW_POSIX_TLS_STATE
  #define PLFW_PLATFORM_MUTEX_STATE  PLFW_POSIX_MUTEX_STATE
 #endif
@@ -129,10 +129,10 @@
 #endif
 
 #if defined(PLFW_BUILD_WIN32_TIMER)
- #include "win32_time.h"
+ #include "win32/win32_time.h"
  #define PLFW_PLATFORM_LIBRARY_TIMER_STATE  PLFW_WIN32_LIBRARY_TIMER_STATE
 #elif defined(PLFW_BUILD_POSIX_TIMER)
- #include "posix_time.h"
+ #include "posix/posix_time.h"
  #define PLFW_PLATFORM_LIBRARY_TIMER_STATE  PLFW_POSIX_LIBRARY_TIMER_STATE
 #endif
 
@@ -143,7 +143,7 @@
 #endif
 
 #if defined(_PLFW_WAYLAND)
- #include "posix_poll.h"
+ #include "posix/posix_poll.h"
  #define PLFW_BUILD_POSIX_POLL
 #endif
 

@@ -4,17 +4,20 @@ add_library(plfw ${PLFW_LIBRARY_TYPE}
                  "${PLFW_SOURCE_DIR}/include/PLFW/plfw3native.h"
                  internal.h platform.h mappings.h
                  init.c input.c monitor.c platform.c window.c
-                 null_platform.h null_joystick.h
-                 null_init.c null_monitor.c null_window.c null_joystick.c)
+                 null/null_platform.h null/null_joystick.h
+                 null/null_init.c null/null_monitor.c
+                 null/null_window.c null/null_joystick.c)
 
 # The time, thread and module code is shared between all backends on a given OS,
 # including the null backend, which still needs those bits to be functional
 if (WIN32)
-    target_sources(plfw PRIVATE win32_time.h win32_thread.h win32_module.c
-                                win32_time.c win32_thread.c)
+    target_sources(plfw PRIVATE win32/win32_time.h win32/win32_thread.h
+                                win32/win32_module.c win32/win32_time.c
+                                win32/win32_thread.c)
 else()
-    target_sources(plfw PRIVATE posix_time.h posix_thread.h posix_module.c
-                                posix_time.c posix_thread.c)
+    target_sources(plfw PRIVATE posix/posix_time.h posix/posix_thread.h
+                                posix/posix_module.c posix/posix_time.c
+                                posix/posix_thread.c)
 endif()
 
 add_custom_target(update_mappings
@@ -28,21 +31,22 @@ set_target_properties(update_mappings PROPERTIES FOLDER "PLFW3")
 
 if (PLFW_BUILD_WIN32)
     target_compile_definitions(plfw PRIVATE _PLFW_WIN32)
-    target_sources(plfw PRIVATE win32_platform.h win32_joystick.h win32_init.c
-                                win32_joystick.c win32_monitor.c win32_window.c)
+    target_sources(plfw PRIVATE win32/win32_platform.h win32/win32_joystick.h
+                                win32/win32_init.c win32/win32_joystick.c
+                                win32/win32_monitor.c win32/win32_window.c)
 endif()
 
 if (PLFW_BUILD_WAYLAND)
     target_compile_definitions(plfw PRIVATE _PLFW_WAYLAND)
-    target_sources(plfw PRIVATE wl_platform.h wl_init.c
-                                wl_monitor.c wl_window.c)
+    target_sources(plfw PRIVATE wayland/wl_platform.h wayland/wl_init.c
+                                wayland/wl_monitor.c wayland/wl_window.c)
 endif()
 
 if (PLFW_BUILD_WAYLAND)
     if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-        target_sources(plfw PRIVATE linux_joystick.h linux_joystick.c)
+        target_sources(plfw PRIVATE wayland/linux_joystick.h wayland/linux_joystick.c)
     endif()
-    target_sources(plfw PRIVATE posix_poll.h posix_poll.c)
+    target_sources(plfw PRIVATE posix/posix_poll.h posix/posix_poll.c)
 endif()
 
 if (PLFW_BUILD_WAYLAND)
