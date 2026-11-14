@@ -445,7 +445,6 @@ typedef struct _PLFWlibraryWayland
 
     struct wl_data_offer*       dragOffer;
     _PLFWwindow*                dragFocus;
-    uint32_t                    dragSerial;
 
     const char*                 tag;
 

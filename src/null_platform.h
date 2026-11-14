@@ -29,9 +29,7 @@
 #define PLFW_NULL_LIBRARY_WINDOW_STATE  _PLFWlibraryNull null;
 #define PLFW_NULL_MONITOR_STATE         _PLFWmonitorNull null;
 
-#define PLFW_NULL_CONTEXT_STATE
 #define PLFW_NULL_CURSOR_STATE
-#define PLFW_NULL_LIBRARY_CONTEXT_STATE
 
 #define PLFW_NULL_SC_FIRST          PLFW_NULL_SC_SPACE
 #define PLFW_NULL_SC_SPACE          1

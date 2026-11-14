@@ -116,9 +116,6 @@ typedef enum
 // Replacement for versionhelpers.h macros, as we cannot rely on the
 // application having a correct embedded manifest
 //
-#define IsWindows8OrGreater()                                         \
-    _plfwIsWindowsVersionOrGreaterWin32(HIBYTE(_WIN32_WINNT_WIN8),    \
-                                        LOBYTE(_WIN32_WINNT_WIN8), 0)
 #define IsWindows8Point1OrGreater()                                   \
     _plfwIsWindowsVersionOrGreaterWin32(HIBYTE(_WIN32_WINNT_WINBLUE), \
                                         LOBYTE(_WIN32_WINNT_WINBLUE), 0)

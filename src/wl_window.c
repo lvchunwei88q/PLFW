@@ -2278,7 +2278,6 @@ static void dataDeviceHandleEnter(void* userData,
             {
                 _plfw.wl.dragOffer = offer;
                 _plfw.wl.dragFocus = window;
-                _plfw.wl.dragSerial = serial;
 
                 wl_data_offer_accept(offer, serial, "text/uri-list");
             }

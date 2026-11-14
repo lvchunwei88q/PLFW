@@ -36,7 +36,7 @@ static const GUID _plfw_GUID_DEVINTERFACE_HID =
 
 #define GUID_DEVINTERFACE_HID _plfw_GUID_DEVINTERFACE_HID
 
-#if defined(_PLFW_USE_HYBRID_HPG) || defined(_PLFW_USE_OPTIMUS_HPG)
+#if defined(_PLFW_USE_HYBRID_HPG)
 
 #if defined(_PLFW_BUILD_DLL)
  #pragma message("These symbols must be exported by the executable and have no effect in a DLL")

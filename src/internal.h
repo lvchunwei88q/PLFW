@@ -27,11 +27,6 @@
 
 #pragma once
 
-#if defined(_PLFW_USE_CONFIG_H)
- #include "plfw_config.h"
-#endif
-
-#define PLFW_INCLUDE_NONE
 #include "../include/PLFW/plfw3.h"
 
 #include <stdbool.h>
@@ -524,7 +519,6 @@ _PLFWjoystick* _plfwAllocJoystick(const char* name,
 void _plfwFreeJoystick(_PLFWjoystick* js);
 void _plfwCenterCursorInContentArea(_PLFWwindow* window);
 
-size_t _plfwEncodeUTF8(char* s, uint32_t codepoint);
 char** _plfwParseUriList(char* text, int* count);
 
 char* _plfw_strdup(const char* source);
