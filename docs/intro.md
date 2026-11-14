@@ -58,9 +58,9 @@ Wayland 的窗口装饰有两种来源：合成器侧（`xdg-decoration`）与�
   `PLFW_PLATFORM_UNAVAILABLE`。
 - `PLFW_PLATFORM_NULL`：只在显式指定时启用。
 
-`plfwPlatformSupported` 可以查询某个平台标识符是否可用。本构建对
-`PLFW_PLATFORM_X11` 与 `PLFW_PLATFORM_COCOA` 一律返回 `PLFW_FALSE`：这两个常量
-仍被保留，只是对应的后端已从源码树中删除。`plfwGetPlatform` 返回实际选中的后端。
+`plfwPlatformSupported` 可以查询某个平台标识符是否可用。本构建只有 Win32、Wayland
+与 Null 三个标识符；X11 / Cocoa 的常量已随后端一起删除，拿它们原来的数值去查询会
+按未知值返回 `PLFW_FALSE`。`plfwGetPlatform` 返回实际选中的后端。
 
 Linux 上只剩 Wayland 之后，**不再有 `DISPLAY` 回退**：`DISPLAY` 指向不可用的 X
 服务器不会有任何效果，`plfwInit` 会在 Wayland 连接阶段失败。需要无显示运行时，

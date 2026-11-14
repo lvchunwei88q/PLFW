@@ -906,9 +906,7 @@ extern "C" {
  */
 #define PLFW_ANY_PLATFORM           0x00060000
 #define PLFW_PLATFORM_WIN32         0x00060001
-#define PLFW_PLATFORM_COCOA         0x00060002
 #define PLFW_PLATFORM_WAYLAND       0x00060003
-#define PLFW_PLATFORM_X11           0x00060004
 #define PLFW_PLATFORM_NULL          0x00060005
 /*! @} */
 
@@ -1918,9 +1916,8 @@ PLFWAPI PLFWerrorfun plfwSetErrorCallback(PLFWerrorfun callback);
  *
  *  This function returns the platform that was selected during initialization.  The
  *  returned value will be one of `PLFW_PLATFORM_WIN32`, `PLFW_PLATFORM_WAYLAND` or
- *  `PLFW_PLATFORM_NULL`.  This build carries no X11 or Cocoa backend, so
- *  `PLFW_PLATFORM_X11` and `PLFW_PLATFORM_COCOA` remain declared identifiers that
- *  are never returned.
+ *  `PLFW_PLATFORM_NULL`; the identifiers of the removed X11 and Cocoa backends no
+ *  longer exist.
  *
  *  @return The currently selected platform, or zero if an error occurred.
  *
@@ -1941,9 +1938,8 @@ PLFWAPI int plfwGetPlatform(void);
  *
  *  This function returns whether the library was compiled with support for the specified
  *  platform.  The platform must be one of `PLFW_PLATFORM_WIN32`,
- *  `PLFW_PLATFORM_WAYLAND` or `PLFW_PLATFORM_NULL`.  `PLFW_PLATFORM_X11` and
- *  `PLFW_PLATFORM_COCOA` are accepted as known identifiers but always report
- *  `PLFW_FALSE`, as neither backend is part of this build.
+ *  `PLFW_PLATFORM_WAYLAND` or `PLFW_PLATFORM_NULL`; any other value, including the
+ *  identifiers of the removed X11 and Cocoa backends, reports `PLFW_FALSE`.
  *
  *  @param[in] platform The platform to query.
  *  @return `PLFW_TRUE` if the platform is supported, or `PLFW_FALSE` otherwise.

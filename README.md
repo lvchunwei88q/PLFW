@@ -101,10 +101,11 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
     `glfwGetX11Display` / `glfwGetX11Adapter` / `glfwGetX11Monitor` /
     `glfwGetX11Window`、`glfwGetX11SelectionString` / `glfwSetX11SelectionString`。
     保留 `PLFW_EXPOSE_NATIVE_WIN32` 与 `PLFW_EXPOSE_NATIVE_WAYLAND`。
-  - `PLFW_PLATFORM_X11` / `PLFW_PLATFORM_COCOA` 这两个平台**标识符**保留：调用方的
-    `switch (plfwGetPlatform())` 不会因删除后端而编译不过，但
-    `plfwPlatformSupported()` 对它们一律返回 `PLFW_FALSE`，用 `PLFW_PLATFORM`
-    hint 显式请求会得到 `PLFW_PLATFORM_UNAVAILABLE`（而不是 `PLFW_INVALID_ENUM`）。
+  - `PLFW_PLATFORM_X11` / `PLFW_PLATFORM_COCOA` 两个平台**标识符已删除**：平台 ID
+    只剩 `PLFW_ANY_PLATFORM`、`PLFW_PLATFORM_WIN32`、`PLFW_PLATFORM_WAYLAND`、
+    `PLFW_PLATFORM_NULL`。用它们原有的数值去请求后端会按未知值处理——`plfwInitHint`
+    报 `PLFW_INVALID_ENUM`，`plfwPlatformSupported` 返回 `PLFW_FALSE`。调用方的
+    `switch (plfwGetPlatform())` 需要自己删掉这两个 `case`。
   - `src/mappings.h` 中 `#if defined(_PLFW_COCOA)` 的 macOS 手柄映射表随宏一起删除
     （`mappings.h.in` 同步去掉 `@GLFW_COCOA_MAPPINGS@`）。
 - 示例与测试：原有 11 个示例、20 个测试全部依赖 OpenGL 或 Vulkan，已随改造删除
@@ -121,10 +122,7 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
     窗口尺寸与位置设置、剪贴板往返、手柄枚举、键扫描码、事件泵、关闭请求与销毁。
     该测试按后端能力自适应：无显示环境自动回落到 headless 后端；Null 后端跳过窗口
     几何断言；Wayland 跳过窗口定位断言（协议不允许客户端定位）；后端声明剪贴板不可用、
-    或 Wayland 窗口没有焦点拿不到剪贴板 data offer 时，跳过剪贴板断言。另有两条断言
-    专门守住后端范围：
-    `plfwPlatformSupported(PLFW_PLATFORM_X11)` 与 `(PLFW_PLATFORM_COCOA)` 必须返回
-    `PLFW_FALSE`。
+    或 Wayland 窗口没有焦点拿不到剪贴板 data offer 时，跳过剪贴板断言。
 - 文档：`docs/` 下 10 篇中文指南与 `SUPPORT.md` 全部按当前能力重写，直接用 Markdown
   阅读即可；仓库不带 Doxygen 配置，构建时也不再生成 HTML。
 

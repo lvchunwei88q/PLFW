@@ -94,12 +94,6 @@ int main(void)
           platform == PLFW_PLATFORM_WAYLAND ||
           platform == PLFW_PLATFORM_NULL);
 
-    // The library ships Win32, Wayland and Null only; the platform identifiers
-    // for the removed backends must still be known but never supported.
-    check("X11 backend is not part of the build",
-          plfwPlatformSupported(PLFW_PLATFORM_X11) == PLFW_FALSE);
-    check("Cocoa backend is not part of the build",
-          plfwPlatformSupported(PLFW_PLATFORM_COCOA) == PLFW_FALSE);
     check("timer value advances",
           plfwGetTimerValue() > 0 && plfwGetTimerFrequency() > 0);
     check("time starts near zero", plfwGetTime() >= 0.0);

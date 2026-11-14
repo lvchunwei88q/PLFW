@@ -53,15 +53,9 @@ PLFWbool _plfwSelectPlatform(int desiredID, _PLFWplatform* platform)
     const size_t count = sizeof(supportedPlatforms) / sizeof(supportedPlatforms[0]);
     size_t i;
 
-    // The X11 and Cocoa identifiers are still accepted as known platform IDs so
-    // that a caller asking for a removed backend gets PLFW_PLATFORM_UNAVAILABLE
-    // instead of PLFW_INVALID_ENUM.  They are never listed in
-    // supportedPlatforms, so they cannot be selected.
     if (desiredID != PLFW_ANY_PLATFORM &&
         desiredID != PLFW_PLATFORM_WIN32 &&
-        desiredID != PLFW_PLATFORM_COCOA &&
         desiredID != PLFW_PLATFORM_WAYLAND &&
-        desiredID != PLFW_PLATFORM_X11 &&
         desiredID != PLFW_PLATFORM_NULL)
     {
         _plfwInputError(PLFW_INVALID_ENUM, "Invalid platform ID 0x%08X", desiredID);
@@ -122,9 +116,7 @@ PLFWAPI int plfwPlatformSupported(int platformID)
     size_t i;
 
     if (platformID != PLFW_PLATFORM_WIN32 &&
-        platformID != PLFW_PLATFORM_COCOA &&
         platformID != PLFW_PLATFORM_WAYLAND &&
-        platformID != PLFW_PLATFORM_X11 &&
         platformID != PLFW_PLATFORM_NULL)
     {
         _plfwInputError(PLFW_INVALID_ENUM, "Invalid platform ID 0x%08X", platformID);

@@ -65,10 +65,10 @@ src/
 `plfwInit` 按 `PLFW_PLATFORM` 提示与 `plfwPlatformSupported` 的结果选一个。
 
 - 平台表只剩 Win32、Wayland、Null 三项；
-- `PLFW_PLATFORM_X11`、`PLFW_PLATFORM_COCOA` 的标识符保留，但
-  `plfwPlatformSupported` 对它们返回 `PLFW_FALSE`，显式请求得到
-  `PLFW_PLATFORM_UNAVAILABLE` 而不是 `PLFW_INVALID_ENUM`——这样调用方的 `switch`
-  不会编译不过；
+- 平台 ID 只有 `PLFW_ANY_PLATFORM`、`PLFW_PLATFORM_WIN32`、`PLFW_PLATFORM_WAYLAND`、
+  `PLFW_PLATFORM_NULL` 四个；X11 / Cocoa 的常量已删除，它们的旧数值现在按未知 ID
+  处理（`plfwInitHint` → `PLFW_INVALID_ENUM`，`plfwPlatformSupported` →
+  `PLFW_FALSE`）；
 
 ## 事件接口 <a name="internals_event"></a>
 

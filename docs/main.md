@@ -6,8 +6,9 @@ Vulkan）已全部移除，库只负责创建窗口、接收输入、分发事�
 
 后端只保留 Windows 的 **Win32** 与 Linux 的 **Wayland**，外加 **Null**
 （headless，用于无窗口系统的自动化测试）。X11 与 Cocoa 后端已经整体删除：
-`PLFW_PLATFORM_X11` / `PLFW_PLATFORM_COCOA` 仍作为标识符存在，但
-`plfwPlatformSupported` 对它们一律返回 `PLFW_FALSE`。
+`PLFW_PLATFORM_X11` / `PLFW_PLATFORM_COCOA` 两个平台标识符也一并删除，平台 ID
+只剩 `PLFW_ANY_PLATFORM`、`PLFW_PLATFORM_WIN32`、`PLFW_PLATFORM_WAYLAND`、
+`PLFW_PLATFORM_NULL`。
 
 [上手](quick.md#quick_guide) 带新手从零写一个能跑的程序。
 
