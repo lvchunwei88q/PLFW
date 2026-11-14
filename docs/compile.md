@@ -184,6 +184,9 @@ CMake 只在**单配置生成器**上写 `compile_commands.json`：Ninja 与 Mak
 cmake -S . -B build-ninja -G Ninja -DCMAKE_BUILD_TYPE=Release
 ```
 
+VS 自带的 `ninja.exe` 在 `Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\` 下，
+不在 PATH 时把它加进去，或者用 VS Code 的 CMake Tools 扩展指定的 generator。
+
 ```sh
 # Linux
 cmake -S . -B build-ninja -G Ninja -DCMAKE_BUILD_TYPE=Release
