@@ -12,6 +12,14 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" PLFW_STANDALONE)
 
+# Emit compile_commands.json for clangd / editor tooling.  Only the Ninja and
+# Makefile generators write this file; the Visual Studio generator ignores the
+# setting, so use a Ninja build directory when you need editor support
+# (see "编辑器集成" in docs/compile.md)
+if (PLFW_STANDALONE)
+    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+endif()
+
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option(PLFW_BUILD_EXAMPLES "Build the PLFW example programs" ${PLFW_STANDALONE})
 option(PLFW_BUILD_TESTS "Build the PLFW test programs" ${PLFW_STANDALONE})

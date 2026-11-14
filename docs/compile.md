@@ -171,6 +171,41 @@ cmake -S . -B build-win -DCMAKE_SYSTEM_NAME=Windows \
 产物 `libplfw3.a` 可以直接给 Windows 上的 MinGW 或 MSVC（用 `.a` 需转换，推荐在
 Windows 上重新构建）。
 
+## 编辑器集成（VS Code / clangd） <a name="compile_editor"></a>
+
+CMake 只在**单配置生成器**上写 `compile_commands.json`：Ninja 与 Makefile 都会自动
+生成（本仓库 `CMakeLists.txt` 已为独立构建打开 `CMAKE_EXPORT_COMPILE_COMMANDS`），
+**Visual Studio 生成器不会**——它生成 `.sln`/`.vcxproj`，编辑器读不到编译参数。
+
+所以做代码补全时额外开一个 Ninja 构建目录，和 `.sln` 构建目录并存：
+
+```bat
+:: Windows，在 "x64 Native Tools Command Prompt" 里（或先 call vcvars64.bat）
+cmake -S . -B build-ninja -G Ninja -DCMAKE_BUILD_TYPE=Release
+```
+
+```sh
+# Linux
+cmake -S . -B build-ninja -G Ninja -DCMAKE_BUILD_TYPE=Release
+```
+
+配置完成后 `build-ninja/compile_commands.json` 就是完整的编译数据库（含
+`-D_PLFW_WIN32` / `-D_PLFW_WAYLAND`、include 路径、警告选项）。改了 `CMakeLists.txt`
+或增删源文件后重新跑一次 `cmake -S . -B build-ninja` 即可刷新，不用重新构建。
+
+VS Code 两种客户端任选其一（`.vscode/settings.json` 已被 `.gitignore` 忽略，属本地配置）：
+
+```json
+{
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/build-ninja/compile_commands.json",
+    "clangd.arguments": ["--compile-commands-dir=${workspaceFolder}/build-ninja"]
+}
+```
+
+`clangd` 还需要知道这是 C 项目、按 C99 解析；本仓库所有源文件都是 `.c`，默认即可。
+只想看单平台的话，在 Ninja 目录上再传一次 `-DPLFW_BUILD_WAYLAND=OFF` 之类即可，
+数据库会跟着变。
+
 ## `CMake/` 目录里的辅助文件 <a name="compile_cmake_dir"></a>
 
 文件 | 作用 | 谁在用
