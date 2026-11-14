@@ -28,7 +28,6 @@
 #if defined(PLFW_BUILD_WIN32_TIMER) || \
     defined(PLFW_BUILD_WIN32_MODULE) || \
     defined(PLFW_BUILD_WIN32_THREAD) || \
-    defined(PLFW_BUILD_MACOS_TIMER) || \
     defined(PLFW_BUILD_POSIX_TIMER) || \
     defined(PLFW_BUILD_POSIX_MODULE) || \
     defined(PLFW_BUILD_POSIX_THREAD) || \
@@ -125,8 +124,6 @@
 
 #if defined(_WIN32)
  #define PLFW_BUILD_WIN32_TIMER
-#elif defined(__APPLE__)
- #define PLFW_BUILD_MACOS_TIMER
 #else
  #define PLFW_BUILD_POSIX_TIMER
 #endif
@@ -134,9 +131,6 @@
 #if defined(PLFW_BUILD_WIN32_TIMER)
  #include "win32_time.h"
  #define PLFW_PLATFORM_LIBRARY_TIMER_STATE  PLFW_WIN32_LIBRARY_TIMER_STATE
-#elif defined(PLFW_BUILD_MACOS_TIMER)
- #include "macos_time.h"
- #define PLFW_PLATFORM_LIBRARY_TIMER_STATE  PLFW_MACOS_LIBRARY_TIMER_STATE
 #elif defined(PLFW_BUILD_POSIX_TIMER)
  #include "posix_time.h"
  #define PLFW_PLATFORM_LIBRARY_TIMER_STATE  PLFW_POSIX_LIBRARY_TIMER_STATE

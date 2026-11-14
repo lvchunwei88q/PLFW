@@ -106,7 +106,7 @@ cmake -S . -B build -DPLFW_BUILD_WAYLAND=ON -DCMAKE_BUILD_TYPE=Release
 ---- | ------ | ----
 `BUILD_SHARED_LIBS` | `OFF` | 建动态库；见 [动态库](#compile_options_shared)
 `PLFW_BUILD_WIN32` | Windows 上 `ON` | 编译 Win32 后端
-`PLFW_BUILD_WAYLAND` | 非 Apple 的 Unix 上 `ON` | 编译 Wayland 后端
+`PLFW_BUILD_WAYLAND` | Unix 上 `ON` | 编译 Wayland 后端
 `PLFW_BUILD_EXAMPLES` | 源码树为顶层时 `ON` | 构建 `examples/` 里的两个示例
 `PLFW_BUILD_TESTS` | 源码树为顶层时 `ON` | 构建 `tests/smoke.c`
 `PLFW_INSTALL` | `ON` | 生成 `install` 目标与 CMake 包配置

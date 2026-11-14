@@ -9,10 +9,7 @@ add_library(plfw ${PLFW_LIBRARY_TYPE}
 
 # The time, thread and module code is shared between all backends on a given OS,
 # including the null backend, which still needs those bits to be functional
-if (APPLE)
-    target_sources(plfw PRIVATE macos_time.h macos_time.c posix_thread.h
-                                posix_module.c posix_thread.c)
-elseif (WIN32)
+if (WIN32)
     target_sources(plfw PRIVATE win32_time.h win32_thread.h win32_module.c
                                 win32_time.c win32_thread.c)
 else()
@@ -145,7 +142,7 @@ if (PLFW_BUILD_WAYLAND)
     endif()
 endif()
 
-if (UNIX AND NOT APPLE)
+if (UNIX)
     find_library(RT_LIBRARY rt)
     mark_as_advanced(RT_LIBRARY)
     if (RT_LIBRARY)
@@ -164,11 +161,6 @@ if (UNIX AND NOT APPLE)
         target_link_libraries(plfw PRIVATE "${CMAKE_DL_LIBS}")
         list(APPEND plfw_PKG_LIBS "-l${CMAKE_DL_LIBS}")
     endif()
-endif()
-
-if (APPLE)
-    target_link_libraries(plfw PRIVATE "-framework CoreFoundation")
-    list(APPEND plfw_PKG_LIBS "-framework CoreFoundation")
 endif()
 
 if (WIN32)

@@ -148,7 +148,9 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
 6. **平台范围只保留 Win32 与 Wayland**：X11 与 Cocoa 后端已从源码树中整体删除
    （详见上文“平台后端范围”一节），Linux 侧只剩 Wayland + Null，Windows 侧为
    Win32 + Null。顶层 `CMakeLists.txt` 只保留 `PLFW_BUILD_WIN32` /
-   `PLFW_BUILD_WAYLAND` 两个后端选项。
+   `PLFW_BUILD_WAYLAND` 两个后端选项；**macOS 不是构建目标**，`APPLE` 上配置会
+   直接报 `PLFW does not support macOS`，`macos_time.*` 也已删除（Unix 一律走
+   POSIX 定时器）。
 7. **null 后端可用**（`PLFW_PLATFORM_NULL`），用于无窗口系统的自动化测试；
    它与另外两个后端一样只做窗口与输入，不创建任何图形上下文。
 8. **Wayland 窗口会自己垫一块纯色 `wl_shm` buffer**。Wayland 的 surface 只有提交过
@@ -267,8 +269,9 @@ Ubuntu 26.04 LTS + WSL2 / WSLg（GCC 15.2.0 + CMake 4.2.3 + Ninja 1.13.2）：
 - `-DPLFW_BUILD_WAYLAND=OFF` 的纯 Null 构建同样通过，`tests/smoke` 报
   `active platform backend: Null`。
 
-X11 与 Cocoa：**已从本仓库删除**，不再需要 macOS 或 X 服务器环境，也不存在
-“未编译验证”的后端。
+X11 与 Cocoa：**已从本仓库删除**，不再需要 X 服务器环境，也不存在“未编译验证”
+的后端。macOS 同样不再支持：Cocoa 后端与 `macos_time.*` 均已删除，`CMakeLists.txt`
+在 `APPLE` 上直接 `FATAL_ERROR`。
 
 ### 已知不再成立的上游内容
 

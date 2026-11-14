@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.16...3.28 FATAL_ERROR)
 
 project(PLFW VERSION 3.5.1 LANGUAGES C)
 
+# macOS is not a supported target: the Cocoa backend was removed, so refuse to
+# configure instead of silently degrading to a null-only build
+if (APPLE)
+    message(FATAL_ERROR "PLFW does not support macOS")
+endif()
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" PLFW_STANDALONE)
@@ -18,13 +24,13 @@ if (GLFW_USE_OSMESA)
     message(FATAL_ERROR "GLFW_USE_OSMESA has been removed; set the PLFW_PLATFORM init hint")
 endif()
 
-if (DEFINED GLFW_USE_WAYLAND AND UNIX AND NOT APPLE)
+if (DEFINED GLFW_USE_WAYLAND AND UNIX)
     message(FATAL_ERROR
         "GLFW_USE_WAYLAND has been removed; delete the CMake cache and set PLFW_BUILD_WAYLAND instead")
 endif()
 
 cmake_dependent_option(PLFW_BUILD_WIN32 "Build support for Win32" ON "WIN32" OFF)
-cmake_dependent_option(PLFW_BUILD_WAYLAND "Build support for Wayland" ON "UNIX;NOT APPLE" OFF)
+cmake_dependent_option(PLFW_BUILD_WAYLAND "Build support for Wayland" ON "UNIX" OFF)
 
 cmake_dependent_option(PLFW_USE_HYBRID_HPG "Force use of high-performance GPU on hybrid systems" OFF
                        "WIN32" OFF)
