@@ -26,9 +26,22 @@ add_executable(hello-window hello-window.c)
 # resource, so on Linux the icon belongs to a .desktop file instead.
 if (WIN32)
     enable_language(RC)
+
+    # windres shells out to a C preprocessor and looks it up on PATH, which
+    # fails whenever the toolchain directory is not exported; point it at the
+    # compiler CMake was configured with instead.
+    if (CMAKE_RC_COMPILER MATCHES "windres")
+        set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} --preprocessor \"${CMAKE_C_COMPILER}\" --preprocessor-arg=-E --preprocessor-arg=-x --preprocessor-arg=c-header")
+    endif()
+
     target_sources(window-input PRIVATE plfw.rc)
     target_sources(multi-window PRIVATE plfw.rc)
     target_sources(hello-window PRIVATE plfw.rc)
+
+    # windres does not report the .ico as a dependency of the .rc it compiles,
+    # so replacing the icon would otherwise leave a stale resource object.
+    set_source_files_properties(plfw.rc PROPERTIES
+                                OBJECT_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/plfw.ico")
 endif()
 
 # The native Wayland accessor is only compiled into the library when that
