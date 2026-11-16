@@ -125,8 +125,9 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
     该测试按后端能力自适应：无显示环境自动回落到 headless 后端；Null 后端跳过窗口
     几何断言；Wayland 跳过窗口定位断言（协议不允许客户端定位）；后端声明剪贴板不可用、
     或 Wayland 窗口没有焦点拿不到剪贴板 data offer 时，跳过剪贴板断言。
-- 文档：`docs/` 下 10 篇中文指南与 `SUPPORT.md` 全部按当前能力重写，直接用 Markdown
-  阅读即可；仓库不带 Doxygen 配置，构建时也不再生成 HTML。
+- 文档：`docs/` 下 7 篇中文指南（总览、窗口、显示器、输入、兼容性、编译与链接、
+  内部结构）全部按当前能力重写，直接用 Markdown 阅读即可；仓库不带 Doxygen 配置，
+  构建时也不再生成 HTML。
 
 ### 语义变化（迁移时注意）
 
@@ -281,9 +282,10 @@ X11 与 Cocoa：**已从本仓库删除**，不再需要 X 服务器环境，也
 - 上游 README 中“为 OpenGL / OpenGL ES / Vulkan 应用开发”“creating windows,
   contexts and surfaces”“On Linux both Wayland and X11 are supported”等描述属于
   上游原文，对本分支不再准确：本分支只保留 Win32 与 Wayland 两个后端。
-- `docs/quick.md`、`docs/intro.md`、`docs/window.md`、`docs/compat.md`、
-  `docs/internal.md` 已按现状重写，不再是上游原文；`docs/moving.md`、`docs/news.md`、
-  `docs/CONTRIBUTING.md` 已删除。
+- `docs/` 已按现状重写并做过一轮合并：`quick.md` 并入总览、`build.md` 并入编译指南
+  （现在的 `compile.md`）、`main.md` 并入 `intro.md`、`SUPPORT.md` 并入本 README，
+  某一轮的代码审查报告 `review.md` 已删除；`moving.md`、`news.md`、`CONTRIBUTING.md`
+  同样已删除。
 - `deps/` 里只剩 **`deps/wayland/` 的 9 个协议 XML**（`wayland.xml`、`viewporter.xml`、
   `xdg-shell.xml`、`idle-inhibit-unstable-v1.xml`、`pointer-constraints-unstable-v1.xml`、
   `relative-pointer-unstable-v1.xml`、`fractional-scale-v1.xml`、`xdg-activation-v1.xml`、

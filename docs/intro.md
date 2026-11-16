@@ -1,10 +1,35 @@
-# API 总览 <a name="intro_guide"></a>
+# PLFW 总览 <a name="intro_guide"></a> <a name="mainpage"></a>
 
-本页讲三件事：如何初始化与收尾、错误怎么报、这个库在设计与兼容性上的约定。
+PLFW 是一个自由、开源、跨平台的**窗口、输入与事件**库。本仓库是 GLFW 3.5.1 的
+改造分支：图形初始化部分（OpenGL、OpenGL ES、EGL、WGL、GLX、NSGL、OSMesa、
+Vulkan）已全部移除，库只负责创建窗口、接收输入、分发事件。
 
-本构建是 GLFW 3.5.1 的“只保留窗口 / 输入 / 事件”版本：没有任何 OpenGL、EGL、
-Vulkan 支持，也只剩 Win32（Windows）与 Wayland（Linux）两个真实后端，另有
-Null（headless）后端。
+后端只保留 Windows 的 **Win32** 与 Linux 的 **Wayland**，外加 **Null**
+（headless，用于无窗口系统的自动化测试）。X11 与 Cocoa 后端已经整体删除，
+平台 ID 只剩 `PLFW_ANY_PLATFORM`、`PLFW_PLATFORM_WIN32`、`PLFW_PLATFORM_WAYLAND`、
+`PLFW_PLATFORM_NULL`。
+
+本页讲四件事：这个库是什么、各页面怎么找、初始化与收尾怎么用、错误怎么报，以及
+这个库在设计与兼容性上的约定。因为库不再创建任何图形上下文，**怎么在窗口里画
+东西完全由应用决定**：D3D11/D3D12、Vulkan、GDI、Direct2D，或者干脆把窗口当成一个
+纯事件来源。
+
+## 页面导航 <a name="index"></a>
+
+- **本页** – 库的定位、初始化、错误处理、坐标与约定
+- [窗口指南](window.md#window_guide) – 窗口创建、窗口提示、窗口属性与窗口事件
+- [显示器指南](monitor.md#monitor_guide) – 显示器枚举、视频模式、内容缩放与 gamma
+- [输入指南](input.md#input_guide) – 键盘、鼠标、手柄、时间、剪贴板与文件拖放
+- [兼容性](compat.md#compat_guide) – 各平台依赖的协议与明确不支持的能力
+- [编译与链接](compile.md#compile_guide) – 怎么编出库，怎么链进自己的程序
+- [内部结构](internal.md#internals_guide) – 源码布局、内部接口与配置宏（维护者向）
+
+想看能直接跑的代码：`examples/hello-window.c` 是最小模板（建一个 640×400 窗口，
+Escape 或关窗退出），`examples/window-input.c` 打印全量输入事件，
+`examples/multi-window.c` 用一个事件循环驱动三个窗口。
+
+[`plfw3.h`](../include/PLFW/plfw3.h) 是逐函数的详细文档。文档就是 `docs/` 下的这些
+Markdown 文件，用任意编辑器或 Markdown 渲染器直接阅读；仓库不随构建生成 HTML。
 
 ## 初始化与终止 <a name="intro_init"></a>
 
@@ -94,6 +119,17 @@ PLFW 用错误码 + 错误描述报告失败，有两种等价的获取方式：
 - 轮询式：`plfwGetError` 取最近一次错误，返回码并把描述写入出参；没有错误时返回
   `PLFW_NO_ERROR`。
 
+错误不会自动打印，接上回调才看得到：
+
+```c
+static void errorCallback(int code, const char* description)
+{
+    fprintf(stderr, "PLFW error 0x%08X: %s\n", (unsigned int) code, description);
+}
+
+plfwSetErrorCallback(errorCallback);
+```
+
 错误码类别：`PLFW_NOT_INITIALIZED`、`PLFW_INVALID_ENUM`、`PLFW_INVALID_VALUE`、
 `PLFW_OUT_OF_MEMORY`、`PLFW_PLATFORM_ERROR`、`PLFW_PLATFORM_UNAVAILABLE`、
 `PLFW_FEATURE_UNAVAILABLE`、`PLFW_CURSOR_UNAVAILABLE`、`PLFW_FORMAT_UNAVAILABLE`。
@@ -112,6 +148,48 @@ PLFW 用错误码 + 错误描述报告失败，有两种等价的获取方式：
 - 光标形状在当前光标主题里不存在时报 `PLFW_CURSOR_UNAVAILABLE`。
 
 错误回调内部**不要调用 PLFW**（会重入），只做记录或转发。
+
+## 最小可运行程序 <a name="minimal_program"></a>
+
+一个窗口、一条事件循环、一条退出路径，这就是最小骨架：
+
+```c
+#include <PLFW/plfw3.h>
+
+plfwSetErrorCallback(errorCallback);   /* 见上一节 */
+
+if (!plfwInit())
+    return 1;
+
+PLFWwindow* window = plfwCreateWindow(640, 400, "PLFW window", NULL, NULL);
+if (!window)
+{
+    plfwTerminate();
+    return 1;
+}
+
+plfwSetKeyCallback(window, keyCallback);   /* Escape -> plfwSetWindowShouldClose */
+
+while (!plfwWindowShouldClose(window))
+    plfwWaitEventsTimeout(0.1);            /* 阻塞等事件，不空转 */
+
+plfwDestroyWindow(window);
+plfwTerminate();
+```
+
+要点：
+
+- `plfwCreateWindow(宽, 高, 标题, 显示器, share)`：宽高必须大于 0；显示器传 `NULL`
+  得到窗口模式；`share` 在本构建里**被忽略**，直接传 `NULL`；
+- 窗口默认可见、可缩放、有装饰、接收焦点，创建前可用
+  [窗口提示](window.md#window_hints) 改掉；
+- 关闭标志由关闭按钮 / Alt+F4 / 合成器的关闭请求置上，也可以自己
+  `plfwSetWindowShouldClose(window, PLFW_TRUE)`；
+- 事件分发顺序见 [事件顺序](#event_order)，键盘细节见
+  [键盘输入](input.md#input_keyboard)。
+
+完整可编译的版本（带尺寸回调、后端名打印）见 `examples/hello-window.c`；要更全的
+输入事件打印见 `examples/window-input.c`。
 
 ## 坐标系 <a name="coordinate_systems"></a>
 
@@ -171,11 +249,9 @@ PLFW 有两套坐标，混用是常见 bug 来源：
 
 ## 版本与构建标识 <a name="intro_version"></a>
 
-本构建**不提供版本查询 API**：`glfwGetVersion`、`glfwGetVersionString` 以及
-`GLFW_VERSION_MAJOR` / `GLFW_VERSION_MINOR` / `GLFW_VERSION_REVISION` 三个宏已全部
-删除。库不再回答“我是什么版本”，调用方也就不需要按版本号分支——能力差异直接用
-`plfwPlatformSupported` 与
-`plfwGetPlatform` 判断。
+本构建**不提供版本查询 API**：`plfwGetVersion`、`plfwGetVersionString` 以及三个
+版本宏都已随命名改造删除。库不再回答“我是什么版本”，调用方也就不需要按版本号
+分支——能力差异直接用 `plfwPlatformSupported` 与 `plfwGetPlatform` 判断。
 
 版本号只存在于仓库层面：`CMakeLists.txt` 里的 `project(PLFW VERSION 3.5.1)` 决定
 `plfw3.pc` 的 `Version` 字段与 CMake 包配置的兼容性检查。二进制本身不带版本信息，
