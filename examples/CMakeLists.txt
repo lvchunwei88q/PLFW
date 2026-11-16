@@ -19,6 +19,18 @@ add_executable(window-input window-input.c)
 add_executable(multi-window multi-window.c)
 add_executable(hello-window hello-window.c)
 
+# On Windows the window icon comes from an icon resource named PLFW_ICON inside
+# the executable itself, so the examples compile plfw.rc (which pulls in
+# plfw.ico) into every one of them.  There is no equivalent on other platforms:
+# Wayland has no window-icon protocol at all and ELF binaries carry no icon
+# resource, so on Linux the icon belongs to a .desktop file instead.
+if (WIN32)
+    enable_language(RC)
+    target_sources(window-input PRIVATE plfw.rc)
+    target_sources(multi-window PRIVATE plfw.rc)
+    target_sources(hello-window PRIVATE plfw.rc)
+endif()
+
 # The native Wayland accessor is only compiled into the library when that
 # backend is enabled; tell the example so it does not reference a symbol that
 # a Wayland-less build does not export.
