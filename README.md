@@ -116,6 +116,8 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
   - `examples/multi-window.c`：一个事件循环驱动三个窗口，演示用户指针、隐藏 / 显示、
     图标化 / 还原、装饰切换、原生句柄（HWND / wl_surface）、窗口落在哪块显示器、
     跨窗口剪贴板。
+  - `examples/hello-window.c`：最小可用的单窗口程序——初始化、建窗、Escape 关窗、
+    尺寸回调、`plfwWaitEventsTimeout` 事件循环，适合直接当模板抄。
   - `tests/smoke.c`：自检式冒烟测试（注册到 CTest 的 `smoke`），覆盖初始化、
     平台后端、定时器、显示器与视频模式、无图形 API 建窗、`share` 参数被忽略、
     窗口尺寸 / 帧缓冲尺寸 / 帧尺寸、可见性 / 图标化 / 可缩放属性、光标与键鼠状态、
@@ -184,6 +186,9 @@ cmake --build build
 
 # 交互演示：800x480 窗口，打印按键 / 字符 / 鼠标 / 滚轮 / 焦点 / 尺寸 / 手柄事件
 ./build/examples/window-input.exe
+
+# 最小示例：640x400 单窗口，按 Escape 或关窗退出
+./build/examples/hello-window.exe
 
 # 多窗口演示（三个窗口 + 原生句柄 + 跨窗口剪贴板）
 ./build/examples/multi-window.exe

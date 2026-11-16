@@ -15,8 +15,8 @@ Windows + MinGW 时把 `-G Ninja` 换成 `-G "MinGW Makefiles"` 也可以；Visu
 
 - `build/src/libplfw3.a`（Windows/MinGW）或 `libplfw3.a`（Linux）
 - `build/tests/smoke.exe`、`build/examples/window-input.exe`、
-  `build/examples/multi-window.exe`（`PLFW_BUILD_TESTS` / `PLFW_BUILD_EXAMPLES`
-  打开时）
+  `build/examples/multi-window.exe`、`build/examples/hello-window.exe`
+  （`PLFW_BUILD_TESTS` / `PLFW_BUILD_EXAMPLES` 打开时）
 
 想跑一遍自检：
 
@@ -107,7 +107,7 @@ cmake -S . -B build -DPLFW_BUILD_WAYLAND=ON -DCMAKE_BUILD_TYPE=Release
 `BUILD_SHARED_LIBS` | `OFF` | 建动态库；见 [动态库](#compile_options_shared)
 `PLFW_BUILD_WIN32` | Windows 上 `ON` | 编译 Win32 后端
 `PLFW_BUILD_WAYLAND` | Unix 上 `ON` | 编译 Wayland 后端
-`PLFW_BUILD_EXAMPLES` | 源码树为顶层时 `ON` | 构建 `examples/` 里的两个示例
+构建 `examples/` 里的三个示例
 `PLFW_BUILD_TESTS` | 源码树为顶层时 `ON` | 构建 `tests/smoke.c`
 `PLFW_INSTALL` | `ON` | 生成 `install` 目标与 CMake 包配置
 `PLFW_USE_HYBRID_HPG` | `OFF` | 只在 Win32 下有意义：强制高性能 GPU；本构建无上下文，

@@ -197,5 +197,6 @@ int main(void)
 }
 ```
 
+最小完整版本见 `examples/hello-window.c`（不带任何调试输出，适合当模板）；
 示例的其余部分见 `examples/window-input.c`（全量输入事件）与
 `examples/multi-window.c`（一个循环带三个窗口、原生句柄、跨窗口剪贴板）。
