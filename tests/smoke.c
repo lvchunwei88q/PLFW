@@ -15,6 +15,7 @@
 #include <PLFW/plfw3.h>
 
 static int failures = 0;
+static int errors = 0;
 
 static void check(const char* what, int condition)
 {
@@ -25,6 +26,7 @@ static void check(const char* what, int condition)
 
 static void errorCallback(int code, const char* description)
 {
+    errors++;
     fprintf(stderr, "PLFW error 0x%08X: %s\n", (unsigned int) code, description);
 }
 
@@ -157,9 +159,16 @@ int main(void)
     }
     else
     {
-        double cursorX = -1.0, cursorY = -1.0;
+        const int errorsBefore = errors;
+        double cursorX = 0.0, cursorY = 0.0;
         plfwGetCursorPos(window, &cursorX, &cursorY);
-        check("cursor position is queryable", cursorX > -1.0 || cursorY > -1.0);
+        // The cursor may sit outside the (hidden) window, in which case the
+        // client-area position is legitimately negative; what must hold is that
+        // the query succeeds without reporting an error and returns real numbers
+        check("cursor position is queryable",
+              errors == errorsBefore &&
+              cursorX > -1.0e6 && cursorX < 1.0e6 &&
+              cursorY > -1.0e6 && cursorY < 1.0e6);
     }
 
     check("a key is not pressed before any input",
