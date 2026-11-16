@@ -13,10 +13,13 @@ cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ```
 
-Windows + MinGW 时把 `-G Ninja` 换成 `-G "MinGW Makefiles"` 也可以；Visual Studio
-直接 `-G "Visual Studio 17 2022" -A x64`。构建产物：
+Windows 上用 MSVC，Linux 上用 GCC；这两条是硬约束，别的编译器（MinGW、Clang、
+clang-cl、MSYS2）在配置阶段就会被 `message(FATAL_ERROR)` 拒掉。Windows 下建议在
+“x64 Native Tools Command Prompt”里执行（或先 `call vcvars64.bat`），让 `cl.exe`
+与 `ninja.exe` 出现在 PATH 上；也可以用 Visual Studio 生成器，版本名以
+`cmake --help` 里的列表为准，形如 `-G "Visual Studio 17 2022" -A x64`。构建产物：
 
-- `build/src/libplfw3.a`（Windows/MinGW）或 `libplfw3.a`（Linux）
+- `build/src/plfw3.lib`（Windows/MSVC）或 `libplfw3.a`（Linux）
 - `build/tests/smoke.exe`、`build/examples/window-input.exe`、
   `build/examples/multi-window.exe`、`build/examples/hello-window.exe`
   （`PLFW_BUILD_TESTS` / `PLFW_BUILD_EXAMPLES` 打开时）
@@ -34,9 +37,9 @@ ctest --test-dir build
 
 ### Windows
 
-只要一个 C99 编译器（MSVC 2015+ / MinGW-w64）与 Windows SDK，没有第三方依赖。
-Win32 后端用到 `user32`、`gdi32`、`dwmapi`、`shell32`、`winmm` 等系统库，CMake 会
-自己接。
+只要 **MSVC（2015 及以上）** 与 Windows SDK，没有第三方依赖——这个分支不支持
+MinGW/Clang 等其它 Windows 工具链。Win32 后端用到 `user32`、`gdi32`、`dwmapi`、
+`shell32`、`winmm` 等系统库，CMake 会自己接。
 
 ### Linux（Wayland）
 
@@ -135,8 +138,8 @@ DLL 会自动生成 `.rc` 版本资源。用 DLL 的应用必须定义 `PLFW_DLL
 
 - `USE_MSVC_RUNTIME_LIBRARY_DLL=OFF`：静态 CRT，通常只在你确定整条依赖链都静态
   链接时用。
-- 用 MinGW 建 DLL 时 CMake 会去掉 `lib` 前缀、把导入库改名为 `.dll.a`，还会自动
-  探测并启用 `--nxcompat`、`--dynamicbase`、`--high-entropy-va` 三项加固。
+- 加固（DEP、ASLR、高熵 ASLR）由 MSVC 链接器默认开启，仓库不再探测 MinGW 的
+  `--nxcompat` / `--dynamicbase` / `--high-entropy-va` 那三项，因为该工具链已移除。
 
 ### Unix 专用选项 <a name="compile_options_unix"></a>
 
@@ -146,34 +149,12 @@ DLL 会自动生成 `.rc` 版本资源。用 DLL 的应用必须定义 `PLFW_DLL
   也只是被 CMake 标注为“未被工程使用”，不会报错。
 - `WAYLAND_SCANNER_EXECUTABLE`：手动指定 `wayland-scanner` 路径。
 
-### MinGW 交叉编译 <a name="compile_mingw_cross"></a>
+### 交叉编译 <a name="compile_cross"></a>
 
-从 Linux 上给 Windows 编（需要 `mingw-w64`）。仓库在 `CMake/toolchains/` 里带了四份
-工具链文件，直接选一份用即可：
-
-```sh
-cmake -S . -B build-win \
-      -DCMAKE_TOOLCHAIN_FILE=CMake/toolchains/mingw-x86_64-gcc.cmake
-cmake --build build-win -j
-```
-
-| 工具链文件 | 目标 |
-| --- | --- |
-| `CMake/toolchains/mingw-x86_64-gcc.cmake` | 64 位 Windows，GCC |
-| `CMake/toolchains/mingw-x86_64-clang.cmake` | 64 位 Windows，Clang |
-| `CMake/toolchains/mingw-i686-gcc.cmake` | 32 位 Windows，GCC |
-| `CMake/toolchains/mingw-i686-clang.cmake` | 32 位 Windows，Clang |
-
-不指定工具链文件时，等价的手写参数是：
-
-```sh
-cmake -S . -B build-win -DCMAKE_SYSTEM_NAME=Windows \
-      -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
-      -DCMAKE_RC_COMPILER=x86_64-w64-mingw32-windres
-```
-
-产物 `libplfw3.a` 可以直接给 Windows 上的 MinGW 或 MSVC（用 `.a` 需转换，推荐在
-Windows 上重新构建）。
+**不支持**从 Linux 往 Windows 交叉编译。Windows 目标必须由 MSVC 产出，而
+mingw-w64 工具链已被移除（`CMake/toolchains/` 目录随之删除），在 Linux 上用
+mingw-w64 配置会在顶层守卫处直接失败。要在 Linux 上验证 Windows 构建质量，
+请在 Windows 机器或 Windows CI 上跑 MSVC。
 
 ## 编辑器集成（VS Code / clangd） <a name="compile_editor"></a>
 
@@ -222,7 +203,9 @@ VS Code 两种客户端任选其一（`.vscode/settings.json` 已被 `.gitignore
 `CMake/plfw3.pc.in` | pkg-config 模板，生成 `plfw3.pc` | 安装流程
 `CMake/plfw3Config.cmake.in` | CMake 包配置模板，生成 `plfw3Config.cmake` | `find_package(plfw3 CONFIG)`
 `CMake/modules/FindEpollShim.cmake` | 查找 epoll-shim（非 Linux 上的 epoll 兼容层） | Wayland 后端
-`CMake/toolchains/*.cmake` | MinGW 交叉编译工具链，见上一节 | 手动传 `CMAKE_TOOLCHAIN_FILE`
+
+`CMake/toolchains/` 目录**已删除**：Windows 目标只支持 MSVC，不再提供 mingw-w64
+交叉编译工具链。
 
 ## 手动编译 <a name="compile_manual"></a>
 
@@ -318,7 +301,7 @@ Vulkan、GDI 头自由共存，包含顺序无关。
 
 静态库（本构建默认）在 Windows 上需要额外链 `gdi32`：
 
-- Windows：`plfw3.lib`（MSVC）或 `libplfw3.a`（MinGW）
+- Windows：`plfw3.lib`（MSVC，唯一支持的工具链）
 - Linux：`libplfw3.a`，另需 `wayland-client`、`wayland-cursor`、`xkbcommon`、
   `dl`、`rt`、`m`
 
@@ -336,15 +319,6 @@ gdi32.lib
 调试版与发布版 CRT 必须一致：用 CMake 构建时选 `USE_MSVC_RUNTIME_LIBRARY_DLL`
 等于 `ON`（默认）就是动态 CRT。DLL 版还要链接 `plfw3dll.lib` 并在代码里定义
 `PLFW_DLL`。
-
-#### Windows（MinGW） <a name="build_link_mingw"></a>
-
-```sh
-gcc my_program.c -o my_program.exe -I/path/to/include -L/path/to/lib -lplfw3 -lgdi32
-```
-
-顺序不能反：`-lplfw3` 在前，`-lgdi32` 在后。C++ 程序用 `g++`，并在
-`extern "C"` 之外调用即可（头文件已处理）。
 
 #### 用 CMake 的源码构建 <a name="build_link_cmake_source"></a>
 

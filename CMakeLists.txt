@@ -8,6 +8,20 @@ if (APPLE)
     message(FATAL_ERROR "PLFW does not support macOS")
 endif()
 
+# Supported toolchains: MSVC on Windows and GCC on Linux.  Every per-compiler
+# fork in this file and in src/CMakeLists.txt assumes exactly that pair, so
+# anything else (MinGW, Clang, clang-cl, MSYS2, cross-compiling to Windows with
+# mingw-w64) is refused instead of taking a branch meant for the other family.
+if (WIN32 AND NOT MSVC)
+    message(FATAL_ERROR
+        "PLFW on Windows requires MSVC (found ${CMAKE_C_COMPILER_ID}); "
+        "MinGW, Clang and clang-cl toolchains are not supported")
+endif()
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT CMAKE_C_COMPILER_ID STREQUAL "GNU")
+    message(FATAL_ERROR
+        "PLFW on Linux requires GCC (found ${CMAKE_C_COMPILER_ID})")
+endif()
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" PLFW_STANDALONE)

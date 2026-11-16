@@ -152,6 +152,9 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
    `PLFW_BUILD_WAYLAND` 两个后端选项；**macOS 不是构建目标**，`APPLE` 上配置会
    直接报 `PLFW does not support macOS`，`macos_time.*` 也已删除（Unix 一律走
    POSIX 定时器）。
+   工具链同样是硬约束：**Windows 只支持 MSVC，Linux 只支持 GCC**，MinGW / Clang /
+   clang-cl / MSYS2 / mingw-w64 交叉编译都会在配置阶段被 `message(FATAL_ERROR)`
+   拒绝（`CMake/toolchains/` 已删除）。
 7. **null 后端可用**（`PLFW_PLATFORM_NULL`），用于无窗口系统的自动化测试；
    它与另外两个后端一样只做窗口与输入，不创建任何图形上下文。
 8. **Wayland 窗口会自己垫一块纯色 `wl_shm` buffer**。Wayland 的 surface 只有提交过
@@ -173,26 +176,25 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
 
 ### 构建与验证
 
-```sh
-# 配置（需要 CMake 3.16+、Ninja 与 C99 编译器）
-cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_C_COMPILER=gcc.exe \
-      -DPLFW_INSTALL=OFF
+Windows 用 MSVC，Linux 用 GCC（其它编译器在配置阶段被拒绝）。Windows 上请在
+“x64 Native Tools Command Prompt”里执行，或先 `call vcvars64.bat`，让 `cl.exe`、
+`rc.exe` 进入 PATH：
 
-# 编译：静态库 + 示例 + 冒烟测试
+```bat
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DPLFW_INSTALL=OFF
 cmake --build build
 
-# 运行验证（自检式，失败时返回非 0）
-./build/tests/smoke.exe
+:: 自检
+build\tests\smoke.exe
 
-# 交互演示：800x480 窗口，打印按键 / 字符 / 鼠标 / 滚轮 / 焦点 / 尺寸 / 手柄事件
-./build/examples/window-input.exe
+:: 交互演示：800x480 窗口，打印按键 / 字符 / 鼠标 / 滚轮 / 焦点 / 尺寸 / 手柄事件
+build\examples\window-input.exe
 
-# 最小示例：640x400 单窗口，按 Escape 或关窗退出
-./build/examples/hello-window.exe
+:: 最小示例：640x400 单窗口，按 Escape 或关窗退出
+build\examples\hello-window.exe
 
-# 多窗口演示（三个窗口 + 原生句柄 + 跨窗口剪贴板）
-./build/examples/multi-window.exe
+:: 多窗口演示（三个窗口 + 原生句柄 + 跨窗口剪贴板）
+build\examples\multi-window.exe
 ```
 
 Linux 侧只剩 Wayland 一个后端，构建依赖随之变少：`libwayland-dev`（提供
@@ -216,7 +218,7 @@ env -u DISPLAY -u WAYLAND_DISPLAY ./build-linux/tests/smoke
 
 #### 实测结果
 
-MinGW-w64 GCC 15.2.0 UCRT + CMake 4.3.2 + Ninja（Windows）：
+MSVC 19.51（VS 2026 Community，14.51.36231）+ CMake 4.3.2 + Ninja（Windows）：
 
 - 库与三个程序全部编译通过，无警告；
 - `tests/smoke.exe`：全部检查 ok，含窗口创建（无图形上下文）、窗口/帧缓冲尺寸、

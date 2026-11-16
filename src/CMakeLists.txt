@@ -174,13 +174,11 @@ if (WIN32)
 endif()
 
 # Enable a reasonable set of warnings
-# NOTE: The order matters here, Clang-CL matches both MSVC and Clang
+# MSVC on Windows, GCC on Linux; no other compiler reaches this file because the
+# top-level guard refuses to configure with one
 if (MSVC)
     target_compile_options(plfw PRIVATE "/W3")
-elseif (CMAKE_C_COMPILER_ID STREQUAL "GNU" OR
-        CMAKE_C_COMPILER_ID STREQUAL "Clang" OR
-        CMAKE_C_COMPILER_ID STREQUAL "AppleClang")
-
+else()
     target_compile_options(plfw PRIVATE "-Wall")
 endif()
 
@@ -189,7 +187,7 @@ if (PLFW_BUILD_WIN32)
 endif()
 
 # Workaround for the MS CRT deprecating parts of the standard library
-if (MSVC OR CMAKE_C_SIMULATE_ID STREQUAL "MSVC")
+if (MSVC)
     target_compile_definitions(plfw PRIVATE _CRT_SECURE_NO_WARNINGS)
 endif()
 
@@ -200,53 +198,15 @@ endif()
 
 if (PLFW_BUILD_SHARED_LIBRARY)
     if (WIN32)
-        if (MINGW)
-            # Remove the lib prefix on the DLL (but not the import library)
-            set_target_properties(plfw PROPERTIES PREFIX "")
-
-            # Add a suffix to the import library to avoid naming conflicts
-            set_target_properties(plfw PROPERTIES IMPORT_SUFFIX "dll.a")
-        else()
-            # Add a suffix to the import library to avoid naming conflicts
-            set_target_properties(plfw PROPERTIES IMPORT_SUFFIX "dll.lib")
-        endif()
+        # Add a suffix to the import library to avoid naming conflicts
+        set_target_properties(plfw PROPERTIES IMPORT_SUFFIX "dll.lib")
         set (PLFW_LIB_NAME_SUFFIX "dll")
 
         target_compile_definitions(plfw INTERFACE PLFW_DLL)
     endif()
 
-    if (MINGW)
-        # Enable link-time exploit mitigation features enabled by default on MSVC
-        include(CheckCCompilerFlag)
-        include(CMakePushCheckState)
-
-        # Compatibility with data execution prevention (DEP)
-        cmake_push_check_state()
-        set(CMAKE_REQUIRED_FLAGS "-Wl,--nxcompat")
-        check_c_compiler_flag("" _PLFW_HAS_DEP)
-        if (_PLFW_HAS_DEP)
-            target_link_libraries(plfw PRIVATE "-Wl,--nxcompat")
-        endif()
-        cmake_pop_check_state()
-
-        # Compatibility with address space layout randomization (ASLR)
-        cmake_push_check_state()
-        set(CMAKE_REQUIRED_FLAGS "-Wl,--dynamicbase")
-        check_c_compiler_flag("" _PLFW_HAS_ASLR)
-        if (_PLFW_HAS_ASLR)
-            target_link_libraries(plfw PRIVATE "-Wl,--dynamicbase")
-        endif()
-        cmake_pop_check_state()
-
-        # Compatibility with 64-bit address space layout randomization (ASLR)
-        cmake_push_check_state()
-        set(CMAKE_REQUIRED_FLAGS "-Wl,--high-entropy-va")
-        check_c_compiler_flag("" _PLFW_HAS_64ASLR)
-        if (_PLFW_HAS_64ASLR)
-            target_link_libraries(plfw PRIVATE "-Wl,--high-entropy-va")
-        endif()
-        cmake_pop_check_state()
-    endif()
+    # MSVC enables DEP, ASLR and high-entropy VA by default; the MinGW-specific
+    # link flags that used to be probed here are gone with that toolchain.
 
     if (UNIX)
         # Hide symbols not explicitly tagged for export from the shared library
