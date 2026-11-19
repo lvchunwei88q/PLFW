@@ -2951,6 +2951,14 @@ const char* _plfwGetScancodeNameWayland(int scancode)
     if (key == PLFW_KEY_UNKNOWN)
         return NULL;
 
+    // The keymap and its state are only created once a keyboard has entered a
+    // surface and the compositor has sent its keymap event.  Asking for a key
+    // name before that (a program querying key labels at startup, or a
+    // compositor that provides no seat at all) must not dereference the still
+    // NULL state; there simply is no layout to name keys with yet.
+    if (!_plfw.wl.xkb.state || !_plfw.wl.xkb.keymap)
+        return NULL;
+
     const xkb_keycode_t keycode = scancode + 8;
     const xkb_layout_index_t layout =
         xkb_state_key_get_layout(_plfw.wl.xkb.state, keycode);

@@ -264,6 +264,15 @@ int main(void)
     int scancode = plfwGetKeyScancode(PLFW_KEY_A);
     check("key scancode mapping exists", scancode >= 0);
 
+    // Asking for a key name must not depend on the compositor having sent a
+    // keyboard keymap yet, which never happens on a compositor without a seat
+    // (or before a surface has received keyboard focus).  The layout is
+    // unknown then, so the call may legitimately return NULL, but it must not
+    // crash on the missing xkb state.
+    const char* keyName = plfwGetKeyName(PLFW_KEY_A, scancode);
+    check("key name query works without a keymap",
+          keyName == NULL || keyName[0] != '\0');
+
     // Pump the event loop for a few frames: if the message pump or the window
     // procedure is broken this either hangs, crashes or reports errors.
     for (int i = 0;  i < 30;  i++)
