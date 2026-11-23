@@ -30,9 +30,19 @@ ctest --test-dir build
 `tests/smoke.c` 是不依赖图形上下文的冒烟测试：初始化、建窗、查询属性、收事件、退出，
 并在 Wayland 上跳过需要合成器能力的断言。
 
+### 只要库的最小构建 <a name="compile_compile"></a>
+
+```sh
+cmake -S . -B build -DPLFW_BUILD_TESTS=OFF -DPLFW_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+```
+
+构建过程中你应当看到且只看到 `-- Including Wayland support`（Windows 上是
+`-- Including Win32 support`），不会再有 X11 相关提示。
+
 ## 依赖 <a name="compile_deps"></a> <a name="compat_guide"></a>
 
-### Windows
+### Windows <a name="compat_win32"></a>
 
 只要 **MSVC（2015 及以上）** 与 Windows SDK，没有第三方依赖。Win32 后端用到下面这些
 系统能力，CMake 会自己接对应的导入库：
@@ -49,7 +59,7 @@ Raw Input | `PLFW_RAW_MOUSE_MOTION` | 该模式退化为普通鼠标
 
 Windows 上只有 Win32 后端，`PLFW_BUILD_WIN32=OFF` 会得到一个只剩 Null 的库。
 
-### Linux（Wayland）
+### Linux（Wayland） <a name="compat_wayland"></a>
 
 必须有：
 

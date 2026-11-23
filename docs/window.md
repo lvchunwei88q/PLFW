@@ -311,7 +311,7 @@ plfwSetWindowAttrib(window, PLFW_RESIZABLE, PLFW_FALSE);
 显示器对象由 PLFW 管理，应用不能创建或销毁它们。它们只用于查询视频模式、摆放
 全屏窗口、读取工作区与 gamma。
 
-### 显示器对象与枚举 <a name="monitor_object"></a>
+### 显示器对象与枚举 <a name="monitor_object"></a> <a name="monitor_monitors"></a>
 
 `PLFWmonitor*` 是不透明句柄。显示器热插拔时，PLFW 会销毁失效的句柄、为新显示器
 创建新句柄，所以**不要在回调之外长期缓存显示器指针**。
@@ -337,7 +337,9 @@ plfwSetMonitorCallback(monitorCallback);
 `event` 是 `PLFW_CONNECTED` 或 `PLFW_DISCONNECTED`。回调发生时管理器状态可能还在
 更新，回调里只能记录，不要枚举显示器。
 
-### 视频模式 <a name="monitor_modes"></a>
+### 显示器属性 <a name="monitor_properties"></a>
+
+#### 视频模式 <a name="monitor_modes"></a>
 
 ```c
 int count;
@@ -352,7 +354,7 @@ const PLFWvidmode* current = plfwGetVideoMode(monitor);
 本构建没有帧缓冲位深提示，`*Bits` 只是平台报告的名义值，不能拿来要求特定格式；
 Wayland 下这些字段通常固定为 8/8/8。
 
-### 物理尺寸 <a name="monitor_size"></a>
+#### 物理尺寸 <a name="monitor_size"></a>
 
 ```c
 int widthMM, heightMM;
@@ -361,7 +363,7 @@ plfwGetMonitorPhysicalSize(monitor, &widthMM, &heightMM);
 
 单位毫米。很多后端拿不到真实尺寸，此时返回 0，不要用它在 0 值上做除法。
 
-### 内容缩放 <a name="monitor_scale"></a>
+#### 内容缩放 <a name="monitor_scale"></a>
 
 ```c
 float xscale, yscale;
@@ -372,7 +374,7 @@ plfwGetMonitorContentScale(monitor, &xscale, &yscale);
 尺寸（真实像素）之间的换算。缩放可在运行期改变，变化会触发显示器回调与窗口的
 内容缩放回调。
 
-### 虚拟位置 <a name="monitor_pos"></a>
+#### 虚拟位置 <a name="monitor_pos"></a>
 
 ```c
 int xpos, ypos;
@@ -383,7 +385,7 @@ plfwGetMonitorPos(monitor, &xpos, &ypos);
 `x = y = 0`）。Wayland 下这个值来自合成器的 `wl_output.geometry`，多数合成器
 一律报 `0,0`，所以不要假设多显示器一定有非零偏移。
 
-### 工作区 <a name="monitor_workarea"></a>
+#### 工作区 <a name="monitor_workarea"></a>
 
 ```c
 int xpos, ypos, width, height;
@@ -392,7 +394,7 @@ plfwGetMonitorWorkarea(monitor, &xpos, &ypos, &width, &height);
 
 去掉任务栏 / 顶栏 / Dock 之后可用的矩形，适合算“无边框全屏窗口”的位置。
 
-### 可读名字 <a name="monitor_name"></a>
+#### 可读名字 <a name="monitor_name"></a>
 
 ```c
 const char* name = plfwGetMonitorName(monitor);
@@ -400,7 +402,7 @@ const char* name = plfwGetMonitorName(monitor);
 
 例如 Windows 上的 `Generic PnP Monitor`、Weston 的 `weston headless`。指针由库持有。
 
-### 用户指针 <a name="monitor_userptr"></a>
+#### 用户指针 <a name="monitor_userptr"></a>
 
 ```c
 plfwSetMonitorUserPointer(monitor, pointer);
@@ -409,7 +411,7 @@ void* pointer = plfwGetMonitorUserPointer(monitor);
 
 存自己的结构，便于在监视器回调里定位。
 
-### Gamma <a name="monitor_gamma"></a>
+#### Gamma <a name="monitor_gamma"></a>
 
 ```c
 plfwSetGamma(monitor, 1.0f);                 // 线性
