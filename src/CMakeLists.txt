@@ -20,15 +20,6 @@ else()
                                 posix/posix_thread.c)
 endif()
 
-add_custom_target(update_mappings
-    COMMAND "${CMAKE_COMMAND}" -P "${PLFW_SOURCE_DIR}/CMake/generate-mappings.cmake" mappings.h.in mappings.h
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    COMMENT "Updating gamepad mappings from upstream repository"
-    SOURCES mappings.h.in "${PLFW_SOURCE_DIR}/CMake/generate-mappings.cmake"
-    VERBATIM)
-
-set_target_properties(update_mappings PROPERTIES FOLDER "PLFW3")
-
 if (PLFW_BUILD_WIN32)
     target_compile_definitions(plfw PRIVATE _PLFW_WIN32)
     target_sources(plfw PRIVATE win32/win32_platform.h win32/win32_joystick.h
@@ -116,16 +107,11 @@ set_target_properties(plfw PROPERTIES
                       FOLDER "PLFW3")
 
 target_include_directories(plfw PUBLIC
-                           "$<BUILD_INTERFACE:${PLFW_SOURCE_DIR}/include>"
-                           "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
+                           "$<BUILD_INTERFACE:${PLFW_SOURCE_DIR}/include>")
 target_include_directories(plfw PRIVATE
                            "${PLFW_SOURCE_DIR}/src"
                            "${PLFW_BINARY_DIR}/src")
 target_link_libraries(plfw PRIVATE Threads::Threads)
-
-if (PLFW_BUILD_WIN32)
-    list(APPEND plfw_PKG_LIBS "-lgdi32")
-endif()
 
 if (PLFW_BUILD_WAYLAND)
     include(FindPkgConfig)
@@ -151,19 +137,16 @@ if (UNIX)
     mark_as_advanced(RT_LIBRARY)
     if (RT_LIBRARY)
         target_link_libraries(plfw PRIVATE "${RT_LIBRARY}")
-        list(APPEND plfw_PKG_LIBS "-lrt")
     endif()
 
     find_library(MATH_LIBRARY m)
     mark_as_advanced(MATH_LIBRARY)
     if (MATH_LIBRARY)
         target_link_libraries(plfw PRIVATE "${MATH_LIBRARY}")
-        list(APPEND plfw_PKG_LIBS "-lm")
     endif()
 
     if (CMAKE_DL_LIBS)
         target_link_libraries(plfw PRIVATE "${CMAKE_DL_LIBS}")
-        list(APPEND plfw_PKG_LIBS "-l${CMAKE_DL_LIBS}")
     endif()
 endif()
 
@@ -213,22 +196,3 @@ if (PLFW_BUILD_SHARED_LIBRARY)
         target_compile_options(plfw PRIVATE "-fvisibility=hidden")
     endif()
 endif()
-
-list(JOIN plfw_PKG_DEPS " " deps)
-list(JOIN plfw_PKG_LIBS " " libs)
-
-set(PLFW_PKG_CONFIG_REQUIRES_PRIVATE "${deps}" CACHE INTERNAL
-    "PLFW pkg-config Requires.private")
-set(PLFW_PKG_CONFIG_LIBS_PRIVATE "${libs}" CACHE INTERNAL
-    "PLFW pkg-config Libs.private")
-
-configure_file("${PLFW_SOURCE_DIR}/CMake/plfw3.pc.in" plfw3.pc @ONLY)
-
-if (PLFW_INSTALL)
-    install(TARGETS plfw
-            EXPORT plfwTargets
-            RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-            ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-            LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}")
-endif()
-

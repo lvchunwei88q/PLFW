@@ -9,7 +9,7 @@
 ```text
 src/
 ├── internal.h  platform.h            内部结构与平台层声明
-├── mappings.h  mappings.h.in         手柄映射（由 CMake 生成）
+├── mappings.h                        内置手柄映射（直接随源码编译）
 ├── plfw.rc.in                        Windows DLL 版本资源模板
 ├── init.c  input.c  monitor.c  window.c   公共 API 实现（后端无关）
 ├── platform.c                        平台表：后端选择
@@ -83,8 +83,8 @@ src/
 
 ## 静态分析工具 <a name="internals_static"></a>
 
-- `src/mappings.h` 由 `src/mappings.h.in` + `CMake/generate-mappings.cmake` 生成，
-  内置 SDL_GameControllerDB 映射。更新用 `cmake --build build --target update_mappings`。
+- `src/mappings.h` 是仓库内置的 SDL_GameControllerDB 映射，直接参与编译；正常构建
+  不会下载或生成映射文件。
 - `tests/smoke.c` 是唯一的自动化测试，随 `ctest` 跑；它断言 X11 / Cocoa 后端不在
   构建里，防止误把后端加回来。
 - 编译时 `-Wall` / `/W3` 默认打开；本仓库要求零警告。

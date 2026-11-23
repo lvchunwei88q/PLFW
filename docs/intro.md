@@ -253,6 +253,5 @@ PLFW 有两套坐标，混用是常见 bug 来源：
 版本宏都已随命名改造删除。库不再回答“我是什么版本”，调用方也就不需要按版本号
 分支——能力差异直接用 `plfwPlatformSupported` 与 `plfwGetPlatform` 判断。
 
-版本号只存在于仓库层面：`CMakeLists.txt` 里的 `project(PLFW VERSION 3.5.1)` 决定
-`plfw3.pc` 的 `Version` 字段与 CMake 包配置的兼容性检查。二进制本身不带版本信息，
-排查问题时记录平台后端、编译选项与提交哈希即可。
+版本号只存在于仓库层面：`CMakeLists.txt` 里的 `project(PLFW VERSION 3.5.1)` 用于构建
+系统标记库版本。二进制本身不带版本信息，排查问题时记录平台后端、编译选项与提交哈希即可。

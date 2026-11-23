@@ -106,8 +106,7 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
     `PLFW_PLATFORM_NULL`。用它们原有的数值去请求后端会按未知值处理——`plfwInitHint`
     报 `PLFW_INVALID_ENUM`，`plfwPlatformSupported` 返回 `PLFW_FALSE`。调用方的
     `switch (plfwGetPlatform())` 需要自己删掉这两个 `case`。
-  - `src/mappings.h` 中 `#if defined(_PLFW_COCOA)` 的 macOS 手柄映射表随宏一起删除
-    （`mappings.h.in` 同步去掉 `@GLFW_COCOA_MAPPINGS@`）。
+  - `src/mappings.h` 中 `#if defined(_PLFW_COCOA)` 的 macOS 手柄映射表随宏一起删除。
 - 示例与测试：原有 11 个示例、20 个测试全部依赖 OpenGL 或 Vulkan，已随改造删除
   （仍可从首次提交取回：`git show 3373d3b:examples/gears.c`）。替换为三个无图形
   依赖的程序，全部为本分支自写：
@@ -171,8 +170,7 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
     `PLFW_PLATFORM_NULL`。
 11. **不提供版本查询 API**：`glfwGetVersion` / `glfwGetVersionString` 与三个
     `PLFW_VERSION_*` 宏已删除，库不再报告自身版本；版本号只留在 `CMakeLists.txt` 的
-    `project(PLFW VERSION 3.5.1)`（供 `plfw3.pc` 与 CMake 包配置使用），二进制本身
-    不带版本信息。
+    `project(PLFW VERSION 3.5.1)`，供构建系统标记库版本；二进制本身不带版本信息。
 
 ### 构建与验证
 
@@ -181,7 +179,7 @@ Windows 用 MSVC，Linux 用 GCC（其它编译器在配置阶段被拒绝）。
 `rc.exe` 进入 PATH：
 
 ```bat
-cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DPLFW_INSTALL=OFF
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 
 :: 自检
@@ -205,8 +203,7 @@ Linux 侧只剩 Wayland 一个后端，构建依赖随之变少：`libwayland-de
 
 ```sh
 # Linux（Wayland + Null）
-cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release \
-      -DPLFW_INSTALL=OFF
+cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build-linux
 
 # 有 Wayland 合成器时
@@ -269,9 +266,6 @@ Ubuntu 26.04 LTS + WSL2 / WSLg（GCC 15.2.0 + CMake 4.2.3 + Ninja 1.13.2）：
   的，静态库本身不带 X11 / Wayland 链接依赖；
 - `BUILD_SHARED_LIBS=ON` 得到 `libplfw.so.3.5`（SONAME `libplfw.so.3`），
   `nm -D --defined-only` 里 `plfw*` 导出符号 113 个、`glfw*` 0 个；
-- `PLFW_INSTALL=ON` 安装后是 `include/PLFW/`、`lib/cmake/plfw3/`、`lib/pkgconfig/plfw3.pc`；
-  分别用 `pkg-config plfw3` 和 `find_package(plfw3 3.5 CONFIG)` 写一个最小消费者，
-  两者都能编译、链接并跑起来（报告 `monitor=weston rdp`）；
 - `-DPLFW_BUILD_WAYLAND=OFF` 的纯 Null 构建同样通过，`tests/smoke` 报
   `active platform backend: Null`。
 

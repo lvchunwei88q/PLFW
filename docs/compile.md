@@ -115,7 +115,6 @@ cmake -S . -B build -DPLFW_BUILD_WAYLAND=ON -DCMAKE_BUILD_TYPE=Release
 `PLFW_BUILD_WAYLAND` | Unix 上 `ON` | 编译 Wayland 后端
 `PLFW_BUILD_EXAMPLES` | 源码树为顶层时 `ON` | 构建 `examples/` 里的三个示例
 `PLFW_BUILD_TESTS` | 源码树为顶层时 `ON` | 构建 `tests/smoke.c`
-`PLFW_INSTALL` | `ON` | 生成 `install` 目标与 CMake 包配置
 `PLFW_USE_HYBRID_HPG` | `OFF` | 只在 Win32 下有意义：强制高性能 GPU；本构建无上下文，
 | | | 该选项保留但基本无效果
 `USE_MSVC_RUNTIME_LIBRARY_DLL` | `ON` | MSVC 下使用动态 CRT
@@ -198,10 +197,6 @@ VS Code 两种客户端任选其一（`.vscode/settings.json` 已被 `.gitignore
 
 文件 | 作用 | 谁在用
 ---- | ---- | ----
-`CMake/generate-mappings.cmake` | 从上游 SDL_GameControllerDB 拉取数据库并生成 `src/mappings.h` | `update_mappings` 自定义目标
-`CMake/uninstall.cmake.in` | `uninstall` 目标的脚本模板，按 `install_manifest.txt` 删除已安装文件 | 顶层 `CMakeLists.txt`（配置期生成 `uninstall.cmake`）
-`CMake/plfw3.pc.in` | pkg-config 模板，生成 `plfw3.pc` | 安装流程
-`CMake/plfw3Config.cmake.in` | CMake 包配置模板，生成 `plfw3Config.cmake` | `find_package(plfw3 CONFIG)`
 `CMake/modules/FindEpollShim.cmake` | 查找 epoll-shim（非 Linux 上的 epoll 兼容层） | Wayland 后端
 
 `CMake/toolchains/` 目录**已删除**：Windows 目标只支持 MSVC，不再提供 mingw-w64
@@ -305,7 +300,7 @@ Vulkan、GDI 头自由共存，包含顺序无关。
 - Linux：`libplfw3.a`，另需 `wayland-client`、`wayland-cursor`、`xkbcommon`、
   `dl`、`rt`、`m`
 
-Linux 上这些依赖大多数情况由 pkg-config 帮你补齐，见 [build_link_pkgconfig](#build_link_pkgconfig)。
+用 CMake 的源码构建时，`plfw` 目标会处理平台依赖；手动链接时则按上面的平台依赖列表添加。
 
 #### Windows（Visual Studio） <a name="build_link_win32"></a>
 
@@ -333,29 +328,3 @@ target_link_libraries(my_app PRIVATE plfw)
 `add_subdirectory` 会把 `plfw` 目标加到同一构建里，包含目录与依赖库自动传播。
 `PLFW_BUILD_TESTS` / `PLFW_BUILD_EXAMPLES` 只在顶层构建时默认 `ON`，作为子目录
 引入时本来就关着；想更彻底可以把它们显式设为 `OFF`。
-
-#### 用 CMake 的已安装包 <a name="build_link_cmake_package"></a>
-
-```cmake
-find_package(plfw3 3.5 REQUIRED)
-target_link_libraries(my_app PRIVATE plfw)
-```
-
-需要先 `cmake --install` 到某个前缀，并让 CMake 找到它：`-DCMAKE_PREFIX_PATH=/path/to/prefix`。
-包配置导出了 `plfw` 目标及其依赖。
-
-#### 用 pkg-config <a name="build_link_pkgconfig"></a>
-
-```sh
-cc my_program.c -o my_program $(pkg-config --cflags --libs plfw3)
-```
-
-`plfw3.pc` 里 `Requires.private` 列出 `wayland-client wayland-cursor xkbcommon`，
-`Libs.private` 列出 `-lrt -lm -ldl`（`-lgdi32` 在 Windows 上）。静态链接时要加
-`--static`：
-
-```sh
-cc my_program.c -o my_program $(pkg-config --static --cflags --libs plfw3)
-```
-
-没有 pkg-config 就直接判 `pkg-config --exists plfw3` 决定是否加上那些库。
