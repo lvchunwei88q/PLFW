@@ -29,7 +29,7 @@ string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" PLFW_ST
 # Emit compile_commands.json for clangd / editor tooling.  Only the Ninja and
 # Makefile generators write this file; the Visual Studio generator ignores the
 # setting, so use a Ninja build directory when you need editor support
-# (see "编辑器集成" in docs/compile.md)
+# (see "编辑器集成" in docs/build.md)
 if (PLFW_STANDALONE)
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 endif()

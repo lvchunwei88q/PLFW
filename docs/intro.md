@@ -17,12 +17,11 @@ Vulkan）已全部移除，库只负责创建窗口、接收输入、分发事�
 ## 页面导航 <a name="index"></a>
 
 - **本页** – 库的定位、初始化、错误处理、坐标与约定
-- [窗口指南](window.md#window_guide) – 窗口创建、窗口提示、窗口属性与窗口事件
-- [显示器指南](monitor.md#monitor_guide) – 显示器枚举、视频模式、内容缩放与 gamma
+- [窗口与显示器](window.md#window_guide) – 窗口创建、提示、属性、事件，以及显示器枚举、
+  视频模式、内容缩放、gamma 与全屏
 - [输入指南](input.md#input_guide) – 键盘、鼠标、手柄、时间、剪贴板与文件拖放
-- [兼容性](compat.md#compat_guide) – 各平台依赖的协议与明确不支持的能力
-- [编译与链接](compile.md#compile_guide) – 怎么编出库，怎么链进自己的程序
-- [内部结构](internal.md#internals_guide) – 源码布局、内部接口与配置宏（维护者向）
+- [构建、链接与内部结构](build.md#compile_guide) – 依赖与协议矩阵、CMake 选项、手动编译、
+  怎么链进自己的程序、源码分层与内部接口
 
 想看能直接跑的代码：`examples/hello-window.c` 是最小模板（建一个 640×400 窗口，
 Escape 或关窗退出），`examples/window-input.c` 打印全量输入事件，
@@ -133,11 +132,8 @@ plfwSetErrorCallback(errorCallback);
 错误码类别：`PLFW_NOT_INITIALIZED`、`PLFW_INVALID_ENUM`、`PLFW_INVALID_VALUE`、
 `PLFW_OUT_OF_MEMORY`、`PLFW_PLATFORM_ERROR`、`PLFW_PLATFORM_UNAVAILABLE`、
 `PLFW_FEATURE_UNAVAILABLE`、`PLFW_CURSOR_UNAVAILABLE`、`PLFW_FORMAT_UNAVAILABLE`。
-
-有三个错误码是为了源码 / ABI 兼容而保留、**本构建不会再产生**的：
-
-- `PLFW_NO_CURRENT_CONTEXT` —— 没有上下文可谈；
-- `PLFW_API_UNAVAILABLE`、`PLFW_VERSION_UNAVAILABLE` —— 不再创建任何客户端 API。
+另有三个为兼容保留、本构建不会产生的码（`PLFW_NO_CURRENT_CONTEXT`、
+`PLFW_API_UNAVAILABLE`、`PLFW_VERSION_UNAVAILABLE`），迁移说明见 README。
 
 后端能力缺失时报 `PLFW_FEATURE_UNAVAILABLE`，而不是静默忽略。典型例子：
 

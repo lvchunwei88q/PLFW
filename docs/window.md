@@ -1,8 +1,11 @@
-# 窗口指南 <a name="window_guide"></a>
+# 窗口与显示器 <a name="window_guide"></a>
 
 窗口是这个库存在的理由：创建它、配置它、在它上面收事件、最后销毁它。因为库不再
 创建图形上下文，**窗口里画什么由你自己决定**——D3D11/D3D12、Vulkan、GDI、
 Direct2D，或者只把它当成事件来源。
+
+显示器在本页的后半部分：它们由库管理、不能创建，用于查询视频模式、摆放全屏窗口、
+读取工作区与 gamma。
 
 ## 窗口对象 <a name="window_object"></a>
 
@@ -62,10 +65,8 @@ if (!window)
 ---- | ------ | ----
 `PLFW_WAYLAND_APP_ID` | `NULL` | 传给合成器的 `app_id`，决定任务栏图标归组与桌面文件名；不设置时取可执行文件名
 
-已删除的上游提示不再存在：`GLFW_X11_CLASS_NAME`、`GLFW_X11_INSTANCE_NAME`、
-`GLFW_COCOA_RETINA_FRAMEBUFFER`、`GLFW_COCOA_FRAME_NAME`、
-`GLFW_COCOA_CHDIR_RESOURCES`、`GLFW_COCOA_MENUBAR`，以及全部 OpenGL / Vulkan /
-EGL / 角 API 相关提示。代码里还写着它们的需要一并删掉。
+上游 X11、Cocoa 与图形 API 相关的提示（`GLFW_X11_*`、`GLFW_COCOA_*`、位深、上下文、
+`GLFW_VISIBLE` 之外的窗口属性等）在本构建里都不存在，传了只会报 `PLFW_INVALID_ENUM`。
 
 ### 提示的取值语义 <a name="window_hints_values"></a>
 
@@ -158,11 +159,9 @@ plfwGetFramebufferSize(window, &width, &height);
 
 #### 帧缓冲属性 <a name="window_attribs_fb"></a>
 
-本构建没有帧缓冲格式提示：`GLFW_RED_BITS`、`GLFW_GREEN_BITS`、`GLFW_BLUE_BITS`、
-`GLFW_ALPHA_BITS`、`GLFW_DEPTH_BITS`、`GLFW_STENCIL_BITS`、`GLFW_SRGB_CAPABLE`、
-`GLFW_DOUBLEBUFFER` 全部已删除。因此 `plfwGetWindowAttrib` **不接受任何帧缓冲
-属性**——能查到的帧缓冲信息只有这里的像素尺寸与 `plfwGetWindowContentScale` 的
-缩放比例。位深和像素格式由你选的图形 API 在创建自己的表面时决定。
+本构建没有帧缓冲格式提示：位深、`GLFW_SRGB_CAPABLE`、`GLFW_DOUBLEBUFFER` 一类属性
+全部已删除，`plfwGetWindowAttrib` **不接受任何帧缓冲属性**。能查到的帧缓冲信息只有
+这里的像素尺寸与内容缩放比例；位深和像素格式由你选的图形 API 在创建自己的表面时决定。
 
 ### 内容缩放 <a name="window_scale"></a>
 
@@ -217,51 +216,6 @@ plfwSetWindowIcon(window, 1, images);
 
 `PLFWimage` 是 RGBA8、逐行、左上角起。Wayland 的 `xdg_toplevel` 没有图标概念：
 调用被接受但不会产生任何效果（任务栏图标由 `.desktop` 文件与 `app_id` 决定）。
-
-### 窗口显示器 <a name="window_monitor"></a>
-
-```c
-PLFWmonitor* monitor = plfwGetWindowMonitor(window);
-```
-
-窗口模式返回 `NULL`，全屏模式返回显示器句柄。注意“无边框全屏”只是去掉了装饰的
-普通窗口，`plfwGetWindowMonitor` 对它仍返回 `NULL`，见
-[window_windowed_full_screen](#window_windowed_full_screen)。
-
-### 全屏窗口 <a name="window_full_screen"></a>
-
-```c
-PLFWmonitor* monitor = plfwGetPrimaryMonitor();
-const PLFWvidmode* mode = plfwGetVideoMode(monitor);
-
-plfwWindowHint(PLFW_REFRESH_RATE, mode->refreshRate);
-PLFWwindow* window = plfwCreateWindow(mode->width, mode->height, "Full screen",
-                                     monitor, NULL);
-```
-
-全屏窗口的尺寸会成为“期望视频模式”，后端选最接近的支持模式。不要自己 `malloc`
-视频模式数组：用 `plfwGetVideoMode`。
-
-运行期切换：
-
-```c
-plfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height,
-                     mode->refreshRate);
-plfwSetWindowMonitor(window, NULL, x, y, width, height, 0);   // 回窗口模式
-```
-
-### 无边框全屏 <a name="window_windowed_full_screen"></a>
-
-```c
-plfwWindowHint(PLFW_DECORATED, PLFW_FALSE);
-PLFWwindow* window = plfwCreateWindow(sw, sh, "Borderless", NULL, NULL);
-plfwSetWindowPos(window, 0, 0);
-plfwSetWindowSize(window, sw, sh);
-```
-
-好处是切换快、能和普通窗口共存、可在多显示器上摆。代价是它仍是窗口模式窗口：
-`plfwGetWindowMonitor` 返回 `NULL`，是否真的盖住任务栏取决于后端与用户设置，
-显式模式切换也拿不到独占刷新率。
 
 ### 最小化与还原 <a name="window_iconify"></a>
 
@@ -351,3 +305,167 @@ plfwSetWindowAttrib(window, PLFW_RESIZABLE, PLFW_FALSE);
 “可写”为“是”的才能传给 `plfwSetWindowAttrib`；传其余属性报
 `PLFW_INVALID_ENUM`，传非法值报 `PLFW_INVALID_VALUE`——请求缩放窗口之类必须在
 创建前用提示表达。
+
+## 显示器 <a name="monitor_guide"></a>
+
+显示器对象由 PLFW 管理，应用不能创建或销毁它们。它们只用于查询视频模式、摆放
+全屏窗口、读取工作区与 gamma。
+
+### 显示器对象与枚举 <a name="monitor_object"></a>
+
+`PLFWmonitor*` 是不透明句柄。显示器热插拔时，PLFW 会销毁失效的句柄、为新显示器
+创建新句柄，所以**不要在回调之外长期缓存显示器指针**。
+
+```c
+int count;
+PLFWmonitor** monitors = plfwGetMonitors(&count);
+PLFWmonitor* primary = plfwGetPrimaryMonitor();
+```
+
+返回的数组由库持有，在下次调用前有效。主显示器由系统决定，可能不是你期望的那块。
+每个显示器都有名字（`plfwGetMonitorName`），可以据此选择。Wayland 下“主显示器”按
+枚举顺序取第一块，不要依赖它。
+
+### 显示器配置变化 <a name="monitor_event"></a>
+
+```c
+void monitorCallback(PLFWmonitor* monitor, int event);
+
+plfwSetMonitorCallback(monitorCallback);
+```
+
+`event` 是 `PLFW_CONNECTED` 或 `PLFW_DISCONNECTED`。回调发生时管理器状态可能还在
+更新，回调里只能记录，不要枚举显示器。
+
+### 视频模式 <a name="monitor_modes"></a>
+
+```c
+int count;
+const PLFWvidmode* modes = plfwGetVideoModes(monitor, &count);
+const PLFWvidmode* current = plfwGetVideoMode(monitor);
+```
+
+`PLFWvidmode` 的字段：`width`、`height`、`redBits`、`greenBits`、`blueBits`、
+`refreshRate`（Hz）。`plfwGetVideoMode` 返回当前模式，`plfwGetVideoModes` 返回该
+显示器支持的全部模式（按分辨率与刷新率排序）。
+
+本构建没有帧缓冲位深提示，`*Bits` 只是平台报告的名义值，不能拿来要求特定格式；
+Wayland 下这些字段通常固定为 8/8/8。
+
+### 物理尺寸 <a name="monitor_size"></a>
+
+```c
+int widthMM, heightMM;
+plfwGetMonitorPhysicalSize(monitor, &widthMM, &heightMM);
+```
+
+单位毫米。很多后端拿不到真实尺寸，此时返回 0，不要用它在 0 值上做除法。
+
+### 内容缩放 <a name="monitor_scale"></a>
+
+```c
+float xscale, yscale;
+plfwGetMonitorContentScale(monitor, &xscale, &yscale);
+```
+
+系统缩放比例（例如 Windows 150% 时为 1.5）。它决定窗口尺寸（逻辑像素）与帧缓冲
+尺寸（真实像素）之间的换算。缩放可在运行期改变，变化会触发显示器回调与窗口的
+内容缩放回调。
+
+### 虚拟位置 <a name="monitor_pos"></a>
+
+```c
+int xpos, ypos;
+plfwGetMonitorPos(monitor, &xpos, &ypos);
+```
+
+显示器左上角在虚拟桌面中的位置，以主显示器左上角为原点（主显示器
+`x = y = 0`）。Wayland 下这个值来自合成器的 `wl_output.geometry`，多数合成器
+一律报 `0,0`，所以不要假设多显示器一定有非零偏移。
+
+### 工作区 <a name="monitor_workarea"></a>
+
+```c
+int xpos, ypos, width, height;
+plfwGetMonitorWorkarea(monitor, &xpos, &ypos, &width, &height);
+```
+
+去掉任务栏 / 顶栏 / Dock 之后可用的矩形，适合算“无边框全屏窗口”的位置。
+
+### 可读名字 <a name="monitor_name"></a>
+
+```c
+const char* name = plfwGetMonitorName(monitor);
+```
+
+例如 Windows 上的 `Generic PnP Monitor`、Weston 的 `weston headless`。指针由库持有。
+
+### 用户指针 <a name="monitor_userptr"></a>
+
+```c
+plfwSetMonitorUserPointer(monitor, pointer);
+void* pointer = plfwGetMonitorUserPointer(monitor);
+```
+
+存自己的结构，便于在监视器回调里定位。
+
+### Gamma <a name="monitor_gamma"></a>
+
+```c
+plfwSetGamma(monitor, 1.0f);                 // 线性
+const PLFWgammaramp* ramp = plfwGetGammaRamp(monitor);
+plfwSetGammaRamp(monitor, ramp);
+```
+
+`PLFWgammaramp` 是三条 `unsigned short` 表（红、绿、蓝）与长度。`plfwSetGamma`
+按给定 gamma 值生成一条近似线性化曲线，比手写表更方便。
+
+支持情况：Win32 实现了 gamma。Wayland 没有 gamma 概念：`plfwGetGammaRamp` 报
+`PLFW_FEATURE_UNAVAILABLE` 并返回 `NULL`，`plfwSetGamma` 拿不到原始 ramp 就直接返回
+（窗口不会因此崩溃，设置也确实没生效）。程序应当把 gamma 当作可选能力，查询失败就
+跳过。
+
+### 窗口显示器 <a name="window_monitor"></a>
+
+```c
+PLFWmonitor* monitor = plfwGetWindowMonitor(window);
+```
+
+窗口模式返回 `NULL`，全屏模式返回显示器句柄。注意“无边框全屏”只是去掉了装饰的
+普通窗口，`plfwGetWindowMonitor` 对它仍返回 `NULL`，见
+[window_windowed_full_screen](#window_windowed_full_screen)。
+
+### 全屏窗口 <a name="window_full_screen"></a>
+
+```c
+PLFWmonitor* monitor = plfwGetPrimaryMonitor();
+const PLFWvidmode* mode = plfwGetVideoMode(monitor);
+
+plfwWindowHint(PLFW_REFRESH_RATE, mode->refreshRate);
+PLFWwindow* window = plfwCreateWindow(mode->width, mode->height, "Full screen",
+                                     monitor, NULL);
+```
+
+全屏窗口的尺寸会成为“期望视频模式”，后端选最接近的支持模式。不要自己 `malloc`
+视频模式数组：用 `plfwGetVideoMode`。
+
+运行期切换：
+
+```c
+plfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height,
+                     mode->refreshRate);
+plfwSetWindowMonitor(window, NULL, x, y, width, height, 0);   // 回窗口模式
+```
+
+### 无边框全屏 <a name="window_windowed_full_screen"></a>
+
+```c
+plfwWindowHint(PLFW_DECORATED, PLFW_FALSE);
+PLFWwindow* window = plfwCreateWindow(sw, sh, "Borderless", NULL, NULL);
+plfwSetWindowPos(window, 0, 0);
+plfwSetWindowSize(window, sw, sh);
+```
+
+好处是切换快、能和普通窗口共存、可在多显示器上摆。代价是它仍是窗口模式窗口：
+`plfwGetWindowMonitor` 返回 `NULL`，是否真的盖住任务栏取决于后端与用户设置，
+显式模式切换也拿不到独占刷新率。
