@@ -124,7 +124,7 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
     该测试按后端能力自适应：无显示环境自动回落到 headless 后端；Null 后端跳过窗口
     几何断言；Wayland 跳过窗口定位断言（协议不允许客户端定位）；后端声明剪贴板不可用、
     或 Wayland 窗口没有焦点拿不到剪贴板 data offer 时，跳过剪贴板断言。
-- 文档：`docs/` 下 4 篇中文指南（总览、窗口与显示器、输入、构建链接与内部结构）
+- 文档：`docs/` 下 5 篇中文指南（总览、窗口与显示器、输入、构建与链接、源码树与内部接口）
   全部按当前能力重写，直接用 Markdown 阅读即可；仓库不带 Doxygen 配置，
   构建时也不再生成 HTML。
 
@@ -283,7 +283,8 @@ X11 与 Cocoa：**已从本仓库删除**，不再需要 X 服务器环境，也
   `SUPPORT.md` 并入本 README，某一轮的代码审查报告 `review.md` 已删除；`moving.md`、
   `news.md`、`CONTRIBUTING.md` 同样已删除。最新一轮把 `monitor.md` 并入
   `window.md`、`internal.md` 与 `compat.md` 并入新的 `build.md`（原 `compile.md`），
-  文档从 7 篇收敛到 4 篇。
+  文档从 7 篇收敛到 4 篇；随后又把 `build.md` 末尾的“源码树与内部接口”拆回独立的
+  `internal.md`，因为它面向的是改库的人而不是用库的人，最终为 5 篇。
 - `deps/` 里只剩 **`deps/wayland/` 的 9 个协议 XML**（`wayland.xml`、`viewporter.xml`、
   `xdg-shell.xml`、`idle-inhibit-unstable-v1.xml`、`pointer-constraints-unstable-v1.xml`、
   `relative-pointer-unstable-v1.xml`、`fractional-scale-v1.xml`、`xdg-activation-v1.xml`、

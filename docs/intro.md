@@ -20,8 +20,10 @@ Vulkan）已全部移除，库只负责创建窗口、接收输入、分发事�
 - [窗口与显示器](window.md#window_guide) – 窗口创建、提示、属性、事件，以及显示器枚举、
   视频模式、内容缩放、gamma 与全屏
 - [输入指南](input.md#input_guide) – 键盘、鼠标、手柄、时间、剪贴板与文件拖放
-- [构建、链接与内部结构](build.md#compile_guide) – 依赖与协议矩阵、CMake 选项、手动编译、
-  怎么链进自己的程序、源码分层与内部接口
+- [构建与链接](build.md#compile_guide) – 依赖与协议矩阵、CMake 选项、手动编译、
+  怎么链进自己的程序
+- [源码树与内部接口](internal.md#internals_guide) – 源码分层、内部结构、平台表、
+  事件接口、配置宏与代码约定（改库的人看）
 
 想看能直接跑的代码：`examples/hello-window.c` 是最小模板（建一个 640×400 窗口，
 Escape 或关窗退出），`examples/window-input.c` 打印全量输入事件，
