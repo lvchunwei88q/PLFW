@@ -123,12 +123,6 @@ if (PLFW_BUILD_WAYLAND)
 endif()
 
 if (UNIX)
-    find_library(RT_LIBRARY rt)
-    mark_as_advanced(RT_LIBRARY)
-    if (RT_LIBRARY)
-        target_link_libraries(plfw PRIVATE "${RT_LIBRARY}")
-    endif()
-
     find_library(MATH_LIBRARY m)
     mark_as_advanced(MATH_LIBRARY)
     if (MATH_LIBRARY)
