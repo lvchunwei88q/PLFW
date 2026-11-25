@@ -57,8 +57,6 @@ else()
     set(PLFW_BUILD_SHARED_LIBRARY ${BUILD_SHARED_LIBS})
 endif()
 
-list(APPEND CMAKE_MODULE_PATH "${PLFW_SOURCE_DIR}/CMake/modules")
-
 find_package(Threads REQUIRED)
 
 #--------------------------------------------------------------------

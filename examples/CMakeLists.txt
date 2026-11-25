@@ -6,10 +6,6 @@
 
 link_libraries(plfw)
 
-if (MATH_LIBRARY)
-    link_libraries("${MATH_LIBRARY}")
-endif()
-
 # Workaround for the MS CRT deprecating parts of the standard library
 if (MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)

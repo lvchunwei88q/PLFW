@@ -94,8 +94,6 @@ if (UNIX AND PLFW_BUILD_SHARED_LIBRARY)
 else()
     set(PLFW_LIB_NAME plfw3)
 endif()
-set(PLFW_LIB_NAME_SUFFIX "")
-
 set_target_properties(plfw PROPERTIES
                       OUTPUT_NAME ${PLFW_LIB_NAME}
                       VERSION ${PLFW_VERSION_MAJOR}.${PLFW_VERSION_MINOR}
@@ -122,14 +120,6 @@ if (PLFW_BUILD_WAYLAND)
         xkbcommon>=0.5.0)
 
     target_include_directories(plfw PRIVATE ${Wayland_INCLUDE_DIRS})
-
-    if (NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
-        find_package(EpollShim)
-        if (EPOLLSHIM_FOUND)
-            target_include_directories(plfw PRIVATE ${EPOLLSHIM_INCLUDE_DIRS})
-            target_link_libraries(plfw PRIVATE ${EPOLLSHIM_LIBRARIES})
-        endif()
-    endif()
 endif()
 
 if (UNIX)
@@ -183,7 +173,6 @@ if (PLFW_BUILD_SHARED_LIBRARY)
     if (WIN32)
         # Add a suffix to the import library to avoid naming conflicts
         set_target_properties(plfw PROPERTIES IMPORT_SUFFIX "dll.lib")
-        set (PLFW_LIB_NAME_SUFFIX "dll")
 
         target_compile_definitions(plfw INTERFACE PLFW_DLL)
     endif()
