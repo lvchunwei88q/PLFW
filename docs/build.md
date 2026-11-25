@@ -258,16 +258,17 @@ src/wayland/linux_joystick.c src/posix/posix_poll.c
 deps/wayland/*.xml  → wayland-scanner 生成的 18 个头/源文件
 ```
 
-链接：`-lwayland-client -lwayland-cursor -lxkbcommon -lpthread -ldl -lm`，
-并按 `HAVE_MEMFD_CREATE` 决定是否定义该宏（不定义也能编，只是少一条优化路径）。
+最终可执行文件链接：`-ldl -lm`。`libwayland-client.so.0`、
+`libwayland-cursor.so.0`、`libxkbcommon.so.0` 由库在运行时 `dlopen`，编译和
+链接都不需要引入，只要运行环境装有这三个库；并按 `HAVE_MEMFD_CREATE` 决定
+是否定义该宏（不定义也能编，只是少一条优化路径）。
 
 手动编译示例（Linux）：
 
 ```sh
 gcc -c -std=c99 -D_DEFAULT_SOURCE -D_PLFW_WAYLAND -Iinclude -Isrc \
     src/*.c src/null/*.c src/posix/*.c src/wayland/*.c build/wl-proto/*.c
-gcc my_program.o libplfw_objects.a -lwayland-client -lwayland-cursor \
-    -lxkbcommon -lpthread -ldl -lm -o my_program
+gcc my_program.o libplfw_objects.a -ldl -lm -o my_program
 ```
 
 **注意**：手动编译必须把 `src/platform.c` 一起带上，它负责后端选择（平台表），漏掉
@@ -317,8 +318,8 @@ Vulkan、GDI 头自由共存，包含顺序无关。
 静态库（本构建默认）在 Windows 上需要额外链 `gdi32`：
 
 - Windows：`plfw3.lib`（MSVC，唯一支持的工具链）
-- Linux：`libplfw3.a`，另需 `wayland-client`、`wayland-cursor`、`xkbcommon`、
-  `dl`、`m`
+- Linux：`libplfw3.a`，另需 `dl`、`m`；Wayland 客户端、光标主题与 xkbcommon
+  由库运行时 `dlopen`，不需要链接，但运行环境要装对应的运行时包
 
 用 CMake 的源码构建时，`plfw` 目标会处理平台依赖；手动链接时则按上面的平台依赖列表添加。
 
