@@ -3,9 +3,9 @@
 # window and exercises the window, monitor, input, clipboard and event APIs
 # without touching any graphics API.
 #
-# This target is a plain executable on purpose: it is not registered with
-# CTest, so it can be run directly (or launched from an external test driver)
-# and its exit code tells whether every check passed.
+# It is both a CTest case named "smoke" and a plain executable, so it can be
+# run through "ctest" or launched directly (its exit code says whether every
+# check passed).
 
 link_libraries(plfw)
 
@@ -15,3 +15,5 @@ if (MSVC)
 endif()
 
 add_executable(smoke smoke.c)
+
+add_test(NAME smoke COMMAND smoke)

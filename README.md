@@ -117,8 +117,8 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
     跨窗口剪贴板。
   - `examples/hello-window.c`：最小可用的单窗口程序——初始化、建窗、Escape 关窗、
     尺寸回调、`plfwWaitEventsTimeout` 事件循环，适合直接当模板抄。
-  - `tests/smoke.c`：自检式冒烟测试，构建成普通可执行文件（不注册 CTest），
-    手工运行或由外部测试驱动调用。覆盖初始化、
+  - `tests/smoke.c`：自检式冒烟测试，注册为 CTest 用例 `smoke`（那个可执行文件也可以
+    直接运行）。覆盖初始化、
     平台后端、定时器、显示器与视频模式、无图形 API 建窗、`share` 参数被忽略、
     窗口尺寸 / 帧缓冲尺寸 / 帧尺寸、可见性 / 图标化 / 可缩放属性、光标与键鼠状态、
     窗口尺寸与位置设置、剪贴板往返、手柄枚举、键扫描码、事件泵、关闭请求与销毁。
@@ -184,7 +184,8 @@ Windows 用 MSVC，Linux 用 GCC（其它编译器在配置阶段被拒绝）。
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 
-:: 自检
+:: 自检（单配置生成器；Visual Studio 生成器要加 -C Release）
+ctest --test-dir build
 build\tests\smoke.exe
 
 :: 交互演示：800x480 窗口，打印按键 / 字符 / 鼠标 / 滚轮 / 焦点 / 尺寸 / 手柄事件
@@ -207,6 +208,9 @@ Linux 侧只剩 Wayland 一个后端，构建依赖随之变少：`libwayland-de
 # Linux（Wayland + Null）
 cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build-linux
+
+# 自检（也可以直接跑 build-linux/tests/smoke）
+ctest --test-dir build-linux
 
 # 有 Wayland 合成器时
 env XDG_RUNTIME_DIR=/tmp/xdg WAYLAND_DISPLAY=wl-test ./build-linux/tests/smoke

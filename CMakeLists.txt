@@ -87,9 +87,9 @@ if (PLFW_BUILD_EXAMPLES)
 endif()
 
 if (PLFW_BUILD_TESTS)
-    # The smoke test is a plain executable, not a CTest: it is built so it can
-    # be run by hand or driven by an external test runner, and this project
-    # never calls enable_testing().
+    # Registered at the top level so that "ctest --test-dir build" finds the
+    # smoke test instead of requiring the build/tests subdirectory
+    enable_testing()
     add_subdirectory(tests)
 endif()
 

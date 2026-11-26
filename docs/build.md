@@ -22,15 +22,17 @@ clang-cl、MSYS2）在配置阶段就会被 `message(FATAL_ERROR)` 拒掉。Wind
   `build/examples/multi-window.exe`、`build/examples/hello-window.exe`
   （`PLFW_BUILD_TESTS` / `PLFW_BUILD_EXAMPLES` 打开时）
 
-想跑一遍自检，直接运行那个可执行文件（本仓库**不注册 CTest**，没有 `ctest` 目标）：
+想跑一遍自检：
 
 ```sh
-build/tests/smoke.exe        # Linux 上是 build/tests/smoke
+ctest --test-dir build              # Ninja / Makefile 等单配置生成器
+ctest --test-dir build -C Release   # Visual Studio 等多配置生成器要带 -C
 ```
 
-`tests/smoke.c` 是不依赖图形上下文的冒烟测试：初始化、建窗、查询属性、收事件、退出，
-并在 Wayland 上跳过需要合成器能力的断言。它是**普通可执行文件**，退出码 0 表示全部
-检查通过，因此也可以被自己的测试驱动直接调用。
+`tests/smoke.c` 是不依赖图形上下文的冒烟测试，注册为 CTest 用例 `smoke`：初始化、建窗、
+查询属性、收事件、退出，并在 Wayland 上跳过需要合成器能力的断言。它同时也是一个普通
+可执行文件，可以直接运行 `build/tests/smoke.exe`（Linux 上是 `build/tests/smoke`），
+退出码 0 表示全部检查通过，所以也能被自己的测试驱动调用。
 
 ### 只要库的最小构建 <a name="compile_compile"></a>
 
