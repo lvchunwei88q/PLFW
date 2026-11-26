@@ -1,5 +1,7 @@
 # PLFW（窗口 / 输入 / 事件 裁剪版）
 
+[简体中文](README.md) | [English](README.en.md)
+
 > **本仓库是 GLFW 3.5.1 的一个改造分支：所有图形初始化代码已被移除，库只保留
 > 窗口系统、输入（键盘 / 鼠标 / 手柄）与事件处理能力。**
 >
@@ -299,5 +301,11 @@ X11 与 Cocoa：**已从本仓库删除**，不再需要 X 服务器环境，也
   `deps/nuklear_plfw_gl2.h`、`deps/stb_image_write.h`、`deps/linmath.h`、
   `deps/tinycthread.*`、`deps/getopt.*`，共 43,949 行）已删除——图形层与 GL 示例
   都不在了，它们在源码、示例、测试与 CMake 中均为零引用。
+
+## 许可证
+
+PLFW 以 zlib 风格的许可分发，全文见 [LICENSE.md](LICENSE.md)：上面保留上游
+Marcus Geelnard 与 Camilla Löwy 的版权声明，并加上本分支的版权行
+（Copyright (c) 2026 LVCHUNWEI）。
 
 ---
