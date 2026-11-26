@@ -41,7 +41,6 @@ if (PLFW_BUILD_WAYLAND)
 endif()
 
 if (PLFW_BUILD_WAYLAND)
-    include(CheckIncludeFiles)
     include(CheckFunctionExists)
     check_function_exists(memfd_create HAVE_MEMFD_CREATE)
     if (HAVE_MEMFD_CREATE)

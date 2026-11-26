@@ -39,7 +39,3 @@ endif()
 if (PLFW_BUILD_WAYLAND)
     target_compile_definitions(multi-window PRIVATE PLFW_EXAMPLE_HAS_WAYLAND)
 endif()
-
-set_target_properties(window-input multi-window hello-window PROPERTIES
-                      C_STANDARD 99
-                      FOLDER "PLFW3/Examples")
