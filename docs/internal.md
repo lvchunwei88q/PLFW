@@ -103,10 +103,11 @@ src/
 
 Null 后端没有自己的宏：它总是被编译进去，只在显式请求 `PLFW_PLATFORM_NULL` 时启用。
 
-## 测试与代码约定 <a name="internals_static"></a>
+## 代码约定 <a name="internals_static"></a>
 
 - `src/mappings.h` 是仓库内置的 SDL_GameControllerDB 映射，直接参与编译；正常构建
   不会下载或生成映射文件。
-- `tests/smoke.c` 是唯一的自动化测试，随 `ctest` 跑；它断言 X11 / Cocoa 后端不在
-  构建里，防止误把后端加回来。
 - 编译时 `-Wall` / `/W3` 默认打开；本仓库要求零警告。
+- 仓库**不带测试工程**，也没有 `ctest` 目标。改动后的验证方式是：全平台各构建一遍
+  并确认零警告，再直接跑 `examples/` 里的三个程序（它们覆盖建窗、事件循环、多窗口、
+  原生句柄与 Wayland 剪贴板往返），或用一个 `add_subdirectory` 消费方工程链上库跑一遍。

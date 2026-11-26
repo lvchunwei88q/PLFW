@@ -9,7 +9,6 @@ cmake-build-*/
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
-CTestTestfile.cmake
 *.ninja
 .ninja_deps
 .ninja_log

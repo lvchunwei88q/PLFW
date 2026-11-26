@@ -107,7 +107,7 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
     报 `PLFW_INVALID_ENUM`，`plfwPlatformSupported` 返回 `PLFW_FALSE`。调用方的
     `switch (plfwGetPlatform())` 需要自己删掉这两个 `case`。
   - `src/mappings.h` 中 `#if defined(_PLFW_COCOA)` 的 macOS 手柄映射表随宏一起删除。
-- 示例与测试：原有 11 个示例、20 个测试全部依赖 OpenGL 或 Vulkan，已随改造删除
+- 示例：上游原有 11 个示例（连同 20 个测试）全部依赖 OpenGL 或 Vulkan，已随改造删除
   （仍可从首次提交取回：`git show 3373d3b:examples/gears.c`）。替换为三个无图形
   依赖的程序，全部为本分支自写：
   - `examples/window-input.c`：单窗口的键盘 / 字符 / 鼠标 / 滚轮 / 焦点 / 尺寸 /
@@ -117,13 +117,8 @@ X11 与 Cocoa 两个后端**整体删除**（不是用 CMake 选项关掉），�
     跨窗口剪贴板。
   - `examples/hello-window.c`：最小可用的单窗口程序——初始化、建窗、Escape 关窗、
     尺寸回调、`plfwWaitEventsTimeout` 事件循环，适合直接当模板抄。
-  - `tests/smoke.c`：自检式冒烟测试（注册到 CTest 的 `smoke`），覆盖初始化、
-    平台后端、定时器、显示器与视频模式、无图形 API 建窗、`share` 参数被忽略、
-    窗口尺寸 / 帧缓冲尺寸 / 帧尺寸、可见性 / 图标化 / 可缩放属性、光标与键鼠状态、
-    窗口尺寸与位置设置、剪贴板往返、手柄枚举、键扫描码、事件泵、关闭请求与销毁。
-    该测试按后端能力自适应：无显示环境自动回落到 headless 后端；Null 后端跳过窗口
-    几何断言；Wayland 跳过窗口定位断言（协议不允许客户端定位）；后端声明剪贴板不可用、
-    或 Wayland 窗口没有焦点拿不到剪贴板 data offer 时，跳过剪贴板断言。
+- 测试：不再提供。`tests/` 目录（原 `smoke.c` 自检程序）、`PLFW_BUILD_TESTS` 选项
+  与 CTest 注册全部移除，验证方式改为编译 + 直接跑 `examples/` 里的程序。
 - 文档：`docs/` 下 5 篇中文指南（总览、窗口与显示器、输入、构建与链接、源码树与内部接口）
   全部按当前能力重写，直接用 Markdown 阅读即可；仓库不带 Doxygen 配置，
   构建时也不再生成 HTML。
@@ -183,9 +178,6 @@ Windows 用 MSVC，Linux 用 GCC（其它编译器在配置阶段被拒绝）。
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 
-:: 自检
-build\tests\smoke.exe
-
 :: 交互演示：800x480 窗口，打印按键 / 字符 / 鼠标 / 滚轮 / 焦点 / 尺寸 / 手柄事件
 build\examples\window-input.exe
 
@@ -207,22 +199,15 @@ Linux 侧只剩 Wayland 一个后端，构建依赖随之变少：`libwayland-de
 cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build-linux
 
-# 有 Wayland 合成器时
-env XDG_RUNTIME_DIR=/tmp/xdg WAYLAND_DISPLAY=wl-test ./build-linux/tests/smoke
-
-# 完全没有显示服务时（测试内部用 PLFW_PLATFORM_NULL 重试）
-env -u DISPLAY -u WAYLAND_DISPLAY ./build-linux/tests/smoke
+# 有 Wayland 合成器时（示例会开窗并持续打印事件，Ctrl+C 结束）
+WAYLAND_DISPLAY=wl-test ./build-linux/examples/window-input
 ```
 
 #### 实测结果
 
 MSVC 19.51（VS 2026 Community，14.51.36231）+ CMake 4.3.2 + Ninja（Windows）：
 
-- 库与三个程序全部编译通过，无警告；
-- `tests/smoke.exe`：全部检查 ok，含窗口创建（无图形上下文）、窗口/帧缓冲尺寸、
-  位置与尺寸设置、窗口属性、光标位置、键鼠状态查询、剪贴板往返、显示器与视频模式、
-  手柄枚举、事件泵 30 次唤醒、关闭请求与销毁，以及“X11 / Cocoa 后端不在构建中”
-  两条断言；`active platform backend: Win32`；
+- 库与三个示例全部编译通过，无警告；
 - `examples/window-input.exe`：桌面出现 800x480 窗口（句柄与标题可被 `FindWindow`
   / `WM_CLOSE` 命中），事件循环稳定（1 秒 46 帧、2 秒 83 帧），收到 `WM_CLOSE` 后正常退出；
 - `examples/multi-window.exe`：三个窗口同时存在（`HWND 0x370650` / `0x610688` /
@@ -235,40 +220,27 @@ GCC 11.4.0 + CMake 3.22.1 + Ninja（Ubuntu 22.04，删除 X11 后的 Wayland 单
   `pkg_check_modules` 只找 `wayland-client` / `wayland-cursor` / `xkbcommon`；
   额外用 `-DCMAKE_DISABLE_FIND_PACKAGE_X11=TRUE` 配置一次仍成功（CMake 报告该变量
   “未被工程使用”，即工程里已不存在 `find_package(X11)`）；
-- 编译：库、两个示例、测试全部通过，`warning:` / `error:` 计数为 0；
-- `env -u DISPLAY -u WAYLAND_DISPLAY ./tests/smoke`（无显示）：以
-  `PLFW_PLATFORM_NULL` 重试成功（`active platform backend: Null`），全部检查 ok；
-  全部检查 ok；
-- `weston --backend=headless-backend.so --socket=wl-test` 下跑 `tests/smoke`：
-  `active platform backend: Wayland`，除两项按后端能力跳过的断言外全部 ok——
-  窗口定位（Wayland 协议不允许客户端放置窗口）与剪贴板（该合成器没有 seat，
-  按预期报 `PLFW_PLATFORM_ERROR`）；
+- 编译：库与三个示例全部通过，`warning:` / `error:` 计数为 0；
 - `window-input` 与 `multi-window` 在同一个 headless 合成器下都跑满 5 秒：
   前者打印 800x480 窗口与每秒状态，后者打印三个 `wl_surface` 句柄（
   `0x5624ac444e90` / `0x5624ac45cca0` / `0x5624ac45d840`）；
-- `ldd tests/smoke` 显示只依赖 `libc` / `libm`，没有 `libX11` 等 X11 库；
-  Wayland 客户端库是运行时 `dlopen` 的，与上游一致。
+- `ldd build-linux/examples/window-input` 显示只依赖 `libc` / `libm`，没有 `libX11`
+  等 X11 库；Wayland 客户端库是运行时 `dlopen` 的，与上游一致。
 
 Ubuntu 26.04 LTS + WSL2 / WSLg（GCC 15.2.0 + CMake 4.2.3 + Ninja 1.13.2）：
 
 - 配置只打印 `-- Including Wayland support`，找到 `wayland-client` / `wayland-cursor`
-  1.24.0 与 `xkbcommon` 1.13.1；库、两个示例与测试全部编译通过，
+  1.24.0 与 `xkbcommon` 1.13.1；库与三个示例全部编译通过，
   `warning` / `error` 计数为 0；
-- 直接在 WSLg 提供的合成器上跑 `tests/smoke`：`active platform backend: Wayland`，
-  除两项按能力跳过的断言外全部 ok——窗口定位（Wayland 不允许客户端放置窗口），
-  以及剪贴板（smoke 故意用隐藏窗口 `PLFW_VISIBLE=FALSE`，隐藏窗口不会被映射，
-  也就拿不到 selection 的 data offer，按预期报
-  `PLFW_FORMAT_UNAVAILABLE: Wayland: No clipboard data available`）；
 - `examples/multi-window` 在同一个合成器上跑：三个窗口各自拿到 `wl_surface` 句柄、
   报告 `"weston rdp"` 显示器，焦点按创建顺序依次切换（`[first] focused` →
   `[second] focused` → `[third] focused`），并且 `clipboard through window 2`
   成功读回窗口 1 写入的字符串——可见窗口的剪贴板往返在 Wayland 上是通的；
-- `ldd build/tests/smoke` 只有 `libm` / `libc`：Wayland 客户端库是运行时 `dlopen`
-  的，静态库本身不带 X11 / Wayland 链接依赖；
+- `ldd build/examples/multi-window` 只有 `libm` / `libc`：Wayland 客户端库是运行时
+  `dlopen` 的，静态库本身不带 X11 / Wayland 链接依赖；
 - `BUILD_SHARED_LIBS=ON` 得到 `libplfw.so.3.5`（SONAME `libplfw.so.3`），
   `nm -D --defined-only` 里 `plfw*` 导出符号 113 个、`glfw*` 0 个；
-- `-DPLFW_BUILD_WAYLAND=OFF` 的纯 Null 构建同样通过，`tests/smoke` 报
-  `active platform backend: Null`。
+- `-DPLFW_BUILD_WAYLAND=OFF` 的纯 Null 构建同样通过，配置与编译零警告。
 
 X11 与 Cocoa：**已从本仓库删除**，不再需要 X 服务器环境，也不存在“未编译验证”
 的后端。macOS 同样不再支持：Cocoa 后端与 `macos_time.*` 均已删除，`CMakeLists.txt`

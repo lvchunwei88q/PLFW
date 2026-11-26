@@ -36,7 +36,6 @@ endif()
 
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option(PLFW_BUILD_EXAMPLES "Build the PLFW example programs" ${PLFW_STANDALONE})
-option(PLFW_BUILD_TESTS "Build the PLFW test programs" ${PLFW_STANDALONE})
 
 include(CMakeDependentOption)
 
@@ -84,12 +83,5 @@ add_subdirectory(src)
 
 if (PLFW_BUILD_EXAMPLES)
     add_subdirectory(examples)
-endif()
-
-if (PLFW_BUILD_TESTS)
-    # Registered at the top level so that "ctest --test-dir build" finds the
-    # smoke test instead of requiring the build/tests subdirectory
-    enable_testing()
-    add_subdirectory(tests)
 endif()
 

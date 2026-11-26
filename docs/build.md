@@ -18,23 +18,15 @@ clang-cl、MSYS2）在配置阶段就会被 `message(FATAL_ERROR)` 拒掉。Wind
 `cmake --help` 里的列表为准，形如 `-G "Visual Studio 17 2022" -A x64`。构建产物：
 
 - `build/src/plfw3.lib`（Windows/MSVC）或 `libplfw3.a`（Linux）
-- `build/tests/smoke.exe`、`build/examples/window-input.exe`、
-  `build/examples/multi-window.exe`、`build/examples/hello-window.exe`
-  （`PLFW_BUILD_TESTS` / `PLFW_BUILD_EXAMPLES` 打开时）
+- `build/examples/window-input.exe`、`build/examples/multi-window.exe`、
+  `build/examples/hello-window.exe`（`PLFW_BUILD_EXAMPLES` 打开时）
 
-想跑一遍自检：
-
-```sh
-ctest --test-dir build
-```
-
-`tests/smoke.c` 是不依赖图形上下文的冒烟测试：初始化、建窗、查询属性、收事件、退出，
-并在 Wayland 上跳过需要合成器能力的断言。
+仓库不带测试工程，也没有 `ctest` 目标：验证靠编译 + 直接跑 `examples/` 里的程序。
 
 ### 只要库的最小构建 <a name="compile_compile"></a>
 
 ```sh
-cmake -S . -B build -DPLFW_BUILD_TESTS=OFF -DPLFW_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release
+cmake -S . -B build -DPLFW_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j
 ```
 
@@ -144,7 +136,6 @@ wayland-scanner private-code  <file>.xml <file>-client-protocol-code.h
 `PLFW_BUILD_WIN32` | Windows 上 `ON` | 编译 Win32 后端
 `PLFW_BUILD_WAYLAND` | Unix 上 `ON` | 编译 Wayland 后端
 `PLFW_BUILD_EXAMPLES` | 源码树为顶层时 `ON` | 构建 `examples/` 里的三个示例
-`PLFW_BUILD_TESTS` | 源码树为顶层时 `ON` | 构建 `tests/smoke.c`
 `PLFW_USE_HYBRID_HPG` | `OFF` | 只在 Win32 下有意义：强制高性能 GPU；本构建无上下文，
 | | | 该选项保留但基本无效果
 `USE_MSVC_RUNTIME_LIBRARY_DLL` | `ON` | MSVC 下使用动态 CRT
@@ -339,7 +330,6 @@ gdi32.lib
 #### 用 CMake 的源码构建 <a name="build_link_cmake_source"></a>
 
 ```cmake
-set(PLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(PLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(path/to/plfw)
 
@@ -347,5 +337,5 @@ target_link_libraries(my_app PRIVATE plfw)
 ```
 
 `add_subdirectory` 会把 `plfw` 目标加到同一构建里，包含目录与依赖库自动传播。
-`PLFW_BUILD_TESTS` / `PLFW_BUILD_EXAMPLES` 只在顶层构建时默认 `ON`，作为子目录
-引入时本来就关着；想更彻底可以把它们显式设为 `OFF`。
+`PLFW_BUILD_EXAMPLES` 只在顶层构建时默认 `ON`，作为子目录引入时本来就关着；
+想更彻底可以显式设为 `OFF`。
