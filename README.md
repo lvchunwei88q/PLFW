@@ -1,7 +1,10 @@
-# PLFW（窗口 / 输入 / 事件 裁剪版）
+# PLFW —— Platform Library FrameWork
 
 [简体中文](README.md) | [English](README.en.md)
 
+> **PLFW** 是 **Platform Library FrameWork** 的缩写：一个只负责窗口、输入与事件的
+> 跨平台抽象库，不含任何图形上下文。
+>
 > **本仓库是 GLFW 3.5.1 的一个改造分支：所有图形初始化代码已被移除，库只保留
 > 窗口系统、输入（键盘 / 鼠标 / 手柄）与事件处理能力。**
 >

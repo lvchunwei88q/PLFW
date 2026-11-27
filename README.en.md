@@ -1,7 +1,10 @@
-# PLFW (window / input / event build)
+# PLFW — Platform Library FrameWork
 
 [**English**](README.en.md) | [简体中文](README.md)
 
+> **PLFW** stands for **Platform Library FrameWork**: a cross-platform abstraction
+> library that covers only windows, input and events, with no graphics context.
+>
 > **This repository is a modified fork of GLFW 3.5.1: all graphics initialization code
 > has been removed, and the library only keeps the window system, input (keyboard /
 > mouse / joystick) and event handling.**

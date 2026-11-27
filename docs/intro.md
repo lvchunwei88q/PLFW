@@ -1,8 +1,8 @@
 # PLFW 总览 <a name="intro_guide"></a> <a name="mainpage"></a>
 
-PLFW 是一个自由、开源、跨平台的**窗口、输入与事件**库。本仓库是 GLFW 3.5.1 的
-改造分支：图形初始化部分（OpenGL、OpenGL ES、EGL、WGL、GLX、NSGL、OSMesa、
-Vulkan）已全部移除，库只负责创建窗口、接收输入、分发事件。
+PLFW（**Platform Library FrameWork**）是一个自由、开源、跨平台的**窗口、输入与事件**
+库。本仓库是 GLFW 3.5.1 的改造分支：图形初始化部分（OpenGL、OpenGL ES、EGL、WGL、
+GLX、NSGL、OSMesa、Vulkan）已全部移除，库只负责创建窗口、接收输入、分发事件。
 
 后端只保留 Windows 的 **Win32** 与 Linux 的 **Wayland**，外加 **Null**
 （headless，用于无窗口系统的自动化测试）。X11 与 Cocoa 后端已经整体删除，
